@@ -43,7 +43,7 @@ namespace IntepretadorSAL
             //Cria lista de Variaveis
             List<VariavelBase> lista_Variaveis = new List<VariavelBase>();
             //lista_Variaveis.Add(new Variavel<string>("AMA"));
-
+            //AMAMAMAMAMAMAM
             
 
 

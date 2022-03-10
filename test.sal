@@ -1,0 +1,4 @@
+Set: int | a | 10;
+Set: int | b | 5;
+Opr: a | + | b;
+Prt: a;

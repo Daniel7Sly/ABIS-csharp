@@ -1,0 +1,70 @@
+O meu coceilho ta joando
+
+--PRINT
+Print: Value(string)\id;
+
+--Read retorna string
+Read: id;
+
+--Define variavel | **talvez
+Set: type|id|value;
+*types: int bool string **list**
+
+--Faz Operaçoes *talvez subtitui açoes "Add: Sub: Mul: & Div:"
+Opr: id|id\value|operador|id\value; (c = b + a)
+Opr: id\value|operador|id\value; (a += b)-(a = a + b)
+*operadores: add\+ sub\- mul\* div\/
+
+--Define valore a variavel
+Eql: id|id\value;
+
+--Soma Valores (a+=b)
+Add: id|value\id;
+
+--Subtrai Valores (a-=b)
+Sub: id|value\id;
+
+--Define flag
+Flag: flag_name;
+
+--Vai até á lable especificada
+Goto: flag_name;
+
+--Define a variavel com o resultado da comparaçao ()
+Comparation: id(result)|id\value|comparator|id\value;
+*comparators: < > >= <= == !=
+
+--É um IF se true -> goto flg_nm
+If: id(bool)|flag_name;
+
+IDEIAS:
+--tipo metodos. tipo input -> tipo output {resto comandos goes here acaba em return}
+Processo name intype -> outtype:
+--code goes here -..-
+return: valeu;
+
+Processo: name (intype) -> (outtype){
+	--code goes here -..-
+	return: valeu;
+}
+
+Proc: proc_name|in_id\value|out_id;
+
+Def: proc_name|in_id_name|out_id_name;
+
+return: out_id;
+
+
+
+-
+-
+-
+If: id|else1;
+-
+-
+-
+.else1
+-
+-
+-
+

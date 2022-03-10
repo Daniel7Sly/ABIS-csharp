@@ -1,0 +1,45 @@
+C:\Users\dani7\source\repos\Minha Linguagem Intepretador\Minha Linguagem Intepretador\bin\Debug\net6.0\Minha Linguagem Intepretador.exe
+C:\Users\dani7\source\repos\Minha Linguagem Intepretador\Minha Linguagem Intepretador\bin\Debug\net6.0\Minha Linguagem Intepretador.deps.json
+C:\Users\dani7\source\repos\Minha Linguagem Intepretador\Minha Linguagem Intepretador\bin\Debug\net6.0\Minha Linguagem Intepretador.runtimeconfig.json
+C:\Users\dani7\source\repos\Minha Linguagem Intepretador\Minha Linguagem Intepretador\bin\Debug\net6.0\Minha Linguagem Intepretador.dll
+C:\Users\dani7\source\repos\Minha Linguagem Intepretador\Minha Linguagem Intepretador\bin\Debug\net6.0\ref\Minha Linguagem Intepretador.dll
+C:\Users\dani7\source\repos\Minha Linguagem Intepretador\Minha Linguagem Intepretador\bin\Debug\net6.0\Minha Linguagem Intepretador.pdb
+C:\Users\dani7\source\repos\Minha Linguagem Intepretador\Minha Linguagem Intepretador\obj\Debug\net6.0\Minha Linguagem Intepretador.csproj.AssemblyReference.cache
+C:\Users\dani7\source\repos\Minha Linguagem Intepretador\Minha Linguagem Intepretador\obj\Debug\net6.0\Minha Linguagem Intepretador.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\dani7\source\repos\Minha Linguagem Intepretador\Minha Linguagem Intepretador\obj\Debug\net6.0\Minha Linguagem Intepretador.AssemblyInfoInputs.cache
+C:\Users\dani7\source\repos\Minha Linguagem Intepretador\Minha Linguagem Intepretador\obj\Debug\net6.0\Minha Linguagem Intepretador.AssemblyInfo.cs
+C:\Users\dani7\source\repos\Minha Linguagem Intepretador\Minha Linguagem Intepretador\obj\Debug\net6.0\Minha Linguagem Intepretador.csproj.CoreCompileInputs.cache
+C:\Users\dani7\source\repos\Minha Linguagem Intepretador\Minha Linguagem Intepretador\obj\Debug\net6.0\Minha Linguagem Intepretador.dll
+C:\Users\dani7\source\repos\Minha Linguagem Intepretador\Minha Linguagem Intepretador\obj\Debug\net6.0\ref\Minha Linguagem Intepretador.dll
+C:\Users\dani7\source\repos\Minha Linguagem Intepretador\Minha Linguagem Intepretador\obj\Debug\net6.0\Minha Linguagem Intepretador.pdb
+C:\Users\dani7\source\repos\Minha Linguagem Intepretador\Minha Linguagem Intepretador\obj\Debug\net6.0\Minha Linguagem Intepretador.genruntimeconfig.cache
+C:\Users\dani7\Documents\VisualStudioCode\Minha Linguagem\bin\Debug\net6.0\Minha Linguagem Intepretador.exe
+C:\Users\dani7\Documents\VisualStudioCode\Minha Linguagem\bin\Debug\net6.0\Minha Linguagem Intepretador.deps.json
+C:\Users\dani7\Documents\VisualStudioCode\Minha Linguagem\bin\Debug\net6.0\Minha Linguagem Intepretador.runtimeconfig.json
+C:\Users\dani7\Documents\VisualStudioCode\Minha Linguagem\bin\Debug\net6.0\Minha Linguagem Intepretador.dll
+C:\Users\dani7\Documents\VisualStudioCode\Minha Linguagem\bin\Debug\net6.0\Minha Linguagem Intepretador.pdb
+C:\Users\dani7\Documents\VisualStudioCode\Minha Linguagem\obj\Debug\net6.0\Minha Linguagem Intepretador.csproj.AssemblyReference.cache
+C:\Users\dani7\Documents\VisualStudioCode\Minha Linguagem\obj\Debug\net6.0\Minha Linguagem Intepretador.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\dani7\Documents\VisualStudioCode\Minha Linguagem\obj\Debug\net6.0\Minha Linguagem Intepretador.AssemblyInfoInputs.cache
+C:\Users\dani7\Documents\VisualStudioCode\Minha Linguagem\obj\Debug\net6.0\Minha Linguagem Intepretador.AssemblyInfo.cs
+C:\Users\dani7\Documents\VisualStudioCode\Minha Linguagem\obj\Debug\net6.0\Minha Linguagem Intepretador.csproj.CoreCompileInputs.cache
+C:\Users\dani7\Documents\VisualStudioCode\Minha Linguagem\obj\Debug\net6.0\Minha Linguagem Intepretador.dll
+C:\Users\dani7\Documents\VisualStudioCode\Minha Linguagem\obj\Debug\net6.0\refint\Minha Linguagem Intepretador.dll
+C:\Users\dani7\Documents\VisualStudioCode\Minha Linguagem\obj\Debug\net6.0\Minha Linguagem Intepretador.pdb
+C:\Users\dani7\Documents\VisualStudioCode\Minha Linguagem\obj\Debug\net6.0\Minha Linguagem Intepretador.genruntimeconfig.cache
+C:\Users\dani7\Documents\VisualStudioCode\Minha Linguagem\obj\Debug\net6.0\ref\Minha Linguagem Intepretador.dll
+C:\Users\Daniel7Sly\Documents\VScode\Minha Linguagem\bin\Debug\net6.0\Minha Linguagem Intepretador.exe
+C:\Users\Daniel7Sly\Documents\VScode\Minha Linguagem\bin\Debug\net6.0\Minha Linguagem Intepretador.deps.json
+C:\Users\Daniel7Sly\Documents\VScode\Minha Linguagem\bin\Debug\net6.0\Minha Linguagem Intepretador.runtimeconfig.json
+C:\Users\Daniel7Sly\Documents\VScode\Minha Linguagem\bin\Debug\net6.0\Minha Linguagem Intepretador.dll
+C:\Users\Daniel7Sly\Documents\VScode\Minha Linguagem\bin\Debug\net6.0\ref\Minha Linguagem Intepretador.dll
+C:\Users\Daniel7Sly\Documents\VScode\Minha Linguagem\bin\Debug\net6.0\Minha Linguagem Intepretador.pdb
+C:\Users\Daniel7Sly\Documents\VScode\Minha Linguagem\obj\Debug\net6.0\Minha Linguagem Intepretador.csproj.AssemblyReference.cache
+C:\Users\Daniel7Sly\Documents\VScode\Minha Linguagem\obj\Debug\net6.0\Minha Linguagem Intepretador.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Daniel7Sly\Documents\VScode\Minha Linguagem\obj\Debug\net6.0\Minha Linguagem Intepretador.AssemblyInfoInputs.cache
+C:\Users\Daniel7Sly\Documents\VScode\Minha Linguagem\obj\Debug\net6.0\Minha Linguagem Intepretador.AssemblyInfo.cs
+C:\Users\Daniel7Sly\Documents\VScode\Minha Linguagem\obj\Debug\net6.0\Minha Linguagem Intepretador.csproj.CoreCompileInputs.cache
+C:\Users\Daniel7Sly\Documents\VScode\Minha Linguagem\obj\Debug\net6.0\Minha Linguagem Intepretador.dll
+C:\Users\Daniel7Sly\Documents\VScode\Minha Linguagem\obj\Debug\net6.0\ref\Minha Linguagem Intepretador.dll
+C:\Users\Daniel7Sly\Documents\VScode\Minha Linguagem\obj\Debug\net6.0\Minha Linguagem Intepretador.pdb
+C:\Users\Daniel7Sly\Documents\VScode\Minha Linguagem\obj\Debug\net6.0\Minha Linguagem Intepretador.genruntimeconfig.cache

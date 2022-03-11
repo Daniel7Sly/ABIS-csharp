@@ -102,7 +102,6 @@ namespace IntepretadorSAL
                 Exception exception = new Exception("Falha ao Criar Variavel. Parametros em falta?",ex);
                 throw exception;
             }
-
         }
     }
 

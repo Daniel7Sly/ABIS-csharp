@@ -56,15 +56,12 @@ return: out_id;
 
 
 
--
--
--
-If: id|else1;
--
--
--
-.else1
--
--
--
 
+Set: int | num | 5;
+
+Add: num | 10 ;
+
+
+Goto: flag2;
+....
+Flag: flag2;

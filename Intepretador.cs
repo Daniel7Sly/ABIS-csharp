@@ -43,11 +43,19 @@ namespace IntepretadorSAL
             //Cria lista de Variaveis
             List<Variavel> lista_Variaveis = new List<Variavel>();
 
-            //Lista de FLAGS
+            //Lista de FLAGS - Flags sao definidas antes de intrepertar o codigo
             List<Flag> lista_Flags = new List<Flag>();
+            for (int i = 0; i < Açoes.Length-1; i++)
+            {
+                if(Açoes[i].tipoaçao == "Flag"){
+                    Flag(Açoes, lista_Flags, i);
+                }
+            }
 
             //TODO:
             //Lista de Processos
+
+            
 
             //intepreta as instruçoes
             for (int i = 0; i < Açoes.Length-1 ; i++)
@@ -57,7 +65,7 @@ namespace IntepretadorSAL
                         Set(Açoes, lista_Variaveis, i);
                         break;
                     case "Print":
-
+                        
                         break;
                     case "Read":
 
@@ -71,11 +79,10 @@ namespace IntepretadorSAL
                     case "Cmp":
 
                         break;
-                    case "Flag":
-
-                        break;
+                    // case "Flag":
+                    //     break;
                     case "Goto":
-
+                        
                         break;
                     case "If":
 
@@ -91,6 +98,7 @@ namespace IntepretadorSAL
                 string type = Açoes[i].parametros[0];
                 string id = Açoes[i].parametros[1];
                 string value = Açoes[i].parametros[2];
+
                 Variavel var = new Variavel(type, id, value);
                 if (lista_Variaveis.Find(x => x.id == id) == null)
                 {
@@ -100,6 +108,26 @@ namespace IntepretadorSAL
             catch (System.Exception ex)
             {
                 Exception exception = new Exception("Falha ao Criar Variavel. Parametros em falta?",ex);
+                throw exception;
+            }
+        }
+
+        private static void Flag(Açao[] Açoes, List<Flag> lista_Flags, int i)
+        {
+            try
+            {
+                string nome = Açoes[i].parametros[0];
+                int posiçao = int.Parse(Açoes[i].parametros[1]);
+
+                Flag flag = new Flag(nome, posiçao);
+                if (lista_Flags.Find(x => x.nome == nome) == null)
+                {
+                    lista_Flags.Add(flag);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Exception exception = new Exception("Falha ao Definir Flag. Parametros em falta?",ex);
                 throw exception;
             }
         }
@@ -133,12 +161,12 @@ namespace IntepretadorSAL
     class Variavel{
         public string type, id, value;
 
-    public Variavel(string type, string id, string value){
-        this.type = type;
-        this.id = id;
-        this.value = value;
+        public Variavel(string type, string id, string value){
+            this.type = type;
+            this.id = id;
+            this.value = value;
+        }
     }
-}
 
     class Flag{
         public string nome;

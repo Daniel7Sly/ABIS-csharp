@@ -82,13 +82,24 @@ namespace IntepretadorSAL
                     // case "Flag":
                     //     break;
                     case "Goto":
-                        
+                        i = Goto(Açoes, lista_Flags, i);
                         break;
                     case "If":
 
                         break;
                 }
             }
+        }
+
+        private static int Goto(Açao[] Açoes, List<Flag> lista_Flags, int i)
+        {
+            Flag flag = lista_Flags.Find(x => x.nome == Açoes[i].parametros[0]);
+            if (flag != null)
+            {
+                i = flag.posiçao;
+            }
+
+            return i;
         }
 
         private static void Set(Açao[] Açoes, List<Variavel> lista_Variaveis, int i)

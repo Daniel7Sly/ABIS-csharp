@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace IntepretadorSAL
 {
+    //dio esteve aqui
+
     internal static class Intepretador
     {
         public static void Intepretar(string file_content)

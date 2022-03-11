@@ -34,25 +34,27 @@ namespace IntepretadorSAL
             // }
 
             //Passa as instruçoes para um array de Açoes
-            Açao[] instrunçoes = new Açao[instrunçoes_do_Ficheiro.Length-2];
+            Açao[] Açoes = new Açao[instrunçoes_do_Ficheiro.Length-2];
             for (int i = 0; i < instrunçoes_do_Ficheiro.Length-2; i++)
             {
-                instrunçoes[i] = new Açao(instrunçoes_do_Ficheiro[i]);
+                Açoes[i] = new Açao(instrunçoes_do_Ficheiro[i]);
             }
 
             //Cria lista de Variaveis
-            List<VariavelBase> lista_Variaveis = new List<VariavelBase>();
-            //lista_Variaveis.Add(new Variavel<string>("AMA"));
-            //AMAMAMAMAMAMAM
-            
+            List<Variavel> lista_Variaveis = new List<Variavel>();
 
+            //Lista de FLAGS
+            List<Flag> lista_Flags = new List<Flag>();
+
+            //TODO:
+            //Lista de Processos
 
             //intepreta as instruçoes
-            for (int i = 0; i < instrunçoes.Length-1 ; i++)
+            for (int i = 0; i < Açoes.Length-1 ; i++)
             {
-                switch(instrunçoes[i].tipoaçao){
+                switch(Açoes[i].tipoaçao){
                     case "Set":
-
+                        Set(Açoes, lista_Variaveis, i);
                         break;
                     case "Print":
 
@@ -81,6 +83,27 @@ namespace IntepretadorSAL
                 }
             }
         }
+
+        private static void Set(Açao[] Açoes, List<Variavel> lista_Variaveis, int i)
+        {
+            try
+            {
+                string type = Açoes[i].parametros[0];
+                string id = Açoes[i].parametros[1];
+                string value = Açoes[i].parametros[2];
+                Variavel var = new Variavel(type, id, value);
+                if (lista_Variaveis.Find(x => x.id == id) == null)
+                {
+                    lista_Variaveis.Add(var);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Exception exception = new Exception("Falha ao Criar Variavel. Parametros em falta?",ex);
+                throw exception;
+            }
+
+        }
     }
 
     class Açao{
@@ -89,25 +112,42 @@ namespace IntepretadorSAL
 
         public Açao(string instruçao){
             if(instruçao != ""){
-                string[] palavras = instruçao.Split(':');
-                this.tipoaçao = palavras[0];
-                this.parametros = palavras[1].Split('|');
+                string[] palavras = instruçao.Split(':');   //  Set  :    type | id | value;
+                this.tipoaçao = palavras[0];                //   ^               ^
+                this.parametros = palavras[1].Split('|');   //tipoaçao       Parametros
             }
             else{
                 this.tipoaçao = "FIM";
             }
         }
     }
-    class VariavelBase{
-        // public string nome;
+
+    // public class VariavelT<T>{
+    //     public string nome;
+    //     public T value;
+
+    //     public Variavell(T Valor){
+    //         this.value = Valor;
+    //     }
+    // }
+
+    class Variavel{
+        public string type, id, value;
+
+    public Variavel(string type, string id, string value){
+        this.type = type;
+        this.id = id;
+        this.value = value;
     }
+}
 
-    class Variavel<T>{
+    class Flag{
         public string nome;
-        public T value;
+        public int posiçao;
 
-        public Variavel(T Valor){
-            this.value = Valor;
+        public Flag(string nome, int posiçao){
+            this.nome = nome;
+            this.posiçao = posiçao;
         }
     }
 }

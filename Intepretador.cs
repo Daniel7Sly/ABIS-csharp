@@ -48,7 +48,7 @@ namespace IntepretadorSAL
             for (int i = 0; i < Açoes.Length-1; i++)
             {
                 if(Açoes[i].tipoaçao == "Flag"){
-                    Flag(Açoes, lista_Flags, i);
+                    Flags(Açoes, lista_Flags, i);
                 }
             }
 
@@ -123,7 +123,7 @@ namespace IntepretadorSAL
             }
         }
 
-        private static void Flag(Açao[] Açoes, List<Flag> lista_Flags, int i)
+        private static void Flags(Açao[] Açoes, List<Flag> lista_Flags, int i)
         {
             try
             {
@@ -142,50 +142,49 @@ namespace IntepretadorSAL
                 throw exception;
             }
         }
-    }
 
-    class Açao{
-        public string tipoaçao;
-        public string[]? parametros;
+        private class Variavel{
+            public string type, id, value;
 
-        public Açao(string instruçao){
-            if(instruçao != ""){
-                string[] palavras = instruçao.Split(':');   //  Set  :    type | id | value;
-                this.tipoaçao = palavras[0];                //   ^               ^
-                this.parametros = palavras[1].Split('|');   //tipoaçao       Parametros
-            }
-            else{
-                this.tipoaçao = "FIM";
+            public Variavel(string type, string id, string value){
+                this.type = type;
+                this.id = id;
+                this.value = value;
             }
         }
-    }
 
-    // public class VariavelT<T>{
-    //     public string nome;
-    //     public T value;
+        // public class VariavelT<T>{
+        //     public string nome;
+        //     public T value;
 
-    //     public Variavell(T Valor){
-    //         this.value = Valor;
-    //     }
-    // }
+        //     public Variavell(T Valor){
+        //         this.value = Valor;
+        //     }
+        // }
+        private class Açao{
+            public string tipoaçao;
+            public string[]? parametros;
 
-    class Variavel{
-        public string type, id, value;
-
-        public Variavel(string type, string id, string value){
-            this.type = type;
-            this.id = id;
-            this.value = value;
+            public Açao(string instruçao){
+                if(instruçao != ""){
+                    string[] palavras = instruçao.Split(':');   //  Set  :    type | id | value;
+                    this.tipoaçao = palavras[0];                //   ^               ^
+                    this.parametros = palavras[1].Split('|');   //tipoaçao       Parametros
+                }
+                else{
+                    this.tipoaçao = "FIM";
+                }
+            }
         }
-    }
 
-    class Flag{
-        public string nome;
-        public int posiçao;
+        private class Flag{
+            public string nome;
+            public int posiçao;
 
-        public Flag(string nome, int posiçao){
-            this.nome = nome;
-            this.posiçao = posiçao;
+            public Flag(string nome, int posiçao){
+                this.nome = nome;
+                this.posiçao = posiçao;
+            }
         }
     }
 }

@@ -62,7 +62,7 @@ namespace IntepretadorSAL
             {
                 switch(Açoes[i].tipoaçao){
                     case "Set":
-                        Set(Açoes, lista_Variaveis, i);
+                        Set(Açoes[i].parametros, lista_Variaveis, i);
                         break;
                     case "Print":
                         
@@ -91,7 +91,7 @@ namespace IntepretadorSAL
             }
         }
 
-        private static void Equals(List<Variavel> lista_Variaveis,string[] parametros){
+        private static void Equals(List<Variavel> lista_Variaveis, string[]? parametros){
             //verifica se chegou dois parametros
             if(parametros.Length != 2){
                 throw new Exception("Parametros em falta.");
@@ -172,26 +172,53 @@ namespace IntepretadorSAL
             return i;
         }
 
-        private static void Set(Açao[] Açoes, List<Variavel> lista_Variaveis, int i)
+        private static void Set(string[]? parametros, List<Variavel> lista_Variaveis, int i)
         {
-            try
-            {
-                //TODO: NUll and type cheking
-                string type = Açoes[i].parametros[0];
-                string id = "$"+Açoes[i].parametros[1];//todo o nome de variavel começa por $
-                string value = Açoes[i].parametros[2];
+            //Verifica se chegam três parametros
+            if(parametros.Length != 3){
+                throw new Exception("parametros em falta.");
+            }
 
-                Variavel var = new Variavel(type, id, value);
-                if (lista_Variaveis.Find(x => x.id == id) == null)
-                {
-                    lista_Variaveis.Add(var);
-                }
+            //Valida o 1º parametro se é um tipo valido
+            if(parametros[0] != "num" && parametros[0] != "bool" && parametros[0] != "text"){
+                throw new Exception("parametro tipo invalido. Type must be num, bool, or text.");
             }
-            catch (System.Exception ex)
-            {
-                Exception exception = new Exception("Falha ao Criar Variavel. Parametros em falta?",ex);
-                throw exception;
+            string type = parametros[0];            
+
+            //Valida o 2º parametro
+            if(parametros[1] == ""){
+                throw new Exception("Nome de variavel vazio / não definida.");
             }
+            if(lista_Variaveis.Find(x => x.id == "$"+parametros[1]) != null){
+                throw new Exception("Variavel ja existente.");
+            }
+            string name = parametros[1];
+
+            //Aplica o valor de acordo com o tipo expecificado
+            string value = "";
+            switch(parametros[0]){
+                case "num":
+                    if(float.TryParse(parametros[2], out float result_num)){
+                        value = result_num.ToString();
+                    }
+                    else{
+                        throw new Exception("Não foi possivel converter parametro para num.");
+                    }
+                    break;
+                case "bool":
+                    if(bool.TryParse(parametros[2], out bool result_bool)){
+                        value = result_bool.ToString();
+                    }
+                    else{
+                        throw new Exception("Não foi possivel converter parametro para bool.");
+                    }
+                    break;
+                case "text":
+                    value = parametros[2];
+                    break;
+            }
+
+            lista_Variaveis.Add(new Variavel(type,name,value));
         }
 
         private static void Flags(Açao[] Açoes, List<Flag> lista_Flags, int i)
@@ -217,9 +244,9 @@ namespace IntepretadorSAL
         private class Variavel{
             public string type, id, value;
 
-            public Variavel(string type, string id, string value){
+            public Variavel(string type, string name, string value){
                 this.type = type;
-                this.id = id;
+                this.id = '$'+name;
                 this.value = value;
             }
         }

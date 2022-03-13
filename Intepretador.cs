@@ -82,7 +82,7 @@ namespace IntepretadorSAL
                     // case "Flag":
                     //     break;
                     case "Goto":
-                        i = Goto(Açoes, lista_Flags, i);
+                        i = Goto(Açoes[i].parametros, lista_Flags, i);
                         break;
                     case "If":
 
@@ -155,14 +155,20 @@ namespace IntepretadorSAL
             }
         }
 
-        private static int Goto(Açao[] Açoes, List<Flag> lista_Flags, int i)
+        private static int Goto(string[] parametros, List<Flag> lista_Flags, int i)
         {
-            Flag flag = lista_Flags.Find(x => x.nome == Açoes[i].parametros[0]);
-            if (flag != null)
-            {
-                i = flag.posiçao;
+            //valida o parametro
+            if(parametros[0] == ""){
+                throw new Exception("Parametro em falta.");
             }
-
+            Flag? flag = lista_Flags.Find(x => x.nome == parametros[0]);
+            if (flag == null)
+            {
+                throw new Exception("Flag não encontrada.");
+            }
+            
+            //Define i para a posiçao da flag
+            i = flag.posiçao;
             return i;
         }
 
@@ -231,8 +237,8 @@ namespace IntepretadorSAL
             public string tipoaçao;
             public string[]? parametros;
 
-            public Açao(string instruçao){
-                if(instruçao != ""){
+            public Açao(string instruçao){                      //instruçao:
+                if(instruçao != ""){                            //  |                         |       
                     string[] palavras = instruçao.Split(':');   //  Set  :    type | id | value;
                     this.tipoaçao = palavras[0];                //   ^               ^
                     this.parametros = palavras[1].Split('|');   //tipoaçao       Parametros

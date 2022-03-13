@@ -39,7 +39,7 @@ namespace IntepretadorSAL
             {
                 Açoes[i] = new Açao(instrunçoes_do_Ficheiro[i]);
             }
-            
+
             //Cria lista de Variaveis
             List<Variavel> lista_Variaveis = new List<Variavel>();
 
@@ -52,7 +52,7 @@ namespace IntepretadorSAL
                 }
             }
 
-            //TODO:
+            //TODO: *talvez*
             //Lista de Processos
 
             
@@ -92,6 +92,11 @@ namespace IntepretadorSAL
         }
 
         private static void Equals(List<Variavel> lista_Variaveis,string[] parametros){
+            //verifica se chegou dois parametros
+            if(parametros.Length != 2){
+                throw new Exception("Parametros em falta.");
+            }
+
             //verifica se o primeiro parametro é uma variavel valida
             if(parametros[0][0] != '$'){
                 throw new Exception("1º parametro não é variavel");
@@ -109,8 +114,8 @@ namespace IntepretadorSAL
                     throw new Exception("2º parametro variavel não encontrada.");
                 }
                 
+                //Define o varlor da var2 á var1
                 if(var1.type == var2.type){
-                    //Define o varlor da var2 á var1
                     var1.value = var2.value;
                 }
                 else{
@@ -123,6 +128,7 @@ namespace IntepretadorSAL
                     throw new Exception("2º parametro vazio.");
                 }
                 
+                //Aplica a operaçao correspondente ao tipo de dado
                 switch(var1.type){
                     case "num":
                         if(float.TryParse(parametros[1], out float result_num)){
@@ -143,9 +149,10 @@ namespace IntepretadorSAL
                     case "text":
                         var1.value = parametros[1];
                         break;
+                    default:
+                        break;
                 }
             }
-
         }
 
         private static int Goto(Açao[] Açoes, List<Flag> lista_Flags, int i)

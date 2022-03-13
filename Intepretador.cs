@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 
 namespace IntepretadorSAL
 {
-    //dio esteve aqui
-
     internal static class Intepretador
     {
         public static void Intepretar(string file_content)
@@ -76,7 +74,7 @@ namespace IntepretadorSAL
 
                         break;
                     case "Eql":
-
+                        Equals(lista_Variaveis, Açoes[i].parametros);
                         break;
                     case "Cmp":
 
@@ -91,6 +89,63 @@ namespace IntepretadorSAL
                         break;
                 }
             }
+        }
+
+        private static void Equals(List<Variavel> lista_Variaveis,string[] parametros){
+            //verifica se o primeiro parametro é uma variavel valida
+            if(parametros[0][0] != '$'){
+                throw new Exception("1º parametro não é variavel");
+            }
+            Variavel? var1 = lista_Variaveis.Find(x => x.id == parametros[0]);
+            if(var1 == null){
+                throw new Exception("1ª variavel não encontrada.");
+            }
+
+            Variavel? var2 = null;
+            if(parametros[1][0] == '$'){
+                //Valida a 2ª variavel
+                var2 = lista_Variaveis.Find(x => x.id == parametros[1]);
+                if(var2 == null){
+                    throw new Exception("2º parametro variavel não encontrada.");
+                }
+                
+                if(var1.type == var2.type){
+                    //Define o varlor da var2 á var1
+                    var1.value = var2.value;
+                }
+                else{
+                    throw new Exception("Variaveis não são do mesmo tipo.");
+                }
+            }
+            else{//caso não seja variavel
+                //valida 2º parametro
+                if(parametros[1] == "" && var1.type != "text"){
+                    throw new Exception("2º parametro vazio.");
+                }
+                
+                switch(var1.type){
+                    case "num":
+                        if(float.TryParse(parametros[1], out float result_num)){
+                            var1.value = result_num.ToString();
+                        }
+                        else{
+                            throw new Exception("Não foi possivel converter parametro para num.");
+                        }
+                        break;
+                    case "bool":
+                        if(bool.TryParse(parametros[1], out bool result_bool)){
+                            var1.value = result_bool.ToString();
+                        }
+                        else{
+                            throw new Exception("Não foi possivel converter parametro para bool.");
+                        }
+                        break;
+                    case "text":
+                        var1.value = parametros[1];
+                        break;
+                }
+            }
+
         }
 
         private static int Goto(Açao[] Açoes, List<Flag> lista_Flags, int i)
@@ -108,8 +163,9 @@ namespace IntepretadorSAL
         {
             try
             {
+                //TODO: NUll and type cheking
                 string type = Açoes[i].parametros[0];
-                string id = Açoes[i].parametros[1];
+                string id = "$"+Açoes[i].parametros[1];//todo o nome de variavel começa por $
                 string value = Açoes[i].parametros[2];
 
                 Variavel var = new Variavel(type, id, value);
@@ -163,6 +219,7 @@ namespace IntepretadorSAL
         //         this.value = Valor;
         //     }
         // }
+
         private class Açao{
             public string tipoaçao;
             public string[]? parametros;

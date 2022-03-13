@@ -39,7 +39,7 @@ namespace IntepretadorSAL
             {
                 Açoes[i] = new Açao(instrunçoes_do_Ficheiro[i]);
             }
-
+            
             //Cria lista de Variaveis
             List<Variavel> lista_Variaveis = new List<Variavel>();
 

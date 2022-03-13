@@ -6,9 +6,11 @@ Print: Value(string)\id;
 --Read retorna string
 Read: id;
 
---Define variavel | **talvez
-Set: type|id|value;
-*types: int bool string **list**
+--Define variavel | **talvez  
+--Variaveis são chamadas de id e são indentificadas
+--no codigo pelo 1º caracter => '$'
+Set: type|nome|value;
+*types: num(float), bool, text, **list**
 
 --Faz Operaçoes *talvez subtitui açoes "Add: Sub: Mul: & Div:"
 Opr: id|id\value|operador|id\value; (c = b + a)

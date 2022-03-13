@@ -48,7 +48,7 @@ namespace IntepretadorSAL
             for (int i = 0; i < Açoes.Length-1; i++)
             {
                 if(Açoes[i].tipoaçao == "Flag"){
-                    Flags(Açoes, lista_Flags, i);
+                    Flags(Açoes[i].parametros, lista_Flags, i);
                 }
             }
 
@@ -175,7 +175,7 @@ namespace IntepretadorSAL
         private static void Set(string[]? parametros, List<Variavel> lista_Variaveis, int i)
         {
             //Verifica se chegam três parametros
-            if(parametros.Length != 3){
+            if(parametros == null || parametros.Length != 3){
                 throw new Exception("parametros em falta.");
             }
 
@@ -221,24 +221,18 @@ namespace IntepretadorSAL
             lista_Variaveis.Add(new Variavel(type,name,value));
         }
 
-        private static void Flags(Açao[] Açoes, List<Flag> lista_Flags, int i)
+        private static void Flags(string[]? parametros, List<Flag> lista_Flags, int i)
         {
-            try
-            {
-                string nome = Açoes[i].parametros[0];
-                int posiçao = int.Parse(Açoes[i].parametros[1]);
+            //Valida o parametro nome
+            if(parametros == null || parametros.Length != 1 || parametros[0] == ""){
+                throw new Exception("Parametro 'nome' invalido.");
+            }
+            if(lista_Flags.Find(x => x.nome == parametros[0]) != null){
+                throw new Exception("Nome de Flag repetido/já existente");
+            }
 
-                Flag flag = new Flag(nome, posiçao);
-                if (lista_Flags.Find(x => x.nome == nome) == null)
-                {
-                    lista_Flags.Add(flag);
-                }
-            }
-            catch (System.Exception ex)
-            {
-                Exception exception = new Exception("Falha ao Definir Flag. Parametros em falta?",ex);
-                throw exception;
-            }
+            //Acrescenta a flag á lista de flags
+            lista_Flags.Add(new Flag(parametros[0], i));
         }
 
         private class Variavel{

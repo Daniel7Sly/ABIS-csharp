@@ -85,15 +85,48 @@ namespace IntepretadorSAL
                         i = Goto(Açoes[i].parametros, lista_Flags, i);
                         break;
                     case "If":
-
+                        int p = IF(lista_Flags,lista_Variaveis,Açoes[i].parametros);
+                        if(p != -1){
+                            i = p;
+                        }
                         break;
                 }
             }
         }
 
-        private static void Equals(List<Variavel> lista_Variaveis, string[]? parametros){
+        private static int IF(List<Flag> lista_Flags, List<Variavel> lista_Variaveis, string[] parametros){
+            //Valida a variavel 1º parametro
+            if(parametros.Length < 2){
+                throw new Exception("Parametros em faltas.");
+            }
+            if(parametros[0][0] != '$'){
+                throw new Exception("1º parametro não é variavel");
+            }
+            Variavel? var = lista_Variaveis.Find(x => x.id == parametros[0]);
+            if(var == null){
+                throw new Exception("Variavel não encontrada");
+            }
+            if(var.type != "bool"){
+                throw new Exception("Variavel de tipo invalido");
+            }
+
+            //Valida a flag 2º parametro
+            Flag? flag = lista_Flags.Find(x => x.nome == parametros[1]);
+            if(flag == null){
+                throw new Exception("Flag não encontrada/definida");
+            }
+
+            //Retorna a posiçao da flag
+            if(var.value == "true"){
+                return flag.posiçao;
+            }
+            //Retorna -1 caso seja false
+            return -1;
+        }   
+
+        private static void Equals(List<Variavel> lista_Variaveis, string[] parametros){
             //verifica se chegou dois parametros
-            if(parametros.Length != 2){
+            if(parametros.Length < 2){
                 throw new Exception("Parametros em falta.");
             }
 
@@ -172,7 +205,7 @@ namespace IntepretadorSAL
             return i;
         }
 
-        private static void Set(string[]? parametros, List<Variavel> lista_Variaveis, int i)
+        private static void Set(string[] parametros, List<Variavel> lista_Variaveis, int i)
         {
             //Verifica se chegam três parametros
             if(parametros == null || parametros.Length != 3){
@@ -221,7 +254,7 @@ namespace IntepretadorSAL
             lista_Variaveis.Add(new Variavel(type,name,value));
         }
 
-        private static void Flags(string[]? parametros, List<Flag> lista_Flags, int i)
+        private static void Flags(string[] parametros, List<Flag> lista_Flags, int i)
         {
             //Valida o parametro nome
             if(parametros == null || parametros.Length != 1 || parametros[0] == ""){
@@ -256,13 +289,15 @@ namespace IntepretadorSAL
 
         private class Açao{
             public string tipoaçao;
-            public string[]? parametros;
+            public string[] parametros = {}; //<-- Amamm
 
-            public Açao(string instruçao){                      //instruçao:
+            public Açao(string instruçao){                      //  |--------instruçao:-------|
                 if(instruçao != ""){                            //  |                         |       
-                    string[] palavras = instruçao.Split(':');   //  Set  :    type | id | value;
-                    this.tipoaçao = palavras[0];                //   ^               ^
-                    this.parametros = palavras[1].Split('|');   //tipoaçao       Parametros
+                    string[] palavras = instruçao.Split(':');   //  Set  :    type | id | value ;
+                    this.tipoaçao = palavras[0];                //   ^        |       ^       |
+                    //this.parametros = palavras[1].Split('|');   //tipoaçao  |--Parametros---|
+                    string[] a = palavras[1].Split('|');
+                    this.parametros = a;
                 }
                 else{
                     this.tipoaçao = "FIM";

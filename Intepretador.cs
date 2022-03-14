@@ -94,6 +94,87 @@ namespace IntepretadorSAL
             }
         }
 
+        private static void Operaçao(List<Variavel> lista_Variaveis, string[] parametros){
+            //Valida a qaunatidade de parametros
+            if(parametros.Length != 4){
+                throw new Exception("Quantidade de parametros invalida.");
+            }
+            
+            //Valida o 1º parametro
+            if(parametros[0][0] != '$'){
+                throw new Exception("Primeiro parametro não é variavel.");
+            }
+            Variavel? var = lista_Variaveis.Find(x => x.id == parametros[0]);
+            if(var == null){
+                throw new Exception("Variavel não encontrada/definida.");
+            }
+            if(var.type != "num"){
+                throw new Exception("Valor a ser atribuido a variavel não numerica.");
+            }
+
+            float valor1;
+            //Valida 2º parametro e atribui o valor á variavel varlor1
+            if(parametros[1][0] == '$'){
+                Variavel? var2 = lista_Variaveis.Find(x => x.id == parametros[1]);
+                if(var2 == null){
+                    throw new Exception("Variavel não encontrada/definida.");
+                }
+                if(var2.type != "num"){
+                    throw new Exception("Valor a ser operado a variavel não numerica.");
+                }
+
+                valor1 = float.Parse(var2.value);
+            }
+            else{//caso não seja variavel
+                if(float.TryParse(parametros[1], out float r1)){
+                    valor1 = r1;
+                }
+                else{
+                    throw new Exception("Valor numerico não valido.");
+                }
+            }
+
+            float valor2;
+            //Valida 4º parametro e atribui o valor á variavel varlor2
+            if(parametros[3][0] == '$'){
+                Variavel? var2 = lista_Variaveis.Find(x => x.id == parametros[1]);
+                if(var2 == null){
+                    throw new Exception("Variavel não encontrada/definida.");
+                }
+                if(var2.type != "num"){
+                    throw new Exception("Valor a ser operado a variavel não numerica.");
+                }
+
+                valor2 = float.Parse(var2.value);
+            }
+            else{//caso não seja variavel
+                if(float.TryParse(parametros[3], out float r1)){
+                    valor2 = r1;
+                }
+                else{
+                    throw new Exception("Valor numerico não valido.");
+                }
+            }
+
+            //Operaçao
+            switch(parametros[2]){
+                case "+":
+                    var.value = (valor1 + valor2).ToString();
+                    break;
+                case "-":
+                    var.value = (valor1 - valor2).ToString();
+                    break;
+                case "*":
+                    var.value = (valor1 * valor2).ToString();
+                    break;
+                case "/":
+                    var.value = (valor1 / valor2).ToString();
+                    break;
+                default:
+                    throw new Exception("Operador invalido.");
+            }
+        }
+
         private static int IF(List<Flag> lista_Flags, List<Variavel> lista_Variaveis, string[] parametros){
             //Valida a variavel 1º parametro
             if(parametros.Length < 2){

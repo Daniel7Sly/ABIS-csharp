@@ -71,13 +71,13 @@ namespace IntepretadorSAL
 
                         break;
                     case "Opr":
-
+                        Operaçao(lista_Variaveis,Açoes[i].parametros);
                         break;
                     case "Eql":
                         Equals(lista_Variaveis, Açoes[i].parametros);
                         break;
                     case "Cmp":
-
+                        
                         break;
                     // case "Flag":
                     //     break;

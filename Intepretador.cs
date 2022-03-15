@@ -77,7 +77,7 @@ namespace IntepretadorSAL
                         Equals(lista_Variaveis, Açoes[i].parametros);
                         break;
                     case "Cmp":
-                        
+                        Comparaçao(lista_Variaveis,Açoes[i].parametros);
                         break;
                     // case "Flag":
                     //     break;
@@ -94,8 +94,158 @@ namespace IntepretadorSAL
             }
         }
 
+        private static void Comparaçao(List<Variavel> lista_Variaveis, string[] parametros){
+            //Valida a quantidade de parametros
+            if(parametros.Length != 4){
+                throw new Exception("Quantidade de parametros invalida.");
+            }
+
+            //Valida o 1º parametro, tem de ser variavel.
+            if(parametros[0][0] != '$'){
+                throw new Exception("Primeiro parametro não é variavel.");
+            }
+            Variavel? var_result = lista_Variaveis.Find(x => x.id == parametros[0]);
+            if(var_result == null){
+                throw new Exception("Variavel não encontrada/definida.");
+            }
+            if(var_result.type != "bool"){
+                throw new Exception("Valor a ser atribuido a variavel não numerica.");
+            }
+            
+            string tipo;
+            //Valida 3º parametro comparador
+            switch(parametros[2]){
+                case "<": case ">": case "<=": case ">=":
+                    tipo = "num";
+                    break;
+                case "==": case "!=":
+                    tipo = "text";
+                    break;
+                default:
+                    throw new Exception("Comparador invalido");
+            }
+
+            string valor1;
+            //Valida 2º parametro
+            if(parametros[1][0] == '$'){
+                Variavel? var2 = lista_Variaveis.Find(x => x.id == parametros[1]);
+                if(var2 == null){
+                    throw new Exception("Variavel não encontrada/definida.");
+                }
+                if(var2.type != tipo){
+                    throw new Exception("Tipo de variavel invalida para a comparaçao pedida.");
+                }
+
+                valor1 = var2.value;
+            }
+            else{//caso não seja variavel
+                if(tipo == "num"){
+                    if(float.TryParse(parametros[1],out float r)){
+                        valor1 = r.ToString();
+                    }
+                    else{
+                        throw new Exception("Não foi possivel converter parametro para int.");
+                    }
+                }
+                else{
+                    valor1 = parametros[1];
+                }
+            }
+
+            string valor2;
+            //Valida o 4º parametro
+            if(parametros[3][0] == '$'){
+                Variavel? var2 = lista_Variaveis.Find(x => x.id == parametros[3]);
+                if(var2 == null){
+                    throw new Exception("Variavel não encontrada/definida.");
+                }
+                if(var2.type != tipo){
+                    throw new Exception("Tipo de variavel invalida para a comparaçao pedida.");
+                }
+
+                valor2 = var2.value;
+            }
+            else{//caso não seja variavel
+                if(tipo == "num"){
+                    if(float.TryParse(parametros[3],out float r)){
+                        valor2 = r.ToString();
+                    }
+                    else{
+                        throw new Exception("Não foi possivel converter parametro para num.");
+                    }
+                }
+                else{
+                    valor2 = parametros[3];
+                }
+            }
+
+            //Faz a comparação
+            if(tipo == "num"){
+                float numval1 = float.Parse(valor1);
+                float numval2 = float.Parse(valor2);
+
+                switch(parametros[2]){
+                    case "<":
+                        if(numval1 < numval2){
+                            var_result.value = "true";
+                        }
+                        else{
+                            var_result.value = "false";
+                        }
+                        break;
+                    case ">":
+                        if(numval1 > numval2){
+                            var_result.value = "true";
+                        }
+                        else{
+                            var_result.value = "false";
+                        }
+                        break;
+                    case "<=":
+                        if(numval1 <= numval2){
+                            var_result.value = "true";
+                        }
+                        else{
+                            var_result.value = "false";
+                        }
+                        break;
+                    case ">=":
+                        if(numval1 >= numval2){
+                            var_result.value = "true";
+                        }
+                        else{
+                            var_result.value = "false";
+                        }
+                        break;
+                    default:
+                        //não é suposto vir pra qui
+                        break;
+                }
+            }
+            else{
+                switch(parametros[2]){
+                    case "==":
+                        if(valor1 == valor2){
+                            var_result.value = "true";
+                        }
+                        else{
+                            var_result.value = "false";
+                        }
+                        break;
+                    case "!=":
+                        if(valor1 != valor2){
+                            var_result.value = "true";
+                        }
+                        else{
+                            var_result.value = "false";
+                        }
+                        break;
+                }
+            }
+        }
+
         private static void Operaçao(List<Variavel> lista_Variaveis, string[] parametros){
-            //Valida a qaunatidade de parametros
+            //Valida a quantidade de parametros
             if(parametros.Length != 4){
                 throw new Exception("Quantidade de parametros invalida.");
             }
@@ -269,8 +419,7 @@ namespace IntepretadorSAL
             }
         }
 
-        private static int Goto(string[] parametros, List<Flag> lista_Flags, int i)
-        {
+        private static int Goto(string[] parametros, List<Flag> lista_Flags, int i){
             //valida o parametro
             if(parametros[0] == ""){
                 throw new Exception("Parametro em falta.");
@@ -286,8 +435,7 @@ namespace IntepretadorSAL
             return i;
         }
 
-        private static void Set(string[] parametros, List<Variavel> lista_Variaveis, int i)
-        {
+        private static void Set(string[] parametros, List<Variavel> lista_Variaveis, int i){
             //Verifica se chegam três parametros
             if(parametros == null || parametros.Length != 3){
                 throw new Exception("parametros em falta.");
@@ -335,8 +483,7 @@ namespace IntepretadorSAL
             lista_Variaveis.Add(new Variavel(type,name,value));
         }
 
-        private static void Flags(string[] parametros, List<Flag> lista_Flags, int i)
-        {
+        private static void Flags(string[] parametros, List<Flag> lista_Flags, int i){
             //Valida o parametro nome
             if(parametros == null || parametros.Length != 1 || parametros[0] == ""){
                 throw new Exception("Parametro 'nome' invalido.");

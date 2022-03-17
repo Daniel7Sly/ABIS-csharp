@@ -94,6 +94,34 @@ namespace IntepretadorSAL
             }
         }
 
+        //! Isto é apenas uma solução temporaria!
+        private static void PrintL(List<Variavel> lista_Variaveis, string[] parametros){
+            Print(lista_Variaveis,parametros);
+            Console.Write('\n');
+        }
+
+        //! Isto é apenas uma solução temporaria!
+        private static void Print(List<Variavel> lista_Variaveis, string[] parametros){
+            // if(parametros.Length < 1){
+            //     throw new Exception("Parametro em falta");
+            // }
+
+            if(parametros[0][0] == '$'){
+                Variavel? var_result = lista_Variaveis.Find(x => x.id == parametros[0]);
+                if(var_result == null){
+                    throw new Exception("Variavel não encontrada/definida.");
+                }
+                else{
+                    //! Isto é apenas uma solução temporaria!
+                    Console.Write(var_result.value);
+                }
+            }
+            else{
+                //! Isto é apenas uma solução temporaria!
+                Console.Write(parametros[0]);
+            }
+        }
+
         private static void Comparaçao(List<Variavel> lista_Variaveis, string[] parametros){
             //Valida a quantidade de parametros
             if(parametros.Length != 4){

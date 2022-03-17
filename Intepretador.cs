@@ -61,30 +61,33 @@ namespace IntepretadorSAL
             for (int i = 0; i < Açoes.Length-1 ; i++)
             {
                 switch(Açoes[i].tipoaçao){
-                    case "Set":
+                    case "SET":
                         Set(Açoes[i].parametros, lista_Variaveis, i);
                         break;
-                    case "Print":
-                        
+                    case "PRINT":
+                        Print(lista_Variaveis,Açoes[i].parametros);
                         break;
-                    case "Read":
+                    case "PRINTL":
+                        PrintL(lista_Variaveis,Açoes[i].parametros);
+                        break;
+                    case "READ":
 
                         break;
-                    case "Opr":
+                    case "OPR":
                         Operaçao(lista_Variaveis,Açoes[i].parametros);
                         break;
-                    case "Eql":
+                    case "EQL":
                         Equals(lista_Variaveis, Açoes[i].parametros);
                         break;
-                    case "Cmp":
+                    case "CMP":
                         Comparaçao(lista_Variaveis,Açoes[i].parametros);
                         break;
                     // case "Flag":
                     //     break;
-                    case "Goto":
+                    case "GOTO":
                         i = Goto(Açoes[i].parametros, lista_Flags, i);
                         break;
-                    case "If":
+                    case "IF":
                         int p = IF(lista_Flags,lista_Variaveis,Açoes[i].parametros);
                         if(p != -1){
                             i = p;
@@ -550,9 +553,9 @@ namespace IntepretadorSAL
 
             public Açao(string instruçao){                      //  |--------instruçao:-------|
                 if(instruçao != ""){                            //  |                         |       
-                    string[] palavras = instruçao.Split(':');   //  Set  :    type | id | value ;
-                    this.tipoaçao = palavras[0];                //   ^        |       ^       |
-                    //this.parametros = palavras[1].Split('|');   //tipoaçao  |--Parametros---|
+                    string[] palavras =  instruçao.Split(':');  //  Set  :    type | id | value ;
+                    this.tipoaçao = palavras[0].ToUpper();      //   ^        |       ^       |
+                    //this.parametros = palavras[1].Split('|'); //tipoaçao  |--Parametros---|
                     string[] a = palavras[1].Split('|');
                     this.parametros = a;
                 }

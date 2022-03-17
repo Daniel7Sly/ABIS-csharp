@@ -95,13 +95,8 @@ namespace IntepretadorSAL
         }
 
         //! Isto é apenas uma solução temporaria!
-        private static void PrintL(List<Variavel> lista_Variaveis, string[] parametros){
-            Print(lista_Variaveis,parametros);
-            Console.Write('\n');
-        }
-
-        //! Isto é apenas uma solução temporaria!
         private static void Print(List<Variavel> lista_Variaveis, string[] parametros){
+
             // if(parametros.Length < 1){
             //     throw new Exception("Parametro em falta");
             // }
@@ -120,6 +115,12 @@ namespace IntepretadorSAL
                 //! Isto é apenas uma solução temporaria!
                 Console.Write(parametros[0]);
             }
+        }
+        
+        //! Isto é apenas uma solução temporaria!
+        private static void PrintL(List<Variavel> lista_Variaveis, string[] parametros){
+            Print(lista_Variaveis,parametros);
+            Console.Write('\n');
         }
 
         private static void Comparaçao(List<Variavel> lista_Variaveis, string[] parametros){

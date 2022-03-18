@@ -1,0 +1,7 @@
+Add PROCESSOS
+
+Add Listas
+
+Add Print multiplos parametros
+
+Add Better Exception Throwing(Identificar a linha onde o erro ocorreu)

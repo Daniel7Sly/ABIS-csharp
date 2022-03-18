@@ -1,4 +1,7 @@
-Set: int | a | 10;
-Set: int | b | 5;
-Opr: a | + | b;
-Prt: a;
+Set: num|l|0;
+Set: num |a|0;
+Print: Insira um numero;
+Read: $l;
+Opr: $a|$l|*|$l;
+Print: A area é: ;
+Print:$a; 

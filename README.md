@@ -9,23 +9,26 @@ Ideia de Usar isto na PAP.
 ## PRINT
 Print: Value(string)\id;
 
+## PRINTL
+igual ao PRINT mas faz quebra de linha no fim.
+
 ## READ 
-retorna string
+Define o valor que receber á variavel dada (converte string recebida automaticamente para o type da variavel dada.)
 Read: id;
 
 ## SET 
 Define variavel, Variaveis são chamadas de id e são indentificadas no codigo pelo 1º caracter => '$'
-Set: type|nome|value;
+Set: type | nome | value;
 *types: num(float), bool, text.
 
 ## OPR
 Faz Operaçoes
-Opr: id|id\value|operador|id\value; (c = b + a)
+Opr: id | id\value | operador | id\value; (c = b + a)
 *operadores: add\+ sub\- mul\* div\/
 
 ## EQL
 Atribui valore a variavel
-Eql: id|id\value;
+Eql: id | id\value;
 
 ## FLAG
 Define flag
@@ -37,8 +40,9 @@ Goto: flag_name;
 
 ## CMP
 Atribui a variavel o resultado da comparaçao (em bool)
-Cmp: id(bool)|id\value|comparator|id\value;
+Cmp: id(bool) | id\value | comparator | id\value;
 *comparators: < > >= <= == !=
+
 ## IF
 É um IF se true -> goto flag_name
-IF: id(bool)|flag_name;
+IF: id(bool) | flag_name;

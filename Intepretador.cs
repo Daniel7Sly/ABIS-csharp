@@ -26,6 +26,8 @@ namespace IntepretadorSAL
                 Console.WriteLine("-"+instruçao);
             }
 
+            Console.WriteLine("###################################");
+
             //Passa as instruçoes para um lista de Açoes
             // List<Açao> lista = new List<Açao>();
             // foreach(string instruçao in instrunçoes)
@@ -34,8 +36,8 @@ namespace IntepretadorSAL
             // }
 
             //Passa as instruçoes para um array de Açoes
-            Açao[] Açoes = new Açao[instrunçoes_do_Ficheiro.Length-2];
-            for (int i = 0; i < instrunçoes_do_Ficheiro.Length-2; i++)
+            Açao[] Açoes = new Açao[instrunçoes_do_Ficheiro.Length];
+            for (int i = 0; i < instrunçoes_do_Ficheiro.Length-1; i++)
             {
                 Açoes[i] = new Açao(instrunçoes_do_Ficheiro[i]);
             }

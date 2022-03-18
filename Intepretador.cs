@@ -62,7 +62,7 @@ namespace IntepretadorSAL
             {
                 switch(Açoes[i].tipoaçao){
                     case "SET":
-                        Set(Açoes[i].parametros, lista_Variaveis, i);
+                        Set(Açoes[i].parametros, lista_Variaveis);
                         break;
                     case "PRINT":
                         Print(lista_Variaveis,Açoes[i].parametros);
@@ -71,7 +71,7 @@ namespace IntepretadorSAL
                         PrintL(lista_Variaveis,Açoes[i].parametros);
                         break;
                     case "READ":
-
+                        Read(lista_Variaveis, Açoes[i].parametros);
                         break;
                     case "OPR":
                         Operaçao(lista_Variaveis,Açoes[i].parametros);
@@ -94,6 +94,52 @@ namespace IntepretadorSAL
                         }
                         break;
                 }
+            }
+        }
+
+        //! Isto é apenas uma solução temporaria!
+        private static void Read(List<Variavel> lista_Variaveis, string[] parametros){
+            // if(parametros.Length < 1){
+            //     throw new Exception("Parametro em falta");
+            // }
+
+            if(parametros[0][0] == '$'){
+                Variavel? var = lista_Variaveis.Find(x => x.id == parametros[0]);
+                if(var == null){
+                    throw new Exception("Variavel não encontrada/definida.");
+                }
+                else{
+                    string? value;
+                    do{
+                        value = Console.ReadLine();
+                    }while(value == null);
+
+                    //! Isto é apenas uma solução temporaria!
+                    switch(var.type){
+                        case "string":
+                            var.value = value;
+                            break;
+                        case "bool":
+                            if(bool.TryParse(value, out bool r)){
+                                var.value = r.ToString();
+                            }
+                            else{
+                                throw new Exception("Não foi possivel definir valor para variavel de tipo bool.");
+                            }
+                            break;
+                        case "num":
+                            if(float.TryParse(value, out float r1)){
+                                var.value = r1.ToString();
+                            }
+                            else{
+                                throw new Exception("Não foi possivel definir valor para variavel de tipo num.");
+                            }
+                            break;
+                    }
+                }
+            }
+            else{
+                throw new Exception("1º Parametro não é variavel.");
             }
         }
 
@@ -467,7 +513,7 @@ namespace IntepretadorSAL
             return i;
         }
 
-        private static void Set(string[] parametros, List<Variavel> lista_Variaveis, int i){
+        private static void Set(string[] parametros, List<Variavel> lista_Variaveis){
             //Verifica se chegam três parametros
             if(parametros == null || parametros.Length != 3){
                 throw new Exception("parametros em falta.");
@@ -555,7 +601,7 @@ namespace IntepretadorSAL
                 if(instruçao != ""){                            //  |                         |       
                     string[] palavras =  instruçao.Split(':');  //  Set  :    type | id | value ;
                     this.tipoaçao = palavras[0].ToUpper();      //   ^        |       ^       |
-                    //this.parametros = palavras[1].Split('|'); //tipoaçao  |--Parametros---|
+                    //this.parametros = palavras[1].Split('|'); //tipoaçao    |--Parametros---|
                     string[] a = palavras[1].Split('|');
                     this.parametros = a;
                 }

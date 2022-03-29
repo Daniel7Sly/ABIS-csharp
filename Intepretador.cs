@@ -4,6 +4,10 @@ namespace IntepretadorSAL
 {
     internal static class Intepretador
     {
+        //São definidas globalmente para serem usadas nas exeçoes
+        static string[] instrunçoes_do_Ficheiro = {};
+        static int indexAtual;
+
         public static void Intepretar(string file_content)
         {
             //Remove quebras de linha e espaços
@@ -14,7 +18,7 @@ namespace IntepretadorSAL
             System.Console.WriteLine("----------");
 
             //array com todas as instruçoes cada index contem uma instruçao
-            string[] instrunçoes_do_Ficheiro = file_content.Split(';'); //Ultimo index é vazio
+            instrunçoes_do_Ficheiro = file_content.Split(';'); //Ultimo index pode ser vazio
 
             //Mostra todas as instruçoes recebidas
             foreach(string instruçao in instrunçoes_do_Ficheiro)
@@ -45,7 +49,7 @@ namespace IntepretadorSAL
             List<Flag> lista_Flags = new List<Flag>();
             for (int i = 0; i < Açoes.Length-1; i++)
             {
-                if(Açoes[i].tipoaçao == "Flag"){
+                if(Açoes[i].tipoaçao == "FLAG"){
                     Flags(Açoes[i].parametros, lista_Flags, i);
                 }
             }
@@ -58,6 +62,7 @@ namespace IntepretadorSAL
             //intepreta as instruçoes
             for (int i = 0; i < Açoes.Length-1 ; i++)
             {
+                indexAtual = i;
                 switch(Açoes[i].tipoaçao){
                     case "SET":
                         Set(Açoes[i].parametros, lista_Variaveis);
@@ -160,7 +165,7 @@ namespace IntepretadorSAL
             }
             else{
                 //! Isto é apenas uma solução temporaria!
-                Console.Write(parametros[0]);
+                Console.Write(parametros[0].Replace('_',' '));
             }
         }
         
@@ -363,15 +368,15 @@ namespace IntepretadorSAL
             float valor2;
             //Valida 4º parametro e atribui o valor á variavel varlor2
             if(parametros[3][0] == '$'){
-                Variavel? var2 = lista_Variaveis.Find(x => x.id == parametros[1]);
-                if(var2 == null){
+                Variavel? var3 = lista_Variaveis.Find(x => x.id == parametros[3]);
+                if(var3 == null){
                     throw new Exception("Variavel não encontrada/definida.");
                 }
-                if(var2.type != "num"){
+                if(var3.type != "num"){
                     throw new Exception("Valor a ser operado a variavel não numerica.");
                 }
 
-                valor2 = float.Parse(var2.value);
+                valor2 = float.Parse(var3.value);
             }
             else{//caso não seja variavel
                 if(float.TryParse(parametros[3], out float r1)){
@@ -519,7 +524,7 @@ namespace IntepretadorSAL
 
             //Valida o 1º parametro se é um tipo valido
             if(parametros[0] != "num" && parametros[0] != "bool" && parametros[0] != "text"){
-                throw new Exception("parametro tipo invalido. Type must be num, bool, or text.");
+                throw new Exception("1º parametro tipo invalido. Type must be num, bool, or text.");
             }
             string type = parametros[0];            
 
@@ -540,7 +545,7 @@ namespace IntepretadorSAL
                         value = result_num.ToString();
                     }
                     else{
-                        throw new Exception("Não foi possivel converter parametro para num.");
+                        throw new InterpretationExeption("Não foi possivel converter parametro para num.");
                     }
                     break;
                 case "bool":
@@ -618,5 +623,28 @@ namespace IntepretadorSAL
                 this.posiçao = posiçao;
             }
         }
+
+        [System.Serializable]
+        public class InterpretationExeption : System.Exception{
+            //public InterpretationExeption() {}
+            public InterpretationExeption(string message) : base(MontarMensagemErro(message)) {}
+
+            //Monta uma mesagem que mostra a linha onde ocorreu o erro com as 3 linhas anteriores e a menssagem de erro;
+            private static string MontarMensagemErro(string mensagem){
+                string ultimas3Instruçoes = "";
+                if(indexAtual >= 3)
+                    ultimas3Instruçoes = instrunçoes_do_Ficheiro[indexAtual-3]+'\n'+instrunçoes_do_Ficheiro[indexAtual-2]+'\n'+instrunçoes_do_Ficheiro[indexAtual-1]+'\n';
+                string instruçaoComErro = instrunçoes_do_Ficheiro[indexAtual];
+                return ("\n \n"+ultimas3Instruçoes + instruçaoComErro + " <-- \n \n" + mensagem);
+            }
+
+            public InterpretationExeption(string message, System.Exception inner) : base(MontarMensagemErro(message), inner) { }
+            // protected InterpretationExeption(
+            //     System.Runtime.Serialization.SerializationInfo info,
+            //     System.Runtime.Serialization.StreamingContext context) : base(info, context) {
+
+            //     }
+        }
     }
+    
 }

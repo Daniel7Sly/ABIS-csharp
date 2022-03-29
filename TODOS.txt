@@ -5,3 +5,7 @@ Add Listas
 Add Print multiplos parametros
 
 Add Better Exception Throwing(Identificar a linha onde o erro ocorreu)
+
+Melhorar os comentarios no codigo do intepretador
+
+Add Comentarios

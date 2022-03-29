@@ -1,7 +1,26 @@
-Set: num|l|0;
-Set: num |a|0;
-Print: Insira um numero;
-Read: $l;
-Opr: $a|$l|*|$l;
-Print: A area é: ;
-Print:$a; 
+Print: Insira_um_numero;
+Set: num|numero|0;
+Set: num|numer1|1;
+Set: num|numer2|dois;
+Read: $numero;
+
+Set: num|i|0;
+Set: num|rslt|0;
+Set: bool|rsl|false;
+
+Flag: cl;
+
+Opr: $i|$i|+|1;
+Opr: $rslt|$numero|*|$i;
+
+Print: $numero;
+Print: *;
+Print: $i;
+Print: =;
+PrintL: $rslt;
+
+
+Cmp: $rsl|$i|<|10;
+If: $rsl|cl;
+
+Print: FIM!!;

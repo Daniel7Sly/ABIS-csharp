@@ -183,14 +183,14 @@ namespace IntepretadorSAL
 
             //Valida o 1º parametro, tem de ser variavel.
             if(parametros[0][0] != '$'){
-                throw new InterpretationExeption("'1ºP' Primeiro parametro não é variavel.");
+                throw new InterpretationExeption(1," Primeiro parametro não é variavel.");
             }
             Variavel? var_result = lista_Variaveis.Find(x => x.id == parametros[0]);
             if(var_result == null){
-                throw new InterpretationExeption("Variavel não encontrada/definida.");
+                throw new InterpretationExeption(1,"Variavel não encontrada/definida.");
             }
             if(var_result.type != "bool"){
-                throw new InterpretationExeption("Valor a ser atribuido a variavel não numerica.");
+                throw new InterpretationExeption(1,"Valor a ser atribuido a variavel não booleana.");
             }
             
             string tipo;
@@ -203,7 +203,7 @@ namespace IntepretadorSAL
                     tipo = "text";
                     break;
                 default:
-                    throw new InterpretationExeption("Comparador invalido");
+                    throw new InterpretationExeption(3,"Comparador invalido");
             }
 
             string valor1;
@@ -211,10 +211,10 @@ namespace IntepretadorSAL
             if(parametros[1][0] == '$'){
                 Variavel? var2 = lista_Variaveis.Find(x => x.id == parametros[1]);
                 if(var2 == null){
-                    throw new InterpretationExeption("Variavel não encontrada/definida.");
+                    throw new InterpretationExeption(2,"Variavel não encontrada/definida.");
                 }
                 if(var2.type != tipo){
-                    throw new InterpretationExeption("Tipo de variavel invalida para a comparaçao pedida.");
+                    throw new InterpretationExeption(2,"Tipo de variavel invalida para a comparaçao pedida.");
                 }
 
                 valor1 = var2.value;
@@ -225,7 +225,7 @@ namespace IntepretadorSAL
                         valor1 = r.ToString();
                     }
                     else{
-                        throw new InterpretationExeption("Não foi possivel converter parametro para int.");
+                        throw new InterpretationExeption(2,"Não foi possivel converter parametro para int.");
                     }
                 }
                 else{
@@ -238,10 +238,10 @@ namespace IntepretadorSAL
             if(parametros[3][0] == '$'){
                 Variavel? var2 = lista_Variaveis.Find(x => x.id == parametros[3]);
                 if(var2 == null){
-                    throw new InterpretationExeption("Variavel não encontrada/definida.");
+                    throw new InterpretationExeption(4,"Variavel não encontrada/definida.");
                 }
                 if(var2.type != tipo){
-                    throw new InterpretationExeption("Tipo de variavel invalida para a comparaçao pedida.");
+                    throw new InterpretationExeption(4,"Tipo de variavel invalida para a comparaçao pedida.");
                 }
 
                 valor2 = var2.value;
@@ -252,7 +252,7 @@ namespace IntepretadorSAL
                         valor2 = r.ToString();
                     }
                     else{
-                        throw new InterpretationExeption("Não foi possivel converter parametro para num.");
+                        throw new InterpretationExeption(4,"Não foi possivel converter parametro para num.");
                     }
                 }
                 else{
@@ -333,14 +333,14 @@ namespace IntepretadorSAL
             
             //Valida o 1º parametro
             if(parametros[0][0] != '$'){
-                throw new InterpretationExeption("Primeiro parametro não é variavel.");
+                throw new InterpretationExeption(1,"Primeiro parametro não é variavel.");
             }
             Variavel? var = lista_Variaveis.Find(x => x.id == parametros[0]);
             if(var == null){
-                throw new InterpretationExeption("Variavel não encontrada/definida.");
+                throw new InterpretationExeption(1,"Variavel não encontrada/definida.");
             }
             if(var.type != "num"){
-                throw new InterpretationExeption("Valor a ser atribuido a variavel não numerica.");
+                throw new InterpretationExeption(1,"Valor a ser atribuido a variavel não numerica.");
             }
 
             float valor1;
@@ -348,10 +348,10 @@ namespace IntepretadorSAL
             if(parametros[1][0] == '$'){
                 Variavel? var2 = lista_Variaveis.Find(x => x.id == parametros[1]);
                 if(var2 == null){
-                    throw new InterpretationExeption("Variavel não encontrada/definida.");
+                    throw new InterpretationExeption(2,"Variavel não encontrada/definida.");
                 }
                 if(var2.type != "num"){
-                    throw new InterpretationExeption("Valor a ser operado a variavel não numerica.");
+                    throw new InterpretationExeption(2,"Valor a ser operado a variavel não numerica.");
                 }
 
                 valor1 = float.Parse(var2.value);
@@ -361,7 +361,7 @@ namespace IntepretadorSAL
                     valor1 = r1;
                 }
                 else{
-                    throw new InterpretationExeption("Valor numerico não valido.");
+                    throw new InterpretationExeption(2,"Não foi possivel converter o parametro para numerico.");
                 }
             }
 
@@ -370,10 +370,10 @@ namespace IntepretadorSAL
             if(parametros[3][0] == '$'){
                 Variavel? var3 = lista_Variaveis.Find(x => x.id == parametros[3]);
                 if(var3 == null){
-                    throw new InterpretationExeption("Variavel não encontrada/definida.");
+                    throw new InterpretationExeption(4,"Variavel não encontrada/definida.");
                 }
                 if(var3.type != "num"){
-                    throw new InterpretationExeption("Valor a ser operado a variavel não numerica.");
+                    throw new InterpretationExeption(4,"Valor a ser operado a variavel não numerica.");
                 }
 
                 valor2 = float.Parse(var3.value);
@@ -383,7 +383,7 @@ namespace IntepretadorSAL
                     valor2 = r1;
                 }
                 else{
-                    throw new InterpretationExeption("Valor numerico não valido.");
+                    throw new InterpretationExeption(4,"Não foi possivel converter o parametro para numerico.");
                 }
             }
 
@@ -402,30 +402,30 @@ namespace IntepretadorSAL
                     var.value = (valor1 / valor2).ToString();
                     break;
                 default:
-                    throw new InterpretationExeption("Operador invalido.");
+                    throw new InterpretationExeption(3,"Operador invalido.");
             }
         }
 
         private static int IF(List<Flag> lista_Flags, List<Variavel> lista_Variaveis, string[] parametros){
-            //Valida a variavel 1º parametro
             if(parametros.Length < 2){
                 throw new InterpretationExeption("Parametros em faltas.");
             }
+            //Valida a variavel 1º parametro
             if(parametros[0][0] != '$'){
-                throw new InterpretationExeption("1º parametro não é variavel");
+                throw new InterpretationExeption(1,"Parametro não é variavel");
             }
             Variavel? var = lista_Variaveis.Find(x => x.id == parametros[0]);
             if(var == null){
-                throw new InterpretationExeption("Variavel não encontrada");
+                throw new InterpretationExeption(1,"Variavel não encontrada.");
             }
             if(var.type != "bool"){
-                throw new InterpretationExeption("Variavel de tipo invalido");
+                throw new InterpretationExeption(1,"Variavel de tipo invalido");
             }
 
             //Valida a flag 2º parametro
             Flag? flag = lista_Flags.Find(x => x.nome == parametros[1]);
             if(flag == null){
-                throw new InterpretationExeption("Flag não encontrada/definida");
+                throw new InterpretationExeption(2,"Flag não encontrada/definida");
             }
 
             //Retorna a posiçao da flag
@@ -434,7 +434,7 @@ namespace IntepretadorSAL
             }
             //Retorna -1 caso seja false
             return -1;
-        }   
+        }
 
         private static void Equals(List<Variavel> lista_Variaveis, string[] parametros){
             //verifica se chegou dois parametros
@@ -444,19 +444,20 @@ namespace IntepretadorSAL
 
             //verifica se o primeiro parametro é uma variavel valida
             if(parametros[0][0] != '$'){
-                throw new InterpretationExeption("1º parametro não é variavel");
+                throw new InterpretationExeption(1,"Parametro não é variavel");
             }
             Variavel? var1 = lista_Variaveis.Find(x => x.id == parametros[0]);
             if(var1 == null){
-                throw new InterpretationExeption("1ª variavel não encontrada.");
+                throw new InterpretationExeption(1,"Variavel não encontrada.");
             }
 
+            //Valida 2º Parametro
             Variavel? var2 = null;
             if(parametros[1][0] == '$'){
                 //Valida a 2ª variavel
                 var2 = lista_Variaveis.Find(x => x.id == parametros[1]);
                 if(var2 == null){
-                    throw new InterpretationExeption("2º parametro variavel não encontrada.");
+                    throw new InterpretationExeption(2,"Variavel não encontrada.");
                 }
                 
                 //Define o varlor da var2 á var1
@@ -470,7 +471,7 @@ namespace IntepretadorSAL
             else{//caso não seja variavel
                 //valida 2º parametro
                 if(parametros[1] == "" && var1.type != "text"){
-                    throw new InterpretationExeption("2º parametro vazio.");
+                    throw new InterpretationExeption(2,"Parametro vazio.");
                 }
                 
                 //Aplica a operaçao correspondente ao tipo de dado
@@ -480,7 +481,7 @@ namespace IntepretadorSAL
                             var1.value = result_num.ToString();
                         }
                         else{
-                            throw new InterpretationExeption("Não foi possivel converter parametro para num.");
+                            throw new InterpretationExeption(2,"Não foi possivel converter parametro para num.");
                         }
                         break;
                     case "bool":
@@ -488,7 +489,7 @@ namespace IntepretadorSAL
                             var1.value = result_bool.ToString();
                         }
                         else{
-                            throw new InterpretationExeption("Não foi possivel converter parametro para bool.");
+                            throw new InterpretationExeption(2,"Não foi possivel converter parametro para bool.");
                         }
                         break;
                     case "text":
@@ -500,7 +501,7 @@ namespace IntepretadorSAL
             }
         }
 
-        private static int Goto(string[] parametros, List<Flag> lista_Flags, int i){
+        private static int Goto(string[] parametros, List<Flag> lista_Flags, int index){
             //valida o parametro
             if(parametros[0] == ""){
                 throw new InterpretationExeption("Parametro em falta.");
@@ -508,32 +509,32 @@ namespace IntepretadorSAL
             Flag? flag = lista_Flags.Find(x => x.nome == parametros[0]);
             if (flag == null)
             {
-                throw new InterpretationExeption("Flag não encontrada.");
+                throw new InterpretationExeption(1,"Flag não encontrada/definida.");
             }
             
             //Define i para a posiçao da flag
-            i = flag.posiçao;
-            return i;
+            index = flag.posiçao;
+            return index;
         }
 
         private static void Set(string[] parametros, List<Variavel> lista_Variaveis){
             //Verifica se chegam três parametros
-            if(parametros == null || parametros.Length != 3){
-                throw new InterpretationExeption("parametros em falta.");
+            if(parametros.Length != 3){
+                throw new InterpretationExeption("Parametros em falta.");
             }
 
             //Valida o 1º parametro se é um tipo valido
             if(parametros[0] != "num" && parametros[0] != "bool" && parametros[0] != "text"){
-                throw new InterpretationExeption("1º parametro tipo invalido. Type must be num, bool, or text.");
+                throw new InterpretationExeption(1,"Parametro tipo invalido. Type must be num, bool, or text.");
             }
             string type = parametros[0];            
 
             //Valida o 2º parametro
             if(parametros[1] == ""){
-                throw new InterpretationExeption("Nome de variavel vazio / não definida.");
+                throw new InterpretationExeption(2,"Nome de variavel vazio / não definido.");
             }
             if(lista_Variaveis.Find(x => x.id == "$"+parametros[1]) != null){
-                throw new InterpretationExeption("Variavel ja existente.");
+                throw new InterpretationExeption(2,"Variavel ja existente.");
             }
             string name = parametros[1];
 
@@ -545,7 +546,7 @@ namespace IntepretadorSAL
                         value = result_num.ToString();
                     }
                     else{
-                        throw new InterpretationExeption("Não foi possivel converter parametro para num.");
+                        throw new InterpretationExeption(3,"Não foi possivel converter parametro para num.");
                     }
                     break;
                 case "bool":
@@ -553,7 +554,7 @@ namespace IntepretadorSAL
                         value = result_bool.ToString();
                     }
                     else{
-                        throw new InterpretationExeption("Não foi possivel converter parametro para bool.");
+                        throw new InterpretationExeption(3,"Não foi possivel converter parametro para bool.");
                     }
                     break;
                 case "text":
@@ -628,7 +629,7 @@ namespace IntepretadorSAL
         public class InterpretationExeption : System.Exception{
             //public InterpretationExeption() {}
             public InterpretationExeption(string message) : base(MontarMensagemErro(message)) {}
-            public InterpretationExeption(int parametro, string message) : base(MontarMensagemErro(message)) {}
+            public InterpretationExeption(int parametro, string message) : base(MontarMensagemErro(parametro, message)) {}
 
             //Monta uma mesagem que mostra a linha onde ocorreu o erro com as 3 linhas anteriores e a menssagem de erro;
             private static string MontarMensagemErro(int parametro, string mensagem){

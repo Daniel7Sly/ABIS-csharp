@@ -1,8 +1,8 @@
 Print: Insira_um_numero;
 Set: num|numero|0;
 Set: num|numer1|1;
-Set: num|numer2|dois;
-Read: $numero;
+Set: num|numer2|2,8;
+Read $numero;
 
 Set: num|i|0;
 Set: num|rslt|0;

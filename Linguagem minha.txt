@@ -1,69 +1,44 @@
-O meu coceilho ta joando
+O meu coceilho ta joando!
+
+--AÇAO:
+nomeaçao: parametro1|parametro2... ;
+					^separador de parametros
+
+Variaveis: 
+Existem 3 tipos de Variaveis
+	num 	-> com um valor numerico(pode ter ,).
+	bool 	-> valor 'true' ou 'false'
+	text 	-> contem texto.
+Variaveis são indetificados por '$' seguido pelo no
+me. Ex: $resultado
+
+--SET
+--Define uma variavel com o tipo da variavel o nome e o valor 
+Set: type|nome|value;
+
 
 --PRINT
-Print: Value(string)\id;
+Print: Value(text)\$;
 
---Read retorna string
-Read: id;
-
---Define variavel | **talvez  
---Variaveis são chamadas de id e são indentificadas
---no codigo pelo 1º caracter => '$'
-Set: type|nome|value;
-*types: num(float), bool, text, **list**
-
---Faz Operaçoes *talvez subtitui açoes "Add: Sub: Mul: & Div:"
-Opr: id|id\value|operador|id\value; (c = b + a)
-Opr: id\value|operador|id\value; (a += b)-(a = a + b)
-*operadores: add\+ sub\- mul\* div\/
+--Read retorna text
+Read: $;
 
 --Define valore a variavel
 Eql: id|id\value;
 
---Soma Valores (a+=b)
-Add: id|value\id;
-
---Subtrai Valores (a-=b)
-Sub: id|value\id;
+--Faz Operaçoes com as variaveis\valores dados
+Opr: id|id\value|operador*|id\value; (c = b + a)
+*operadores: + - * /
 
 --Define flag
 Flag: flag_name;
 
---Vai até á lable especificada
+--Vai até á flag especificada
 Goto: flag_name;
 
 --Define a variavel com o resultado da comparaçao ()
-Comparation: id(result)|id\value|comparator|id\value;
+CMP: $(bool)|id\value|comparator|id\value;
 *comparators: < > >= <= == !=
 
 --É um IF se true -> goto flg_nm
 If: id(bool)|flag_name;
-
-IDEIAS:
---tipo metodos. tipo input -> tipo output {resto comandos goes here acaba em return}
-Processo name intype -> outtype:
---code goes here -..-
-return: valeu;
-
-Processo: name (intype) -> (outtype){
-	--code goes here -..-
-	return: valeu;
-}
-
-Proc: proc_name|in_id\value|out_id;
-
-Def: proc_name|in_id_name|out_id_name;
-
-return: out_id;
-
-
-
-
-Set: int | num | 5;
-
-Add: num | 10 ;
-
-
-Goto: flag2;
-....
-Flag: flag2;

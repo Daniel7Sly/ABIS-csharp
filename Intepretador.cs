@@ -96,6 +96,8 @@ namespace IntepretadorSAL
                             i = p;
                         }
                         break;
+                    default:
+                        break;
                 }
             }
         }
@@ -109,7 +111,7 @@ namespace IntepretadorSAL
             if(parametros[0][0] == '$'){
                 Variavel? var = lista_Variaveis.Find(x => x.id == parametros[0]);
                 if(var == null){
-                    throw new InterpretationExeption("'1ºP' Variavel não encontrada/definida.");
+                    throw new InterpretationExeption("Variavel não encontrada/definida.");
                 }
                 else{
                     string? value;
@@ -606,7 +608,10 @@ namespace IntepretadorSAL
                     string[] palavras =  instruçao.Split(':');  //  Set  :    type | id | value ;
                     this.tipoaçao = palavras[0].ToUpper();      //   ^        |       ^       |
                     //this.parametros = palavras[1].Split('|'); //tipoaçao    |--Parametros---|
-                    string[] a = palavras[1].Split('|');
+                    string[] a = {};
+                    if(palavras.Length > 1){
+                        a = palavras[1].Split('|');
+                    }
                     this.parametros = a;
                 }
                 else{
@@ -648,7 +653,7 @@ namespace IntepretadorSAL
                 return ("\n \n"+ultimas3Instruçoes + instruçaoComErro + " <-- \n \n" + mensagem);
             }
 
-            public InterpretationExeption(string message, System.Exception inner) : base(MontarMensagemErro(message), inner) { }
+            // public InterpretationExeption(string message, System.Exception inner) : base(MontarMensagemErro(message), inner) { }
             // protected InterpretationExeption(
             //     System.Runtime.Serialization.SerializationInfo info,
             //     System.Runtime.Serialization.StreamingContext context) : base(info, context) {

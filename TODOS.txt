@@ -1,11 +1,22 @@
-Add PROCESSOS
+[ ] 1.Add PROCESSOS
 
-Add Listas
+[ ] 2.Add Listas (fazer 9 primeiro)
 
-Add Print multiplos parametros
+[ ] 3.Add Print multiplos parametros(talvez)
 
-Add Better Exception Throwing(Identificar a linha onde o erro ocorreu)
+[ ] 4.Add operaçao com text
 
-Melhorar os comentarios no codigo do intepretador
+[x] 5.Add Better Exception Throwing(Identificar a linha onde o erro ocorreu)
 
-Add Comentarios
+[ ] 6.Melhorar os comentarios no codigo do intepretador
+
+[kinda] 7.Add Comentarios
+
+[ ] 8.Add Conversores
+
+[ ] 9.Add Metodo de obeter valor de parametro
+
+
+Print: $lista#3;
+             ^
+            indica o index da lista

@@ -581,13 +581,70 @@ namespace IntepretadorSAL
             lista_Flags.Add(new Flag(parametros[0], i));
         }
 
+        //Obtem o valor do parametro dado
+        private static string GetValue(List<Variavel> lista_Variaveis, string parametro, int paramIndex){
+            //Verifica se o parametro é variavel
+            if(parametro[0] == '$'){
+                //Verifica se o parametro é referente a um valor dum array
+                if(parametro.Contains('#')){
+                    //separa o nome do array do index
+                    string[] l = parametro.Split('#');
+
+                    Variavel? var = lista_Variaveis.Find(x => x.id == l[0]);
+                    if(var == null){
+                        throw new InterpretationExeption(paramIndex, "Variavel não encontrada/definida.");
+                    }
+                    if(var !is Array){
+                        throw new InterpretationExeption(paramIndex, "Variavel indicada não é do tipo array.");
+                    }
+                    if(int.TryParse(l[1], out int index)){
+                        if(index >= ((Array)var).values.Length){
+                            throw new InterpretationExeption(paramIndex, "Index indicado ultrapassa os limites do Array.");
+                        }
+                        
+                        //Retorna o valor no index especificado do Array
+                        return ((Array)var).values[index];
+                    }
+                    else{
+                        throw new InterpretationExeption(paramIndex, "Index especificado invalido.");
+                    }
+                }
+                else{//Caso n seja referente a um valor dum array
+                    Variavel? var = lista_Variaveis.Find(x => x.id == parametro);
+                    if(var == null){
+                        throw new InterpretationExeption(paramIndex, "Variavel não encontrada/definida.");
+                    }
+                    if(var is Array){
+                        throw new InterpretationExeption(paramIndex, "Não é possivel obter valor de Variavel do tipo Array sem index especificado.");
+                    }
+                    
+                    return var.value;
+                }
+            }
+            else{//Caso não seja variavel
+                return parametro;
+            }
+        }
+
         private class Variavel{
             public string type, id, value;
-
+            
             public Variavel(string type, string name, string value){
                 this.type = type;
                 this.id = '$'+name;
                 this.value = value;
+            }
+        }
+
+        private class Array : Variavel{
+            public string[] values;
+
+            public Array(string type, string name, string[] values) : base(type, name, "lista"){
+                this.values = values;
+            }
+            
+            public Array(string type, string name, int length) : base(type, name, "lista"){
+                this.values = new string[length];
             }
         }
 

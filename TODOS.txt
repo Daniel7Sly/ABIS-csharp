@@ -1,6 +1,6 @@
 [ ] 1.Add PROCESSOS
 
-[ ] 2.Add Listas (fazer 9 primeiro)
+[kinda] 2.Add Listas (fazer 9 primeiro)
 
 [ ] 3.Add Print multiplos parametros(talvez)
 
@@ -14,7 +14,9 @@
 
 [ ] 8.Add Conversores
 
-[ ] 9.Add Metodo de obeter valor de parametro
+[x] 9.Add Metodo de obeter valor de parametro
+
+[ ] 10. Add Foreach.
 
 
 Print: $lista#3;

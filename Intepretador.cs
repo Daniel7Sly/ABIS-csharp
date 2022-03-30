@@ -13,18 +13,19 @@ namespace IntepretadorSAL
             //Remove quebras de linha e espaços
             file_content = file_content.Replace(" ","");
             file_content = file_content.Replace(System.Environment.NewLine,"");
+            file_content = file_content.Replace("\t","");
 
-            System.Console.WriteLine(file_content);
-            System.Console.WriteLine("----------");
+            // System.Console.WriteLine(file_content);
+            // System.Console.WriteLine("----------");
 
             //array com todas as instruçoes cada index contem uma instruçao
             instrunçoes_do_Ficheiro = file_content.Split(';'); //Ultimo index pode ser vazio
 
             //Mostra todas as instruçoes recebidas
-            foreach(string instruçao in instrunçoes_do_Ficheiro)
-            {
-                Console.WriteLine("-"+instruçao);
-            }
+            // foreach(string instruçao in instrunçoes_do_Ficheiro)
+            // {
+            //     Console.WriteLine("-"+instruçao);
+            // }
 
             Console.WriteLine("###################################");
 
@@ -215,7 +216,7 @@ namespace IntepretadorSAL
                 if(var2 == null){
                     throw new InterpretationExeption(2,"Variavel não encontrada/definida.");
                 }
-                if(var2.type != tipo){
+                if(var2.type != tipo && var2.type == "text"){
                     throw new InterpretationExeption(2,"Tipo de variavel invalida para a comparaçao pedida.");
                 }
 
@@ -242,7 +243,7 @@ namespace IntepretadorSAL
                 if(var2 == null){
                     throw new InterpretationExeption(4,"Variavel não encontrada/definida.");
                 }
-                if(var2.type != tipo){
+                if(var2.type != tipo && var2.type != "text"){
                     throw new InterpretationExeption(4,"Tipo de variavel invalida para a comparaçao pedida.");
                 }
 

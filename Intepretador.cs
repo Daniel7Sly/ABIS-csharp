@@ -441,66 +441,70 @@ namespace IntepretadorSAL
 
         private static void Equals(List<Variavel> lista_Variaveis, string[] parametros){
             //verifica se chegou dois parametros
-            if(parametros.Length < 2){
-                throw new InterpretationExeption("Parametros em falta.");
+            if(parametros.Length != 2){
+                throw new InterpretationExeption("Quantidade de Parametros Invalida.");
             }
 
             //verifica se o primeiro parametro é uma variavel valida
+            Variavel? var1;
+            int index = 0;
             if(parametros[0][0] != '$'){
                 throw new InterpretationExeption(1,"Parametro não é variavel");
             }
-            Variavel? var1 = lista_Variaveis.Find(x => x.id == parametros[0]);
+            if(parametros[0].Contains('#')){
+                string[] l = parametros[0].Split('#');
+                var1 = lista_Variaveis.Find(x => x.id == l[0]);
+                if(int.TryParse(l[1],out int r)){
+                    index = r;
+                }
+                else{
+                    throw new InterpretationExeption(1,"Index especificado invalido.");
+                }
+            }
+            else{
+                var1 = lista_Variaveis.Find(x => x.id == parametros[0]);
+            }
             if(var1 == null){
                 throw new InterpretationExeption(1,"Variavel não encontrada.");
             }
 
-            //Valida 2º Parametro
-            Variavel? var2 = null;
-            if(parametros[1][0] == '$'){
-                //Valida a 2ª variavel
-                var2 = lista_Variaveis.Find(x => x.id == parametros[1]);
-                if(var2 == null){
-                    throw new InterpretationExeption(2,"Variavel não encontrada.");
-                }
-                
-                //Define o varlor da var2 á var1
-                if(var1.type == var2.type){
-                    var1.value = var2.value;
-                }
-                else{
-                    throw new InterpretationExeption("Variaveis não são do mesmo tipo.");
-                }
+            //obtem o o valor do 2º parametro
+            string value2 = GetValue(lista_Variaveis,parametros[1],2);
+
+            string valor = "";
+            //Aplica a operaçao correspondente ao tipo de dado
+            switch(var1.type){
+                case "num":
+                    if(float.TryParse(value2, out float result_num)){
+                        valor = result_num.ToString();
+                    }
+                    else{
+                        throw new InterpretationExeption(2,"Não foi possivel converter parametro para num.");
+                    }
+                    break;
+                case "bool":
+                    if(bool.TryParse(value2, out bool result_bool)){
+                        valor = result_bool.ToString();
+                    }
+                    else{
+                        throw new InterpretationExeption(2,"Não foi possivel converter parametro para bool.");
+                    }
+                    break;
+                case "text":
+                    valor = value2;
+                    break;
+                default:
+                    break;
             }
-            else{//caso não seja variavel
-                //valida 2º parametro
-                if(parametros[1] == "" && var1.type != "text"){
-                    throw new InterpretationExeption(2,"Parametro vazio.");
+
+            if(var1 is Array){
+                if(index >= ((Array)var1).values.Length){
+                    throw new InterpretationExeption(1, "Index indicado ultrapassa os limites do Array.");
                 }
-                
-                //Aplica a operaçao correspondente ao tipo de dado
-                switch(var1.type){
-                    case "num":
-                        if(float.TryParse(parametros[1], out float result_num)){
-                            var1.value = result_num.ToString();
-                        }
-                        else{
-                            throw new InterpretationExeption(2,"Não foi possivel converter parametro para num.");
-                        }
-                        break;
-                    case "bool":
-                        if(bool.TryParse(parametros[1], out bool result_bool)){
-                            var1.value = result_bool.ToString();
-                        }
-                        else{
-                            throw new InterpretationExeption(2,"Não foi possivel converter parametro para bool.");
-                        }
-                        break;
-                    case "text":
-                        var1.value = parametros[1];
-                        break;
-                    default:
-                        break;
-                }
+                ((Array)var1).values[index] = valor;
+            }
+            else{
+                var1.value = valor;
             }
         }
 
@@ -523,7 +527,7 @@ namespace IntepretadorSAL
         private static void Set(string[] parametros, List<Variavel> lista_Variaveis){
             //Verifica se chegam três parametros
             if(parametros.Length != 3){
-                throw new InterpretationExeption("Parametros em falta.");
+                throw new InterpretationExeption("Quantidade de Parametros Invalida.");
             }
 
             //Valida o 1º parametro se é um tipo valido
@@ -542,10 +546,11 @@ namespace IntepretadorSAL
             string name = parametros[1];
 
             //Aplica o valor de acordo com o tipo expecificado
+            string param = GetValue(lista_Variaveis,parametros[2],3);
             string value = "";
-            switch(parametros[0]){
+            switch(type){
                 case "num":
-                    if(float.TryParse(parametros[2], out float result_num)){
+                    if(float.TryParse(param, out float result_num)){
                         value = result_num.ToString();
                     }
                     else{
@@ -553,7 +558,7 @@ namespace IntepretadorSAL
                     }
                     break;
                 case "bool":
-                    if(bool.TryParse(parametros[2], out bool result_bool)){
+                    if(bool.TryParse(param, out bool result_bool)){
                         value = result_bool.ToString();
                     }
                     else{
@@ -561,7 +566,7 @@ namespace IntepretadorSAL
                     }
                     break;
                 case "text":
-                    value = parametros[2];
+                    value = param;
                     break;
             }
 

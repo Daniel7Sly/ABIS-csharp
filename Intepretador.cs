@@ -103,6 +103,9 @@ namespace IntepretadorSAL
                     case "JTXT":
                         JoinText(lista_Variaveis,Açoes[i].parametros);
                         break; 
+                    case "GLENGTH":
+                        GetLength(lista_Variaveis,Açoes[i].parametros);
+                        break;
                     default:
                         break;
                 }
@@ -303,6 +306,24 @@ namespace IntepretadorSAL
             }
 
             var_result.value = valor1 + valor2;
+        }
+
+        private static void GetLength(List<Variavel> lista_Variaveis, string[] parametros){
+            if(parametros.Length != 2){
+                throw new InterpretationExeption("Quantidade de parametros invalida.");
+            }
+
+            Variavel varr = GetVariavel(lista_Variaveis,parametros[0],1);
+            Variavel var1 = GetVariavel(lista_Variaveis,parametros[1],2);
+
+            if(varr.type != "num"){
+                throw new InterpretationExeption(1,"Variavel de atribuição não é do tipo numerica.");
+            }
+            if(var1 !is Array){
+                throw new InterpretationExeption(2,"Parametro não é do tipo Array.");
+            }
+
+            varr.value = ((Array)var1).vars.Length.ToString();
         }
 
         private static void Operaçao(List<Variavel> lista_Variaveis, string[] parametros){

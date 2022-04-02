@@ -32,8 +32,16 @@ Read: $;
 --Atribui o valor dado á variavel
 Eql: $|$\value;
 
+--JoinText
+--junta os valores dados e atribui o resultado á variavel dada
+Jtxt: $(text)|$\value|$\value;
+
+--GetArrayLegth
+--Obtem o tamanho do array dado
+GLength: $(num)|$#;
+
 --Faz Operaçoes com as variaveis\valores dados
-Opr: $|$\value|operador*|$\value; (c = b + a)
+Opr: $(num)|$\value|operador*|$\value; (c = b + a)
 *operadores: + - * /
 
 --Define flag
@@ -50,10 +58,18 @@ CMP: $(bool)|id\value|comparator|id\value;
 If: $(bool)|flag_name;
 
 
+################################################################
+
+--Processos
+nome da variavel de entrada $INPUT
 
 
+...
 
+Def: TemPares|#int -> bool|{
+	
 
-Def: TemPares|int# -> bool|{
 
 }
+
+...

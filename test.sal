@@ -3,19 +3,11 @@ fazer opção "Volume";
 
 
 
-
-
 Set: num|CONST_PI|3,14;
-
 Set: num|op|0;
-
 Set: num|a|0;
 Set: num|b|0;   
-
 Set: bool|test|false;
-
-
-
 
 
 
@@ -25,7 +17,7 @@ PrintL: Escolha_uma_das_seguintes_opções:;
 PrintL: 1-Area;
 PrintL: 2-Perimetro;
 PrintL: 3-Sair;
-Read: $op;
+Read  : $op;
 
 Cmp: $test|$op|==|1;
 If: $test|are;
@@ -37,7 +29,7 @@ Cmp: $test|$op|==|3;
 If: $test|Exit;
 
 PrintL: Número_Inválido;
-Goto Start;
+Goto: Start;
 
 
 Flag: 		are;

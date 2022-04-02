@@ -68,6 +68,9 @@ namespace IntepretadorSAL
                     case "SET":
                         Set(Açoes[i].parametros, lista_Variaveis);
                         break;
+                    case "SETARR":
+                        SetArr(lista_Variaveis,Açoes[i].parametros);
+                        break;
                     case "PRINT":
                         Print(lista_Variaveis,Açoes[i].parametros);
                         break;
@@ -524,45 +527,107 @@ namespace IntepretadorSAL
             return index;
         }
 
-        private static void Set(string[] parametros, List<Variavel> lista_Variaveis){
+        private static void SetArr(List<Variavel> lista_Variaveis, string[] parametros){
             //Verifica se chegam três parametros
             if(parametros.Length != 3){
                 throw new InterpretationExeption("Quantidade de Parametros Invalida.");
             }
 
-            //Valida o 1º parametro se é um tipo valido
-            if(parametros[0] != "num" && parametros[0] != "bool" && parametros[0] != "text"){
-                throw new InterpretationExeption(1,"Parametro tipo invalido. Type must be num, bool, or text.");
-            }
-            string type = parametros[0];            
+            //Valida o 1º parametro se é um tipo valido (num, bool, text)
+            string type = GetType(parametros[0], 1);
 
-            //Valida o 2º parametro
-            if(parametros[1] == ""){
-                throw new InterpretationExeption(2,"Nome de variavel vazio / não definido.");
+            //Valida o 2º parametro se é um nome valido
+            string name = GetVarName(parametros[1], lista_Variaveis, 2);
+
+            if(int.TryParse(parametros[2], out int length)){
+                lista_Variaveis.Add(new Array(type, name, length));
+                return;
             }
-            if(lista_Variaveis.Find(x => x.id == "$"+parametros[1]) != null){
-                throw new InterpretationExeption(2,"Variavel ja existente.");
+            Variavel? var = lista_Variaveis.Find(x => x.id == parametros[2]);
+            if(var != null){
+                if(var is Array){
+                    if(((Array)var).type != type){
+                        throw new InterpretationExeption(3,"Tipo de dados dos arrays não condizem");
+                    }
+                    //Cria um array com os mesmos valores que o array dado
+                    lista_Variaveis.Add(new Array(type, name, ((Array)var).values));
+                    return;
+                }
+                else{
+                    //Isto kinda podia ser aceite mas não faz sentido criar um array so com um valor
+                    throw new InterpretationExeption(3,"Não é possivel atribuir unico valor de variavel a valores de array.");
+                }
             }
-            string name = parametros[1];
+            else{//Por fim verifica se é dada uma lista de valores.
+                if(parametros[2][0] == '{' && parametros[2][parametros.Length-1] == '}'){
+                    string param = parametros[2];
+                    param = param.Remove('{').Remove('}');
+                    
+                    string[] valores = param.Split(',');
+
+                    //Verifica se todos os dados dados são validos correspondente ao type
+                    switch(type){
+                        case "num":
+                            foreach (string valor in valores){
+                                if(int.TryParse(GetValue(lista_Variaveis, valor,3), out int a) == false){
+                                    throw new InterpretationExeption(3,"Não foi possivel converter um dos valores para num");
+                                }
+                            }
+                        break;
+                        case "bool":
+                            foreach (string valor in valores){
+                                if(bool.TryParse(GetValue(lista_Variaveis, valor,3), out bool a) == false){
+                                    throw new InterpretationExeption(3,"Não foi possivel converter um dos valores para num");
+                                }
+                            }
+                        break;
+                        case "text":
+                            //Para text não é preciso validaçao
+                        break;
+                    }
+
+                    //Apos a verificação define um novo array com os valores dados
+                    lista_Variaveis.Add(new Array(type, name, valores));
+                }
+                else{
+                    throw new InterpretationExeption(3,"O parametro não contem um tamanho nem uma lista de valores para o array.");
+                }
+            }
+        }
+
+        private static void Set(string[] parametros, List<Variavel> lista_Variaveis)
+        {
+            //Verifica se chegam três parametros
+            if (parametros.Length != 3)
+            {
+                throw new InterpretationExeption("Quantidade de Parametros Invalida.");
+            }
+
+            //Valida o 1º parametro se é um tipo valido
+            string type = GetType(parametros[0], 1);
+
+            //Valida e obtem o nome do 2º parametro
+            string name = GetVarName(parametros[1], lista_Variaveis, 2);
 
             //Aplica o valor de acordo com o tipo expecificado
-            string param = GetValue(lista_Variaveis,parametros[2],3);
+            string param = GetValue(lista_Variaveis, parametros[2], 3);
             string value = "";
-            switch(type){
+            switch (type)
+            {
                 case "num":
-                    if(float.TryParse(param, out float result_num)){
+                    if (float.TryParse(param, out float result_num)){
                         value = result_num.ToString();
                     }
                     else{
-                        throw new InterpretationExeption(3,"Não foi possivel converter parametro para num.");
+                        throw new InterpretationExeption(3, "Não foi possivel converter parametro para num.");
                     }
                     break;
                 case "bool":
-                    if(bool.TryParse(param, out bool result_bool)){
+                    if (bool.TryParse(param, out bool result_bool)){
                         value = result_bool.ToString();
                     }
                     else{
-                        throw new InterpretationExeption(3,"Não foi possivel converter parametro para bool.");
+                        throw new InterpretationExeption(3, "Não foi possivel converter parametro para bool.");
                     }
                     break;
                 case "text":
@@ -570,8 +635,11 @@ namespace IntepretadorSAL
                     break;
             }
 
-            lista_Variaveis.Add(new Variavel(type,name,value));
+            //Cria a variavel e acrecenta-a á lista de variaveis
+            lista_Variaveis.Add(new Variavel(type, name, value));
         }
+
+
 
         private static void Flags(string[] parametros, List<Flag> lista_Flags, int i){
             //Valida o parametro nome
@@ -586,7 +654,37 @@ namespace IntepretadorSAL
             lista_Flags.Add(new Flag(parametros[0], i));
         }
 
-        //Obtem o valor do parametro dado
+        private static string GetVarName(string parametro, List<Variavel> lista_Variaveis, int paramIndex)
+        {
+            if (parametro == ""){
+                throw new InterpretationExeption(paramIndex, "Nome de variavel vazio / não definido.");
+            }
+            if (parametro.Contains('#') || parametro.Contains('$')){
+                throw new InterpretationExeption(paramIndex, "Nome de variavel não pode conter caracters especiais.('#', '$')");
+            }
+            if (lista_Variaveis.Find(x => x.id == "$" + parametro) != null){
+                throw new InterpretationExeption(paramIndex, "Variavel ja existente.");
+            }
+            return parametro;
+        }
+
+        private static string GetType(string parametro, int paramIndex)
+        {
+            if (parametro != "num" && parametro != "bool" && parametro != "text")
+            {
+                throw new InterpretationExeption(paramIndex, "Parametro tipo invalido. Type must be num, bool, or text.");
+            }
+
+            return parametro;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="lista_Variaveis"></param>
+        /// <param name="parametro"></param>
+        /// <param name="paramIndex"></param>
+        /// <returns>Returns the value in 'parametro'</returns>
         private static string GetValue(List<Variavel> lista_Variaveis, string parametro, int paramIndex){
             //Verifica se o parametro é variavel
             if(parametro[0] == '$'){
@@ -614,7 +712,7 @@ namespace IntepretadorSAL
                         throw new InterpretationExeption(paramIndex, "Index especificado invalido.");
                     }
                 }
-                else{//Caso n seja referente a um valor dum array
+                else{//Caso  seja referente a um valor duma variavel
                     Variavel? var = lista_Variaveis.Find(x => x.id == parametro);
                     if(var == null){
                         throw new InterpretationExeption(paramIndex, "Variavel não encontrada/definida.");

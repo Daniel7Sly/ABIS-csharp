@@ -16,18 +16,30 @@ me. Ex: $resultado
 --Define uma variavel com o tipo da variavel o nome e o valor 
 Set: type|nome|value;
 
+--SETARR
+--Define um array
+SetArr: type|nome|{1,2,3,4};
+SetArr: type|nome|10;
+
+
+
+SetArr: type|nome|{$a, $b, $c#1};
+
+
+
 
 --PRINT
+--Escreve o valor na consola, '_' são substituidos por espaços
 Print: Value(text)\$;
 
 --Read retorna text
 Read: $;
 
---Define valore a variavel
-Eql: id|id\value;
+--Atribui o valor dado á variavel
+Eql: $|$\value;
 
 --Faz Operaçoes com as variaveis\valores dados
-Opr: id|id\value|operador*|id\value; (c = b + a)
+Opr: $|$\value|operador*|$\value; (c = b + a)
 *operadores: + - * /
 
 --Define flag
@@ -41,4 +53,4 @@ CMP: $(bool)|id\value|comparator|id\value;
 *comparators: < > >= <= == !=
 
 --É um IF se true -> goto flg_nm
-If: id(bool)|flag_name;
+If: $(bool)|flag_name;

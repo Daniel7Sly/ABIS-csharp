@@ -18,6 +18,19 @@
 
 [ ] 10. Add Foreach.
 
+[ ] 11. Add Structs
+
+[ ] 12. Add Validaçao no Set e SetArr para nomes de variaveis com '#'
+
+[x] 13. Add GetType & GetName metodos.
+
+[ ] 14. Add $array#$i ou $array#i (i seria uma variavel num) acrescentar ao GetValue()
+
+[ ] 15. Add SetArr: type|nome|{$a, $b, $c#1};
+
+
+
+Add verificaçao caracteres especiais em flag names
 
 Print: $lista#3;
              ^

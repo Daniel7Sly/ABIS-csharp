@@ -20,13 +20,7 @@ Set: type|nome|value;
 --Define um array
 SetArr: type|nome|{1,2,3,4};
 SetArr: type|nome|10;
-
-
-
-SetArr: type|nome|{$a, $b, $c#1};
-
-
-
+SetArr: type|nome|{1, $b, $c#1};
 
 --PRINT
 --Escreve o valor na consola, '_' são substituidos por espaços
@@ -54,3 +48,14 @@ CMP: $(bool)|id\value|comparator|id\value;
 
 --É um IF se true -> goto flg_nm
 If: $(bool)|flag_name;
+
+
+
+
+
+Set: text|a|Olá_;
+Set: text|b|Mundo.;
+
+Opr: a | a |+| b ;
+
+Print: a;

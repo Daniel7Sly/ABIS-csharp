@@ -1,10 +1,10 @@
 [ ] 1.Add PROCESSOS
 
-[kinda] 2.Add Listas (fazer 9 primeiro)
+[x] 2.Add Arrays (fazer 9 primeiro)
 
 [ ] 3.Add Print multiplos parametros(talvez)
 
-[ ] 4.Add operaçao com text
+[x] 4.Add operaçao com text --> 16.
 
 [x] 5.Add Better Exception Throwing(Identificar a linha onde o erro ocorreu)
 
@@ -20,18 +20,15 @@
 
 [ ] 11. Add Structs
 
-[ ] 12. Add Validaçao no Set e SetArr para nomes de variaveis com '#'
+[x] 12. Add Validaçao no Set e SetArr para nomes de variaveis com '#'
 
 [x] 13. Add GetType & GetName metodos.
 
-[ ] 14. Add $array#$i ou $array#i (i seria uma variavel num) acrescentar ao GetValue()
+[x] 14. Add $array#$i (i seria uma variavel num) acrescentar ao GetValue()
 
-[ ] 15. Add SetArr: type|nome|{$a, $b, $c#1};
+[x] 15. Add SetArr: type|nome|{$a, $b, $c#1};
 
+[x] 16. Add JoinText:
 
+[ ] Add verificaçao caracteres especiais em flag names
 
-Add verificaçao caracteres especiais em flag names
-
-Print: $lista#3;
-             ^
-            indica o index da lista

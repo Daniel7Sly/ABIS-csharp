@@ -9,15 +9,15 @@ Existem 3 tipos de Variaveis
 	num 	-> com um valor numerico(pode ter ,).
 	bool 	-> valor 'true' ou 'false'
 	text 	-> contem texto.
-Variaveis são indetificados por '$' seguido pelo no
-me. Ex: $resultado
+Variaveis são indetificados por '$' seguido pelo nome. Ex: $resultado
+Em arrays é usado o '#' depois do nome para indicar o index que queremos o valor. Ex: $listaNomes#23
 
 --SET
 --Define uma variavel com o tipo da variavel o nome e o valor 
 Set: type|nome|value;
 
 --SETARR
---Define um array
+--Define um array com o tipo de dados o nome e valores/tamanho 
 SetArr: type|nome|{1,2,3,4};
 SetArr: type|nome|10;
 SetArr: type|nome|{1, $b, $c#1};
@@ -53,9 +53,7 @@ If: $(bool)|flag_name;
 
 
 
-Set: text|a|Olá_;
-Set: text|b|Mundo.;
 
-Opr: a | a |+| b ;
+Def: TemPares|int# -> bool|{
 
-Print: a;
+}

@@ -100,6 +100,9 @@ namespace IntepretadorSAL
                             i = p;
                         }
                         break;
+                    case "JTXT":
+                        JoinText(lista_Variaveis,Açoes[i].parametros);
+                        break; 
                     default:
                         break;
                 }
@@ -188,10 +191,7 @@ namespace IntepretadorSAL
             }
 
             //Valida o 1º parametro, tem de ser variavel.
-            if(parametros[0][0] != '$'){
-                throw new InterpretationExeption(1,"Parametro não é variavel.");
-            }
-            Variavel? var_result = lista_Variaveis.Find(x => x.id == parametros[0]);
+            Variavel? var_result = GetVariavel(lista_Variaveis, parametros[0],1);
             if(var_result == null){
                 throw new InterpretationExeption(1,"Variavel não encontrada/definida.");
             }
@@ -288,6 +288,23 @@ namespace IntepretadorSAL
             }
         }
 
+        private static void JoinText(List<Variavel> lista_Variaveis, string[] parametros){
+            //Valida a quantidade de parametros
+            if(parametros.Length != 3){
+                 throw new InterpretationExeption("Quantidade de parametros invalida.");
+            }
+            
+            Variavel var_result = GetVariavel(lista_Variaveis,parametros[0],1);
+            string valor1 = GetValue(lista_Variaveis,parametros[1],2);
+            string valor2 = GetValue(lista_Variaveis,parametros[2],3);
+
+            if(var_result.type != "text"){
+                throw new InterpretationExeption(1,"Variavel não é do tipo 'text'");
+            }
+
+            var_result.value = valor1 + valor2;
+        }
+
         private static void Operaçao(List<Variavel> lista_Variaveis, string[] parametros){
             //Valida a quantidade de parametros
             if(parametros.Length != 4){
@@ -295,10 +312,7 @@ namespace IntepretadorSAL
             }
             
             //Valida o 1º parametro
-            if(parametros[0][0] != '$'){
-                throw new InterpretationExeption(1,"Primeiro parametro não é variavel.");
-            }
-            Variavel? var = lista_Variaveis.Find(x => x.id == parametros[0]);
+            Variavel? var = GetVariavel(lista_Variaveis,parametros[0],1);
             if(var == null){
                 throw new InterpretationExeption(1,"Variavel não encontrada/definida.");
             }
@@ -384,7 +398,7 @@ namespace IntepretadorSAL
             if(parametros[0].Contains('#')){
                 string[] l = parametros[0].Split('#');
                 var1 = lista_Variaveis.Find(x => x.id == l[0]);
-                if(int.TryParse(l[1],out int r)){
+                if(int.TryParse(GetValue(lista_Variaveis,l[1],1),out int r)){
                     index = r;
                 }
                 else{
@@ -394,6 +408,7 @@ namespace IntepretadorSAL
             else{
                 var1 = lista_Variaveis.Find(x => x.id == parametros[0]);
             }
+
             if(var1 == null){
                 throw new InterpretationExeption(1,"Variavel não encontrada.");
             }
@@ -428,10 +443,10 @@ namespace IntepretadorSAL
             }
 
             if(var1 is Array){
-                if(index >= ((Array)var1).values.Length){
+                if(index >= ((Array)var1).vars.Length){
                     throw new InterpretationExeption(1, "Index indicado ultrapassa os limites do Array.");
                 }
-                ((Array)var1).values[index] = valor;
+                ((Array)var1).vars[index].value = valor;
             }
             else{
                 var1.value = valor;
@@ -477,7 +492,7 @@ namespace IntepretadorSAL
                         throw new InterpretationExeption(3,"Tipo de dados dos arrays não condizem");
                     }
                     //Cria um array com os mesmos valores que o array dado
-                    lista_Variaveis.Add(new Array(type, name, ((Array)var).values));
+                    lista_Variaveis.Add(new Array(type, name, ((Array)var).vars));
                     return;
                 }
                 else{
@@ -579,13 +594,52 @@ namespace IntepretadorSAL
             lista_Flags.Add(new Flag(parametros[0], i));
         }
 
+//############################################
+
+        private static Variavel GetVariavel(List<Variavel> lista_Variaveis, string parametro, int paramIndex){
+            //Verifica se o parametro é variavel
+            if(parametro[0] != '$'){
+                throw new InterpretationExeption(paramIndex,"Parametro não é variavel.");
+            }
+
+            Variavel? var;
+
+            //Verifica se é uma variavel de um array
+            if(parametro.Contains('#')){
+                string[] l = parametro.Split('#');
+                var = lista_Variaveis.Find(x => x.id == l[0]);
+                if(var == null){
+                    throw new InterpretationExeption(paramIndex,"Variavel não encontrada/definida.");
+                }
+                if(int.TryParse(GetValue(lista_Variaveis,l[1],1),out int index)){
+                    if(index >= ((Array)var).vars.Length || index < 0){
+                        throw new InterpretationExeption(paramIndex, "Index indicado ultrapassa os limites do Array.");
+                    }
+                    
+                    //Retorna a variavel do Array do index especificado
+                    return ((Array)var).vars[index];
+                }
+                else{
+                    throw new InterpretationExeption(1,"Index especificado invalido.");
+                }
+            }
+            else{//Busca a Variavel correspondente ao parametro
+                var = lista_Variaveis.Find(x => x.id == parametro);
+                if(var == null){
+                    throw new InterpretationExeption(paramIndex,"Variavel não encontrada/definida.");
+                }
+            }
+
+            return var;
+        }
+
         private static string GetVarName(string parametro, List<Variavel> lista_Variaveis, int paramIndex)
         {
             if (parametro == ""){
                 throw new InterpretationExeption(paramIndex, "Nome de variavel vazio / não definido.");
             }
             if (parametro.Contains('#') || parametro.Contains('$')){
-                throw new InterpretationExeption(paramIndex, "Nome de variavel não pode conter caracters especiais.('#', '$')");
+                throw new InterpretationExeption(paramIndex, "Nomes de variaveis não podem conter caracters especiais.('#', '$')");
             }
             if (lista_Variaveis.Find(x => x.id == "$" + parametro) != null){
                 throw new InterpretationExeption(paramIndex, "Variavel ja existente.");
@@ -625,13 +679,13 @@ namespace IntepretadorSAL
                     if(var !is Array){
                         throw new InterpretationExeption(paramIndex, "Variavel indicada não é do tipo array.");
                     }
-                    if(int.TryParse(l[1], out int index)){
-                        if(index >= ((Array)var).values.Length){
+                    if(int.TryParse(GetValue(lista_Variaveis,l[1],paramIndex), out int index)){
+                        if(index >= ((Array)var).vars.Length){
                             throw new InterpretationExeption(paramIndex, "Index indicado ultrapassa os limites do Array.");
                         }
                         
                         //Retorna o valor no index especificado do Array
-                        return ((Array)var).values[index];
+                        return ((Array)var).vars[index].value;
                     }
                     else{
                         throw new InterpretationExeption(paramIndex, "Index especificado invalido.");
@@ -655,24 +709,40 @@ namespace IntepretadorSAL
         }
 
         private class Variavel{
-            public string type, id, value;
+            public string type;
+            public string? id;
+            public string value;
             
             public Variavel(string type, string name, string value){
                 this.type = type;
                 this.id = '$'+name;
                 this.value = value;
             }
+
+            public Variavel(string value, string type){
+                this.value = value;
+                this.type = type;
+            }
         }
 
         private class Array : Variavel{
-            public string[] values;
+            public Variavel[] vars;
 
-            public Array(string type, string name, string[] values) : base(type, name, "lista"){
-                this.values = values;
+            public Array(string type, string name, string[] values) : base(type, name, "Array"){
+                Variavel[] arr = new Variavel[values.Length];
+                for(int i = 0; i < values.Length-1; i++){
+                    arr[i] = new Variavel(values[i], type);
+                }
+                
+                this.vars = arr;
+            }
+
+            public Array(string type, string name, Variavel[] vars) : base(type, name, "Array"){
+                this.vars = vars;
             }
             
-            public Array(string type, string name, int length) : base(type, name, "lista"){
-                this.values = new string[length];
+            public Array(string type, string name, int length) : base(type, name, "Array"){
+                this.vars = new Variavel[length];
             }
         }
 

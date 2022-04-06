@@ -10,23 +10,26 @@ Existem 3 tipos de Variaveis
 	bool 	-> valor 'true' ou 'false'
 	text 	-> contem texto.
 Variaveis são indetificados por '$' seguido pelo nome. Ex: $resultado
-Em arrays é usado o '#' depois do nome para indicar o index que queremos o valor. Ex: $listaNomes#23
+Em arrays é usado o '#' depois do nome para indicar o index que queremos o valor. Ex: $listaNomes#23 --> dá o valor da posição 23
 
 --SET
 --Define uma variavel com o tipo da variavel o nome e o valor 
 Set: type|nome|value;
 
 --SETARR
---Define um array com o tipo de dados o nome e valores/tamanho 
-SetArr: type|nome|{1,2,3,4};
-SetArr: type|nome|10;
-SetArr: type|nome|{1, $b, $c#1};
+--Define um array do tipo de dado, com os valores/tamanho 
+SetArr: type|nome|{1,2,3,4}; 		<-- array com tamanho 4 e valores predefinidos
+SetArr: type|nome|10;				<-- array de tamanho 10 sem valores predefinidos
+SetArr: type|nome|{amam, $b, $c#1};	<-- array de tamanho 3 com valores predefinidos
 
 --PRINT
 --Escreve o valor na consola, '_' são substituidos por espaços
 Print: Value(text)\$;
 
---Read retorna text
+--READ
+--Lê o que o usuario escrever no terminal.
+--Caso a variavel seja num ou bool READ tentará converter o texto recebido para o tipo dado.
+--Caso não consiga rebenta
 Read: $;
 
 --Atribui o valor dado á variavel
@@ -35,6 +38,10 @@ Eql: $|$\value;
 --JoinText
 --junta os valores dados e atribui o resultado á variavel dada
 Jtxt: $(text)|$\value|$\value;
+
+--PRS
+--
+Prs: 
 
 --GetArrayLegth
 --Obtem o tamanho do array dado

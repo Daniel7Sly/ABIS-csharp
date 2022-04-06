@@ -112,11 +112,13 @@ namespace IntepretadorSAL
             }
         }
 
+//################################################################################################
+
         //! Isto é apenas uma solução temporaria!
         private static void Read(List<Variavel> lista_Variaveis, string[] parametros){
-            // if(parametros.Length < 1){
-            //     throw new InterpretationExeption("Parametro em falta");
-            // }
+            if(parametros.Length != 1){
+                throw new InterpretationExeption("Quantidade de parametros invalida.");
+            }
 
             if(parametros[0][0] == '$'){
                 Variavel? var = lista_Variaveis.Find(x => x.id == parametros[0]);
@@ -313,6 +315,7 @@ namespace IntepretadorSAL
                 throw new InterpretationExeption("Quantidade de parametros invalida.");
             }
 
+            //Busca a variavel e o array
             Variavel varr = GetVariavel(lista_Variaveis,parametros[0],1);
             Variavel var1 = GetVariavel(lista_Variaveis,parametros[1],2);
 
@@ -334,9 +337,6 @@ namespace IntepretadorSAL
             
             //Valida o 1º parametro
             Variavel? var = GetVariavel(lista_Variaveis,parametros[0],1);
-            if(var == null){
-                throw new InterpretationExeption(1,"Variavel não encontrada/definida.");
-            }
             if(var.type != "num"){
                 throw new InterpretationExeption(1,"Valor a ser atribuido a variavel não numerica.");
             }
@@ -344,6 +344,9 @@ namespace IntepretadorSAL
             //Valida 2º parametro e atribui o valor á variavel varlor1
             string valor1 = GetValue(lista_Variaveis, parametros[1],2);
             
+            //Recebe o operador do 3º parametro
+            string operador = GetValue(lista_Variaveis, parametros[2],3);
+
             //Valida 4º parametro e atribui o valor á variavel varlor2
             string valor2 = GetValue(lista_Variaveis, parametros[3],4);
             
@@ -356,7 +359,7 @@ namespace IntepretadorSAL
             }
 
             //Operaçao
-            switch(parametros[2]){
+            switch(operador){
                 case "+":
                     var.value = (a + b).ToString();
                     break;
@@ -375,17 +378,11 @@ namespace IntepretadorSAL
         }
 
         private static int IF(List<Flag> lista_Flags, List<Variavel> lista_Variaveis, string[] parametros){
-            if(parametros.Length < 2){
+            if(parametros.Length != 2){
                 throw new InterpretationExeption("Parametros em faltas.");
             }
-            //Valida a variavel 1º parametro
-            if(parametros[0][0] != '$'){
-                throw new InterpretationExeption(1,"Parametro não é variavel");
-            }
-            Variavel? var = lista_Variaveis.Find(x => x.id == parametros[0]);
-            if(var == null){
-                throw new InterpretationExeption(1,"Variavel não encontrada.");
-            }
+            //Recebe e Valida a variavel do 1º parametro
+            Variavel? var = GetVariavel(lista_Variaveis, parametros[0], 1);
             if(var.type != "bool"){
                 throw new InterpretationExeption(1,"Variavel de tipo invalido");
             }
@@ -410,35 +407,15 @@ namespace IntepretadorSAL
                 throw new InterpretationExeption("Quantidade de Parametros Invalida.");
             }
 
+
             //verifica se o primeiro parametro é uma variavel valida
-            Variavel? var1;
-            int index = 0;
-            if(parametros[0][0] != '$'){
-                throw new InterpretationExeption(1,"Parametro não é variavel");
-            }
-            if(parametros[0].Contains('#')){
-                string[] l = parametros[0].Split('#');
-                var1 = lista_Variaveis.Find(x => x.id == l[0]);
-                if(int.TryParse(GetValue(lista_Variaveis,l[1],1),out int r)){
-                    index = r;
-                }
-                else{
-                    throw new InterpretationExeption(1,"Index especificado invalido.");
-                }
-            }
-            else{
-                var1 = lista_Variaveis.Find(x => x.id == parametros[0]);
-            }
-
-            if(var1 == null){
-                throw new InterpretationExeption(1,"Variavel não encontrada.");
-            }
-
+            Variavel? var1 = GetVariavel(lista_Variaveis, parametros[0],1);
             //obtem o o valor do 2º parametro
             string value2 = GetValue(lista_Variaveis,parametros[1],2);
 
+
             string valor = "";
-            //Aplica a operaçao correspondente ao tipo de dado
+            //Aplica a atribuição correspondente ao tipo de dado da var1
             switch(var1.type){
                 case "num":
                     if(float.TryParse(value2, out float result_num)){
@@ -463,15 +440,8 @@ namespace IntepretadorSAL
                     break;
             }
 
-            if(var1 is Array){
-                if(index >= ((Array)var1).vars.Length){
-                    throw new InterpretationExeption(1, "Index indicado ultrapassa os limites do Array.");
-                }
-                ((Array)var1).vars[index].value = valor;
-            }
-            else{
-                var1.value = valor;
-            }
+            var1.value = valor;
+            
         }
 
         private static int Goto(string[] parametros, List<Flag> lista_Flags, int index){
@@ -615,8 +585,15 @@ namespace IntepretadorSAL
             lista_Flags.Add(new Flag(parametros[0], i));
         }
 
-//############################################
+//#########################################################################################################
 
+        /// <summary>
+        ///     Verifica se existe. Verifica se é de um array e valida se o index é valido caso dado.
+        /// </summary>
+        /// <param name="lista_Variaveis"></param>
+        /// <param name="parametro"></param>
+        /// <param name="paramIndex"></param>
+        /// <returns>Retorna a variavel pedida(normal ou de array). Não retorna NULL</returns>
         private static Variavel GetVariavel(List<Variavel> lista_Variaveis, string parametro, int paramIndex){
             //Verifica se o parametro é variavel
             if(parametro[0] != '$'){
@@ -637,7 +614,7 @@ namespace IntepretadorSAL
                         throw new InterpretationExeption(paramIndex, "Index indicado ultrapassa os limites do Array.");
                     }
                     
-                    //Retorna a variavel do Array do index especificado
+                    //Retorna a variavel do Array no index especificado
                     return ((Array)var).vars[index];
                 }
                 else{

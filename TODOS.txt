@@ -1,20 +1,20 @@
-[ ] 1.Add PROCESSOS
+[ ] 1. Add PROCESSOS
 
-[x] 2.Add Arrays (fazer 9 primeiro)
+[x] 2. Add Arrays (fazer 9 primeiro)
 
-[ ] 3.Add Print multiplos parametros(talvez)
+[ ] 3. Add Print multiplos parametros(talvez)
 
-[x] 4.Add operaçao com text --> 16.
+[x] 4. Add operaçao com text --> 16.
 
-[x] 5.Add Better Exception Throwing(Identificar a linha onde o erro ocorreu)
+[x] 5. Add Better Exception Throwing(Identificar a linha onde o erro ocorreu)
 
-[ ] 6.Melhorar os comentarios no codigo do intepretador
+[ ] 6. Melhorar os comentarios no codigo do intepretador
 
-[kinda] 7.Add Comentarios
+[kinda] 7. Add Comentarios
 
-[ ] 8.Add Conversores
+[ ] 8. Add Conversores
 
-[x] 9.Add Metodo de obeter valor de parametro
+[x] 9. Add Metodo de obeter valor de parametro
 
 [ ] 10. Add Foreach.
 
@@ -30,5 +30,11 @@
 
 [x] 16. Add JoinText:
 
-[ ] Add verificaçao caracteres especiais em flag names
+[ ] 17. Add EQL: $#|$#
+
+[x] 18. Add kinda array suporte read
+
+[ ] 19. Add verificaçao caracteres especiais em flag names
+
+[ ] 20. Add Parse: converte text para a variavel dada.
 

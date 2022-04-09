@@ -40,8 +40,10 @@ Eql: $|$\value;
 Jtxt: $(text)|$\value|$\value;
 
 --PRS
---
-Prs: 
+--Tenta converter o valor dado para num e atribui o valor á variavel dada.
+--Atribui true\false á 1ª variavel: true se conseguio converter otherwise false.
+--Se conseguir converter atribui o resultado á 2ª variavel. 
+Prs: $(bool) | $(num) | $\value(text);
 
 --GetArrayLegth
 --Obtem o tamanho do array dado

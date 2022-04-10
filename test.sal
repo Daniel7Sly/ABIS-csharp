@@ -1,208 +1,27 @@
-por "$" para usar qualquer tipo de variavel no programa;
-fazer opção "Volume";
+Fibonacci Sequence;
 
+x	y	z;
+z = x + y;
+x = y;
+y = z;
+repete;
 
+Set: num | x | 0;
+Set: num | y | 1;
+Set: num | z | 0;
+Set: num | i | 0;
+Set: bool| r | false;
 
-Set: num|CONST_PI|3,14;
-Set: num|op|0;
-Set: num|a|0;
-Set: num|b|0;   
-Set: bool|test|false;
+Printl: $x;
+Printl: $y;
 
+Conta:
+	Opr: $z | $x | + | $y;
+	Eql: $x | $y;
+	Eql: $y | $z;
+	Printl: $z;
 
+	Opr: $i | $i | + | 1;
 
-Flag: 		Start;
-
-PrintL: Escolha_uma_das_seguintes_opções:;
-PrintL: 1-Area;
-PrintL: 2-Perimetro;
-PrintL: 3-Sair;
-Read  : $op;
-
-Cmp: $test|$op|==|1;
-If: $test|are;
-
-Cmp: $test|$op|==|2;
-If: $test|per;
-
-Cmp: $test|$op|==|3;
-If: $test|Exit;
-
-PrintL: Número_Inválido;
-Goto: Start;
-
-
-Flag: 		are;
-
-PrintL: Escolha_uma_das_seguintes_opções:;
-PrintL: 1-Circulo;
-PrintL: 2-Triângulo(Apenas_equilátero);
-PrintL: 3-Quadrado;
-PrintL: 4-Retângulo;
-PrintL: 5-Pentaguno(Apenas_Regular);
-PrintL: 6-Voltar_ao_menu_anterior;
-Read:$op;
-
-Cmp: $test|$op|==|1;
-If: $test|CirA;
-
-Cmp: $test|$op|==|2;
-If: $test|TriA;
-
-Cmp: $test|$op|==|3;
-If: $test|QuaA;
-
-Cmp: $test|$op|==|4;
-If: $test|RetA;
-
-Cmp: $test|$op|==|5;
-If: $test|PenA;
-
-Cmp: $test|$op|==|6;
-If: $test|Start;
-
-PrintL: Número_Inválido;
-Goto are;
-
-
-
-
-
-Flag: 		per;
-
-PrintL: Escolha_uma_das_seguintes_opções:;
-PrintL: 1-Circulo;
-PrintL: 2-Triângulo(Apenas_equilátero);
-PrintL: 3-Quadrado;
-PrintL: 4-Retângulo;
-PrintL: 5-Pentaguno(Apenas_Regular);
-PrintL: 6-Voltar_ao_menu_anterior;
-Read:$op;
-
-Cmp: $test|$op|==|1;
-If: $test|CirP;
-
-Cmp: $test|$op|==|2;
-If: $test|TriP;
-
-Cmp: $test|$op|==|3;
-If: $test|QuaP;
-
-Cmp: $test|$op|==|4;
-If: $test|RetP;
-
-Cmp: $test|$op|==|5;
-If: $test|PenP;
-
-Cmp: $test|$op|==|6;
-If: $test|Start;
-
-PrintL: Número_Inválido;
-Goto are;
-
-
-
-Flag: CirA;
-	PrintL: Insira_o_raio;
-	Read: $a;
-	Opr: $a|$a|*|$a;
-	Opr:$a|$a|*|$CONST_PI;
-	Print:Area->;
-	PrintL: $a;
-	Goto:Start;
-
-
-Flag: CirP;
-	PrintL: Insira_o_diâmetro;
-	Read: $a;
-	Opr:$a|$a|*|$CONST_PI;
-	Print:Perimetro->;
-	PrintL: $a;
-	Goto:Start;
-
-
-Flag: TriA;
-	PrintL:Insira_a_base;
-	Read:$a;
-	PrintL:Insira_a_altura;
-	Read:$b;
-	Opr: $a|$a|*|$b;
-	Opr: $a|$a|/|2;
-	Print:Area->;
-	PrintL: $a;
-	Goto:Start;
-
-
-Flag: TriP;
-	PrintL:Insira_o_cateto;
-	Read:$a;
-	PrintL:Insira_a_hipotnusa;
-	Read:$b;
-	Opr:$a|$a|*|2;
-	Opr:$a|$a|+|$b;
-	Print:Perimetro->;
-	PrintL: $a;
-	Goto:Start;
-
-
-Flag: QuaA;
-	PrintL:Insira_o_lado;
-	Read: $a;
-	Opr:$a|$a|*|$a;
-	Print:Area->;
-	PrintL: $a;
-	Goto:Start;
-
-
-Flag: QuaP;
-	PrintL:Insira_o_lado;
-	Read: $a;
-	Opr: $a|$a|*|4;
-	Print:Perimetro->;
-	PrintL: $a;
-	Goto:Start;
-
-
-Flag: RetA;
-	PrintL:Insira_o_comprimento;
-	Read: $a;
-	PrintL:Insira_a_largura;
-	Read: $b;
-	Opr:$a|$a|*|$b;
-	Print:Area->;
-	PrintL: $a;
-	Goto:Start;
-
-Flag: RetP;
-	PrintL:Insira_o_comprimento;
-	Read: $a;
-	PrintL:Insira_a_largura;
-	Read: $b;
-	Opr:$a|$a|+|$b;
-	Opr:$a|$a|*|2;
-	Print:Perimetro->;
-	PrintL: $a;
-	Goto:Start;
-
-
-Flag: PenA;
-	PrintL:Insira_a_apótma;
-	Read: $a;
-	PrintL:Insira_o_lado;
-	Read: $b;
-	Opr:$a|$a|*|$b;
-	Opr:$a|$a|/|2;
-	Print:Area->;
-	PrintL: $a;
-	Goto:Start;
-	
-
-Flag: PenP;
-	PrintL:Insira_o_lado;
-	Read: $a;
-	Opr: a|a|*|5;
-	Print:Perimetro->;
-	PrintL: $a;
-	Goto:Start;
-
-Flag: Exit;
+	Cmp: $r | $i | < | 20;
+	If:  $r | Conta;

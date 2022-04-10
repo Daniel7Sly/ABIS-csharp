@@ -36,24 +36,43 @@ namespace IntepretadorSAL
             //     lista.Add(new Açao(instruçao));
             // }
 
-            //Passa as instruçoes para um array de Açoes
-            Açao[] Açoes = new Açao[instrunçoes_do_Ficheiro.Length];
-            for (int i = 0; i < instrunçoes_do_Ficheiro.Length-1; i++)
+            //Lista de FLAGS - Flags sao definidas antes de intrepertar o codigo
+            List<Flag> lista_Flags = new List<Flag>();
+            List<Açao> Açoes = new List<Açao>();
+            //Com as instruções cria as Açoes e Flags
+            for (int i = 0, j = 0; i < instrunçoes_do_Ficheiro.Length-1; i++)
             {
-                Açoes[i] = new Açao(instrunçoes_do_Ficheiro[i]);
+                string[] a = instrunçoes_do_Ficheiro[i].Split(':');
+                switch (a.Length)
+                {
+                    case 3:
+                        lista_Flags.Add(new Flag(a[0], j));
+
+                        Açoes.Add(new Açao(a[1].ToUpper(), a[2].Split('|')));
+                        j++;
+                        break;
+                    case 2:
+                        Açoes.Add(new Açao(a[0].ToUpper(), a[1].Split('|')));
+                        j++;
+                        break;
+                    case 1:
+                        //não faz nada because seria um comentario
+                        break;
+                    default:
+                        break;
+                }
             }
 
             //Cria lista de Variaveis
             List<Variavel> lista_Variaveis = new List<Variavel>();
 
             //Lista de FLAGS - Flags sao definidas antes de intrepertar o codigo
-            List<Flag> lista_Flags = new List<Flag>();
-            for (int i = 0; i < Açoes.Length-1; i++)
-            {
-                if(Açoes[i].tipoaçao == "FLAG"){
-                    Flags(Açoes[i].parametros, lista_Flags, i);
-                }
-            }
+            // for (int i = 0; i < Açoes.Length-1; i++)
+            // {
+            //     if(Açoes[i].tipoaçao == "FLAG"){
+            //         Flags(Açoes[i].parametros, lista_Flags, i);
+            //     }
+            // }
 
             //TODO: *talvez*
             //Lista de Processos
@@ -61,7 +80,7 @@ namespace IntepretadorSAL
             
 
             //intepreta as instruçoes
-            for (int i = 0; i < Açoes.Length-1 ; i++)
+            for (int i = 0; i < Açoes.Count; i++)
             {
                 indexAtual = i;
                 switch(Açoes[i].tipoaçao){
@@ -97,7 +116,7 @@ namespace IntepretadorSAL
                     case "IF":
                         int p = IF(lista_Flags,lista_Variaveis,Açoes[i].parametros);
                         if(p != -1){
-                            i = p;
+                            i = p-1;
                         }
                         break;
                     case "JTXT":
@@ -798,6 +817,11 @@ namespace IntepretadorSAL
                 else{
                     this.tipoaçao = "FIM";
                 }
+            }
+
+            public Açao(string açao, string[] parametros){
+                this.tipoaçao = açao;
+                this.parametros = parametros;
             }
         }
 

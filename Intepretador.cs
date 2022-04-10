@@ -106,6 +106,9 @@ namespace IntepretadorSAL
                     case "GLENGTH":
                         GetLength(lista_Variaveis,Açoes[i].parametros);
                         break;
+                    case "PRS":
+                        Parse(lista_Variaveis,Açoes[i].parametros);
+                        break;
                     default:
                         break;
                 }

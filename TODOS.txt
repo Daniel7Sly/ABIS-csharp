@@ -36,5 +36,6 @@
 
 [ ] 19. Add verificaçao caracteres especiais em flag names
 
-[ ] 20. Add Parse: converte text para a variavel dada.
+[x] 20. Add Parse: converte text para a num.
 
+[ ] 21. Add $array#1#4#2.. indicar index dum array num array

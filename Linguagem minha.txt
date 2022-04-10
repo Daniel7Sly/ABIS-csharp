@@ -37,6 +37,7 @@ Eql: $|$\value;
 
 --JoinText
 --junta os valores dados e atribui o resultado á variavel dada
+--pose ser usado para converter bool e num para text
 Jtxt: $(text)|$\value|$\value;
 
 --PRS

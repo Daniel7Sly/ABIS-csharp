@@ -10,7 +10,7 @@ namespace IntepretadorSAL
 
         public static void Intepretar(string file_content)
         {
-            //Remove quebras de linha e espaços
+            //Remove quebras de linhas e espaços
             file_content = file_content.Replace(" ","");
             file_content = file_content.Replace(System.Environment.NewLine,"");
             file_content = file_content.Replace("\t","");
@@ -278,6 +278,32 @@ namespace IntepretadorSAL
             var_result.value = valor1 + valor2;
         }
 
+        private static void Parse(List<Variavel> lista_Variaveis, string[] parametros){
+            if(parametros.Length != 4){
+                throw new InterpretationExeption("Quantidade de parametros invalida.");
+            }
+            
+            //Recebe os parametros
+            Variavel var1 = GetVariavel(lista_Variaveis, parametros[0], 1, false);
+            Variavel var2 = GetVariavel(lista_Variaveis, parametros[1], 2, false);
+            string valor = GetValue(lista_Variaveis, parametros[2], 3);
+
+            //Valida as variaveis
+            if(var1.type != "bool"){
+                throw new InterpretationExeption(1,"Variavel não é do tipo bool.");
+            }
+            if(var2.type != "num"){
+                throw new InterpretationExeption(2  ,"Variavel não é do tipo num.");
+            }
+
+            //Realiza o parse
+            bool parse = float.TryParse(valor, out float num);
+            var1.value = parse.ToString();
+            if(parse){
+                var2.value = num.ToString();
+            }
+        }
+
         private static void GetLength(List<Variavel> lista_Variaveis, string[] parametros){
             if(parametros.Length != 2){
                 throw new InterpretationExeption("Quantidade de parametros invalida.");
@@ -288,7 +314,7 @@ namespace IntepretadorSAL
             Variavel var1 = GetVariavel(lista_Variaveis,parametros[1],2, true);
 
             if(varr.type != "num"){
-                throw new InterpretationExeption(1,"Variavel de atribuição não é do tipo numerica.");
+                throw new InterpretationExeption(1,"Variavel de atribuição não é do tipo num.");
             }
             if(var1 !is Array){
                 throw new InterpretationExeption(2,"Parametro não é do tipo Array.");
@@ -488,7 +514,7 @@ namespace IntepretadorSAL
                         case "bool":
                             foreach (string valor in valores){
                                 if(bool.TryParse(GetValue(lista_Variaveis, valor,3), out bool a) == false){
-                                    throw new InterpretationExeption(3,"Não foi possivel converter um dos valores para num");
+                                    throw new InterpretationExeption(3,"Não foi possivel converter um dos valores para bool");
                                 }
                             }
                         break;

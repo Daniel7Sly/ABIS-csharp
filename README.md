@@ -1,48 +1,11 @@
-SAL
-===
+ABIS
+====
+ABIS is a project were i am developing an Action Block Interpreted Script (ABIS).
+This project contains the interpreter for the ABIS language.
+This interpreter is supposed to be used in projects were you would like to give to the user some extra functinality by allowing them to run ABIS scripts in your aplication.
 
-Este é o meu projeto onde estou a criar uma linguagem Simples baseada em Ações. Simple Action Language SAL.
-Ideia de Usar isto na PAP.
+This is going to be my PAP;
 
 # Instruções
 
-## PRINT
-Print: Value(string)\id;
-
-## PRINTL
-igual ao PRINT mas faz quebra de linha no fim.
-
-## READ 
-Define o valor que receber á variavel dada (converte string recebida automaticamente para o type da variavel dada.)
-Read: id;
-
-## SET 
-Define variavel, Variaveis são chamadas de id e são indentificadas no codigo pelo 1º caracter => '$'
-Set: type | nome | value;
-*types: num(float), bool, text.
-
-## OPR
-Faz Operaçoes
-Opr: id | id\value | operador | id\value; (c = b + a)
-*operadores: add\+ sub\- mul\* div\/
-
-## EQL
-Atribui valore a variavel
-Eql: id | id\value;
-
-## FLAG
-Define flag
-Flag: flag_name;
-
-## Goto
-Vai até á flag especificada
-Goto: flag_name;
-
-## CMP
-Atribui a variavel o resultado da comparaçao (em bool)
-Cmp: id(bool) | id\value | comparator | id\value;
-*comparators: < > >= <= == !=
-
-## IF
-É um IF se true -> goto flag_name
-IF: id(bool) | flag_name;
+Intruction Description [here](https://github.com/Daniel7Sly/SAL/blob/master/Linguagem%20minha.txt).

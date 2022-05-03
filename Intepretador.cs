@@ -40,7 +40,7 @@ namespace IntepretadorSAL
             List<Flag> lista_Flags = new List<Flag>();
             List<Açao> Açoes = new List<Açao>();
             //Com as instruções cria as Açoes e Flags
-            for (int i = 0, j = 0; i < instrunçoes_do_Ficheiro.Length-1; i++)
+            for (int i = 0, j = 0; i < instrunçoes_do_Ficheiro.Length; i++)
             {
                 string[] a = instrunçoes_do_Ficheiro[i].Split(':');
                 switch (a.Length)
@@ -57,8 +57,10 @@ namespace IntepretadorSAL
                         break;
                     case 1:
                         //não faz nada because seria um comentario
+                        //Açoes.Add(new Açao());
                         break;
                     default:
+
                         break;
                 }
             }
@@ -111,7 +113,7 @@ namespace IntepretadorSAL
                     // case "Flag":
                     //     break;
                     case "GOTO":
-                        i = Goto(Açoes[i].parametros, lista_Flags, i);
+                        i = Goto(Açoes[i].parametros, lista_Flags, i)-1;
                         break;
                     case "IF":
                         int p = IF(lista_Flags,lista_Variaveis,Açoes[i].parametros);
@@ -301,7 +303,7 @@ namespace IntepretadorSAL
         }
 
         private static void Parse(List<Variavel> lista_Variaveis, string[] parametros){
-            if(parametros.Length != 4){
+            if(parametros.Length != 3){
                 throw new InterpretationExeption("Quantidade de parametros invalida.");
             }
             
@@ -391,6 +393,9 @@ namespace IntepretadorSAL
                 case "/":
                     var.value = (a / b).ToString();
                     break;
+                case "%":
+                    var.value = (a % b).ToString();
+                    break;
                 default:
                     throw new InterpretationExeption(3,"Operador invalido.");
             }
@@ -416,7 +421,7 @@ namespace IntepretadorSAL
             }
 
             //Retorna a posiçao da flag
-            if(var.value == "true"){
+            if(var.value == "True"){
                 return flag.posiçao;
             }
             //Retorna -1 caso seja false
@@ -709,6 +714,10 @@ namespace IntepretadorSAL
         /// <param name="paramIndex"></param>
         /// <returns>Returns the value in 'parametro'</returns>
         private static string GetValue(List<Variavel> lista_Variaveis, string parametro, int paramIndex){
+            if(parametro.Length == 0){
+                return parametro;
+            }
+            
             //Verifica se o parametro é variavel
             if(parametro[0] == '$'){
                 //Verifica se o parametro é referente a um valor dum array
@@ -803,25 +812,13 @@ namespace IntepretadorSAL
             public string tipoaçao;
             public string[] parametros = {}; //<-- Amamm
 
-            public Açao(string instruçao){                      //  |--------instruçao:-------|
-                if(instruçao != ""){                            //  |                         |       
-                    string[] palavras =  instruçao.Split(':');  //  Set  :    type | id | value ;
-                    this.tipoaçao = palavras[0].ToUpper();      //   ^        |       ^       |
-                    //this.parametros = palavras[1].Split('|'); //tipoaçao    |--Parametros---|
-                    string[] a = {};
-                    if(palavras.Length > 1){
-                        a = palavras[1].Split('|');
-                    }
-                    this.parametros = a;
-                }
-                else{
-                    this.tipoaçao = "FIM";
-                }
-            }
-
             public Açao(string açao, string[] parametros){
                 this.tipoaçao = açao;
                 this.parametros = parametros;
+            }
+
+            public Açao(){
+                this.tipoaçao = "Comentario";
             }
         }
 

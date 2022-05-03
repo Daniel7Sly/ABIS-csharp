@@ -1,27 +1,93 @@
-Fibonacci Sequence;
+A:
+	Print: A;
+	Print: A;
+	Print: A;
+	Goto: C;
 
-x	y	z;
-z = x + y;
-x = y;
-y = z;
-repete;
+B:
+	Print: B;
+	Print: B;
+	Print: B;
+	Goto: D;
 
-Set: num | x | 0;
-Set: num | y | 1;
-Set: num | z | 0;
-Set: num | i | 0;
-Set: bool| r | false;
+@Tabuada[num]{
+	Set: num|mult|1;
+	Set: num|rslt|0;
+	Set: bool|comp|false;
+	
+	Tabuada:
+		Print: $input1;
+		Print: *;
+		Print: $mult;
+		Print: =;
 
-Printl: $x;
-Printl: $y;
+	Opr: $rslt|$mult|*|$input1;
+	Printl: $rslt;
+	Opr: $mult|$mult|+|1;
 
-Conta:
-	Opr: $z | $x | + | $y;
-	Eql: $x | $y;
-	Eql: $y | $z;
-	Printl: $z;
+	Cmp: $comp|$rslt|<=|10;
+	If: $comp|Tabuada;
 
-	Opr: $i | $i | + | 1;
+	Printl:;
+}
 
-	Cmp: $r | $i | < | 20;
-	If:  $r | Conta;
+Receber Array de numeros e returnar um array com os numeros impares;
+@Impares[#num]->#num{
+	Set: num|arrLenght|0;
+	Set: num|i|0;
+	Set: num|OddQuant|0;
+
+	Set: bool|comp|false;
+	Set: num|rslt|0;
+
+	GetLength: $arrLenght|$input1;
+
+	Contar:
+		Opr: $rslt|$input1#$i|%|2;
+		Cmp: $comp|$rslt|!=|0;
+		If: $comp|ContarNext;
+		Opr: $OddQuant|$OddQuant|+|1;
+		ContarNext:
+			Opr: $i|$i|+|1;
+			Cmp: $comp|$i|<|$arrLenght;
+			If: $comp|Contar;
+
+	SetArr: num|oddarray|$OddQuant;
+	Eql: $i|0;
+	Set: num|j|0;
+
+	Preencher:
+		Opr: $rslt|$input1#$i|%|2;
+		Cmp: $comp|$rslt|!=|0;
+		If: $comp|PreencherNext;
+		Eql: $oddarray#$j|$input1#$i;
+		Opr: $j|$j|+|1;
+		PreencherNext:
+			Opr: $i|$i|+|1;
+			Cmp: $comp|$i|<|$OddQuant;
+			If: $comp|Preencher;
+	
+	Return: $oddarray;
+}
+
+@Cmp[num,text,num]->bool{
+	Set: bool|comp|0;
+	Cmp: $comp|$input1|$input2|$input3;
+	Return: $comp;
+}
+Set: bool|comp|false;
+...
+Cmp: $comp|1|==|0;
+If: $comp|Flag;
+
+If: @Cmp[1,==,0]|Flag;
+
+D:
+	Print: D;
+	Print: D;
+	Print: D;
+
+E:
+	Print: E;
+	Print: E;
+	Print: E;

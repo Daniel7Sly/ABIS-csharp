@@ -1,8 +1,12 @@
 O meu coceilho ta joando!
 
 --AÇAO:
-nomeaçao: parametro1|parametro2... ;
-					^separador de parametros
+//  |--------instruçao:-------|
+//  |                         |  
+//  Set  :    type | id | value ;
+//   ^        |       ^       |
+//tipoaçao    |--Parametros---|
+ 
 
 Variaveis: 
 Existem 3 tipos de Variaveis
@@ -11,6 +15,7 @@ Existem 3 tipos de Variaveis
 	text 	-> contem texto.
 Variaveis são indetificados por '$' seguido pelo nome. Ex: $resultado
 Em arrays é usado o '#' depois do nome para indicar o index que queremos o valor. Ex: $listaNomes#23 --> dá o valor da posição 23
+É possivel Identificar o index do array com uma variavel. Ex: $listaNumeros#$index ($index é uma variavel num)
 
 --SET
 --Define uma variavel com o tipo da variavel o nome e o valor 
@@ -32,6 +37,7 @@ Print: Value(text)\$;
 --Caso não consiga rebenta
 Read: $;
 
+--EQUALS
 --Atribui o valor dado á variavel
 Eql: $|$\value;
 
@@ -55,7 +61,9 @@ Opr: $(num)|$\value|operador*|$\value; (c = b + a)
 *operadores: + - * /
 
 --Define flag
-Flag: flag_name;
+NomeFlag:
+...
+...
 
 --Vai até á flag especificada
 Goto: flag_name;

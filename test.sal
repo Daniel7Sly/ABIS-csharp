@@ -1,93 +1,13 @@
-A:
-	Print: A;
-	Print: A;
-	Print: A;
-	Goto: C;
 
-B:
-	Print: B;
-	Print: B;
-	Print: B;
-	Goto: D;
+SetArr: num|a|10;
+SetArr: num|b|10;
 
-@Tabuada[num]{
-	Set: num|mult|1;
-	Set: num|rslt|0;
-	Set: bool|comp|false;
-	
-	Tabuada:
-		Print: $input1;
-		Print: *;
-		Print: $mult;
-		Print: =;
 
-	Opr: $rslt|$mult|*|$input1;
-	Printl: $rslt;
-	Opr: $mult|$mult|+|1;
+SetArr: num|c|{1,2,3,4,5,6,7,8,9,0};
+Print: $c#1;
 
-	Cmp: $comp|$rslt|<=|10;
-	If: $comp|Tabuada;
+Eql: $c#1|7;
 
-	Printl:;
-}
+SetArr: array|x|{$a,$b,$c};
 
-Receber Array de numeros e returnar um array com os numeros impares;
-@Impares[#num]->#num{
-	Set: num|arrLenght|0;
-	Set: num|i|0;
-	Set: num|OddQuant|0;
-
-	Set: bool|comp|false;
-	Set: num|rslt|0;
-
-	GetLength: $arrLenght|$input1;
-
-	Contar:
-		Opr: $rslt|$input1#$i|%|2;
-		Cmp: $comp|$rslt|!=|0;
-		If: $comp|ContarNext;
-		Opr: $OddQuant|$OddQuant|+|1;
-		ContarNext:
-			Opr: $i|$i|+|1;
-			Cmp: $comp|$i|<|$arrLenght;
-			If: $comp|Contar;
-
-	SetArr: num|oddarray|$OddQuant;
-	Eql: $i|0;
-	Set: num|j|0;
-
-	Preencher:
-		Opr: $rslt|$input1#$i|%|2;
-		Cmp: $comp|$rslt|!=|0;
-		If: $comp|PreencherNext;
-		Eql: $oddarray#$j|$input1#$i;
-		Opr: $j|$j|+|1;
-		PreencherNext:
-			Opr: $i|$i|+|1;
-			Cmp: $comp|$i|<|$OddQuant;
-			If: $comp|Preencher;
-	
-	Return: $oddarray;
-}
-
-@Cmp[num,text,num]->bool{
-	Set: bool|comp|0;
-	Cmp: $comp|$input1|$input2|$input3;
-	Return: $comp;
-}
-Set: bool|comp|false;
-...
-Cmp: $comp|1|==|0;
-If: $comp|Flag;
-
-If: @Cmp[1,==,0]|Flag;
-
-D:
-	Print: D;
-	Print: D;
-	Print: D;
-
-E:
-	Print: E;
-	Print: E;
-	Print: E;
+Printl: $x#2#1;

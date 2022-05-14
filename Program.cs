@@ -15,6 +15,7 @@ namespace Minha_Linguagem_Intepretador
                     //Recives and reads the file
                     StreamReader input = File.OpenText(path);
                     string comandos = input.ReadToEnd();
+                    input.Close();
                     //Console.WriteLine(comandos);
 
                     Intepretador.Intepretar(comandos);

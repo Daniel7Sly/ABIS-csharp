@@ -1,4 +1,4 @@
-[ ] 1. Add PROCESSOS
+[ ] 1. Add Blocks
 
 [x] 2. Add Arrays (fazer 9 primeiro)
 
@@ -30,7 +30,7 @@
 
 [x] 16. Add JoinText:
 
-[ ] 17. Add EQL: $#|$#
+[kinda] 17. Add EQL: $#|$#;
 
 [x] 18. Add kinda array suporte read
 
@@ -38,4 +38,6 @@
 
 [x] 20. Add Parse: converte text para a num.
 
-[ ] 21. Add $array#1#4#2.. indicar index dum array num array
+[kinda] 21. Add $array#1#4#2.. indicar index dum array num array
+
+[ ] 22. Add Metodos GetTextValue() GetNumValue()...

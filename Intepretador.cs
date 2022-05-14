@@ -1,4 +1,28 @@
-﻿using System;
+﻿/*
+MIT License
+
+Copyright (c) 2022 Daniel7Sly
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+using System;
 
 namespace IntepretadorSAL
 {
@@ -10,17 +34,6 @@ namespace IntepretadorSAL
 
         public static void Intepretar(string file_content)
         {
-            //Remove quebras de linhas e espaços
-            file_content = file_content.Replace(" ","");
-            file_content = file_content.Replace(System.Environment.NewLine,"");
-            file_content = file_content.Replace("\t","");
-
-            // System.Console.WriteLine(file_content);
-            // System.Console.WriteLine("----------");
-
-            //array com todas as instruçoes cada index contem uma instruçao
-            instrunçoes_do_Ficheiro = file_content.Split(';'); //Ultimo index pode ser vazio
-
             //Mostra todas as instruçoes recebidas
             // foreach(string instruçao in instrunçoes_do_Ficheiro)
             // {
@@ -29,17 +42,21 @@ namespace IntepretadorSAL
 
             Console.WriteLine("###################################");
 
-            //Passa as instruçoes para um lista de Açoes
-            // List<Açao> lista = new List<Açao>();
-            // foreach(string instruçao in instrunçoes)
-            // {
-            //     lista.Add(new Açao(instruçao));
-            // }
-
             //Lista de FLAGS - Flags sao definidas antes de intrepertar o codigo
             List<Flag> lista_Flags = new List<Flag>();
-            List<Açao> Açoes = new List<Açao>();
+            List<Action> Açoes = new List<Action>();
             //Com as instruções cria as Açoes e Flags
+            NewMethod(lista_Flags, Açoes);
+
+            //Cria lista de Variaveis
+            List<Variavel> lista_Variaveis = new List<Variavel>();
+
+            //intepreta as instruçoes
+            
+        }
+
+        private static void NewMethod(List<Flag> lista_Flags, List<Action> Açoes)
+        {
             for (int i = 0, j = 0; i < instrunçoes_do_Ficheiro.Length; i++)
             {
                 string[] a = instrunçoes_do_Ficheiro[i].Split(':');
@@ -48,11 +65,11 @@ namespace IntepretadorSAL
                     case 3:
                         lista_Flags.Add(new Flag(a[0], j));
 
-                        Açoes.Add(new Açao(a[1].ToUpper(), a[2].Split('|')));
+                        Açoes.Add(new Action(a[1].ToUpper(), a[2].Split('|')));
                         j++;
                         break;
                     case 2:
-                        Açoes.Add(new Açao(a[0].ToUpper(), a[1].Split('|')));
+                        Açoes.Add(new Action(a[0].ToUpper(), a[1].Split('|')));
                         j++;
                         break;
                     case 1:
@@ -60,82 +77,26 @@ namespace IntepretadorSAL
                         //Açoes.Add(new Açao());
                         break;
                     default:
-
-                        break;
-                }
-            }
-
-            //Cria lista de Variaveis
-            List<Variavel> lista_Variaveis = new List<Variavel>();
-
-            //Lista de FLAGS - Flags sao definidas antes de intrepertar o codigo
-            // for (int i = 0; i < Açoes.Length-1; i++)
-            // {
-            //     if(Açoes[i].tipoaçao == "FLAG"){
-            //         Flags(Açoes[i].parametros, lista_Flags, i);
-            //     }
-            // }
-
-            //TODO: *talvez*
-            //Lista de Processos
-
-            
-
-            //intepreta as instruçoes
-            for (int i = 0; i < Açoes.Count; i++)
-            {
-                indexAtual = i;
-                switch(Açoes[i].tipoaçao){
-                    case "SET":
-                        Set(Açoes[i].parametros, lista_Variaveis);
-                        break;
-                    case "SETARR":
-                        SetArr(lista_Variaveis,Açoes[i].parametros);
-                        break;
-                    case "PRINT":
-                        Print(lista_Variaveis,Açoes[i].parametros);
-                        break;
-                    case "PRINTL":
-                        PrintL(lista_Variaveis,Açoes[i].parametros);
-                        break;
-                    case "READ":
-                        Read(lista_Variaveis, Açoes[i].parametros);
-                        break;
-                    case "OPR":
-                        Operaçao(lista_Variaveis,Açoes[i].parametros);
-                        break;
-                    case "EQL":
-                        Equals(lista_Variaveis, Açoes[i].parametros);
-                        break;
-                    case "CMP":
-                        Comparaçao(lista_Variaveis,Açoes[i].parametros);
-                        break;
-                    // case "Flag":
-                    //     break;
-                    case "GOTO":
-                        i = Goto(Açoes[i].parametros, lista_Flags, i)-1;
-                        break;
-                    case "IF":
-                        int p = IF(lista_Flags,lista_Variaveis,Açoes[i].parametros);
-                        if(p != -1){
-                            i = p-1;
-                        }
-                        break;
-                    case "JTXT":
-                        JoinText(lista_Variaveis,Açoes[i].parametros);
-                        break; 
-                    case "GLENGTH":
-                        GetLength(lista_Variaveis,Açoes[i].parametros);
-                        break;
-                    case "PRS":
-                        Parse(lista_Variaveis,Açoes[i].parametros);
-                        break;
-                    default:
+                        //Action ignored
                         break;
                 }
             }
         }
 
+        private static void LexerParser(string file_content){
+            //Remove quebras de linhas e espaços
+            file_content = file_content.Replace(" ", "");
+            file_content = file_content.Replace(System.Environment.NewLine, "");
+            file_content = file_content.Replace("\t", "");
+
+            // System.Console.WriteLine(file_content);
+            // System.Console.WriteLine("----------");
+
+            //array com todas as instruçoes cada index contem uma instruçao
+            instrunçoes_do_Ficheiro = file_content.Split(';'); //Ultimo index pode ser vazio
+        }
+
+//---ACTIONS---
 //################################################################################################
 
         //! Isto é apenas uma solução temporaria!
@@ -519,13 +480,16 @@ namespace IntepretadorSAL
                     return;
                 }
                 else{
-                    throw new InterpretationExeption(3,"Variavel dada não é do tipo array.");
+                    if(var.type == "num"){
+                        lista_Variaveis.Add(new Array(type, name, int.Parse(var.value)));
+                    }
+                    throw new InterpretationExeption(3,"Variavel dada não é do tipo num.");
                 }
             }
             else{//Por fim verifica se é dada uma lista de valores.
-                if(parametros[2][0] == '{' && parametros[2][parametros.Length-1] == '}'){
+                if(parametros[2][0] == '{' && parametros[2][parametros[2].Length-1] == '}'){
                     string param = parametros[2];
-                    param = param.Remove('{').Remove('}');
+                    param = param.Replace("{",String.Empty).Replace("}",String.Empty);
                     
                     string[] valores = param.Split(',');
 
@@ -616,6 +580,10 @@ namespace IntepretadorSAL
             lista_Flags.Add(new Flag(parametros[0], i));
         }
 
+        private static string Return(List<Variavel> var_list, string[] parameters){
+            throw new InterpretationExeption("RETURN ACTION NOT IMPLEMENTED YET!");
+        }
+
 //#########################################################################################################
 
         /// <summary>
@@ -640,7 +608,7 @@ namespace IntepretadorSAL
                 if(var == null){
                     throw new InterpretationExeption(paramIndex, "Variavel não encontrada/definida.");
                 }
-                if(var !is Array){
+                if(!(var is Array)){
                     throw new InterpretationExeption(paramIndex, "Variavel dada não é do tipo array");
                 }
 
@@ -670,7 +638,7 @@ namespace IntepretadorSAL
                     throw new InterpretationExeption(paramIndex, "Variavel não encontrada/definida.");
                 }
 
-                if(var !is Array && isArray){
+                if(!(var is Array) && isArray){
                     throw new InterpretationExeption(paramIndex, "A variavel recebida não é um Array.");
                 }
                 if(var is Array && !isArray){
@@ -726,23 +694,43 @@ namespace IntepretadorSAL
                     string[] l = parametro.Split('#');
 
                     Variavel? var = lista_Variaveis.Find(x => x.id == l[0]);
-                    if(var == null){
+                    if (var == null){
                         throw new InterpretationExeption(paramIndex, "Variavel não encontrada/definida.");
                     }
-                    if(var !is Array){
+                    if (!(var is Array)){
                         throw new InterpretationExeption(paramIndex, "Variavel indicada não é do tipo array.");
                     }
-                    if(int.TryParse(GetValue(lista_Variaveis,l[1],paramIndex), out int index)){
-                        if(index >= ((Array)var).vars.Length){
-                            throw new InterpretationExeption(paramIndex, "Index indicado ultrapassa os limites do Array.");
+                    
+                    //Vai buscando as variaveis/arrays de acordo com 
+                    for (int i = 1; i < l.Length; i++){
+                        if (int.TryParse(GetValue(lista_Variaveis, l[i], paramIndex), out int index)){
+                            if (index >= ((Array)var).vars.Length){
+                                throw new InterpretationExeption(paramIndex, "Index indicado ultrapassa os limites do Array.");
+                            }
+                            
+                            //Variable contained in specified index($arr#i)
+                            var = ((Array)var).vars[index];
+                            
+                            //O ultimo é o valor a ser returnado
+                            if(i == l.Length-1){
+                                if(!(var is Array)){
+                                    break;
+                                }
+                                else{
+                                    throw new InterpretationExeption(paramIndex, "Expecting a value, got an array.");
+                                }
+                            }
                         }
-                        
-                        //Retorna o valor no index especificado do Array
-                        return ((Array)var).vars[index].value;
+                        else{
+                            throw new InterpretationExeption(paramIndex, "Invalid Index.");
+                        }
                     }
-                    else{
-                        throw new InterpretationExeption(paramIndex, "Index especificado invalido.");
+
+                    if (var is Array){
+                        throw new InterpretationExeption(paramIndex, "Expecting a value, got an array.");
                     }
+                    
+                    return var.value;
                 }
                 else{//Caso  seja referente a um valor duma variavel
                     Variavel? var = lista_Variaveis.Find(x => x.id == parametro);
@@ -761,9 +749,11 @@ namespace IntepretadorSAL
             }
         }
 
+//#########################################################################################################
+
         private class Variavel{
             public string type;
-            public string? id;
+            public string? id; //Variables in array dont have id
             public string value;
             
             public Variavel(string type, string name, string value){
@@ -783,7 +773,7 @@ namespace IntepretadorSAL
 
             public Array(string type, string name, string[] values) : base(type, name, "Array"){
                 Variavel[] arr = new Variavel[values.Length];
-                for(int i = 0; i < values.Length-1; i++){
+                for(int i = 0; i < values.Length; i++){
                     arr[i] = new Variavel(values[i], type);
                 }
                 
@@ -799,26 +789,106 @@ namespace IntepretadorSAL
             }
         }
 
-        // public class VariavelT<T>{
-        //     public string nome;
-        //     public T value;
+        private class Block{
+            public string name;
+            public string outputType;
+            public string[] inputTypes;
 
-        //     public Variavell(T Valor){
-        //         this.value = Valor;
-        //     }
-        // }
+            public List<Action> actions;
+            public List<Flag> flag_list;
 
-        private class Açao{
-            public string tipoaçao;
-            public string[] parametros = {}; //<-- Amamm
+            public List<Variavel> var_list;
 
-            public Açao(string açao, string[] parametros){
-                this.tipoaçao = açao;
-                this.parametros = parametros;
+            public Block(string name, string outputType, string[] inputTypes, List<Action> actions, List<Flag> flag_list){
+                this.name = name;
+                this.outputType = outputType;
+                this.inputTypes = inputTypes;
+                this.actions = actions;
+                this.flag_list = flag_list;
             }
 
-            public Açao(){
-                this.tipoaçao = "Comentario";
+
+
+
+            /// <summary>
+            ///     Runs the block instructions. A Block must always return a value.
+            /// </summary>
+            /// <returns>Returns value acording with output type.</returns>
+            public string RunBlock(string[] inputValues){
+                //Create the input variables
+                for (int i = 0; i < inputTypes.Length; i++)
+                {
+                    var_list.Add(new Variavel(inputTypes[i],"in"+i,inputValues[i]));
+                }
+
+                //Runs the intructions in the block
+                for (int i = 0; i < actions.Count; i++){
+                    indexAtual = i;
+                    switch (actions[i].actionType)
+                    {
+                        case "SET":
+                            Set(actions[i].parameters, var_list);
+                            break;
+                        case "SETARR":
+                            SetArr(var_list, actions[i].parameters);
+                            break;
+                        case "PRINT":
+                            Print(var_list, actions[i].parameters);
+                            break;
+                        case "PRINTL":
+                            PrintL(var_list, actions[i].parameters);
+                            break;
+                        case "READ":
+                            Read(var_list, actions[i].parameters);
+                            break;
+                        case "OPR":
+                            Operaçao(var_list, actions[i].parameters);
+                            break;
+                        case "EQL":
+                            Equals(var_list, actions[i].parameters);
+                            break;
+                        case "CMP":
+                            Comparaçao(var_list, actions[i].parameters);
+                            break;
+                        case "GOTO":
+                            i = Goto(actions[i].parameters, flag_list, i) - 1;
+                            break;
+                        case "IF":
+                            int p = IF(flag_list, var_list, actions[i].parameters);
+                            if (p != -1){
+                                i = p - 1;
+                            }
+                            break;
+                        case "JTXT":
+                            JoinText(var_list, actions[i].parameters);
+                            break;
+                        case "GLENGTH":
+                            GetLength(var_list, actions[i].parameters);
+                            break;
+                        case "PRS":
+                            Parse(var_list, actions[i].parameters);
+                            break;
+                        case "RETURN":
+                            return Return(var_list, actions[i].parameters);
+                        default:
+                            break;
+                    }
+                }
+                throw new InterpretationExeption("Block finished without return statement");
+            }
+        }
+
+        private class Action{
+            public string actionType;
+            public string[] parameters = {}; //<-- Amamm
+
+            public Action(string açao, string[] parameters){
+                this.actionType = açao;
+                this.parameters = parameters;
+            }
+
+            public Action(){
+                this.actionType = "Comentario";
             }
         }
 

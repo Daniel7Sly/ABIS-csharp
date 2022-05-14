@@ -24,6 +24,7 @@ Set: type|nome|value;
 --SETARR
 --Define um array do tipo de dado, com os valores/tamanho 
 SetArr: type|nome|{1,2,3,4}; 		<-- array com tamanho 4 e valores predefinidos
+SetArr: type|nome|$(num);			<-- array de tamanho do numero da variavel, sem valores predefinidos
 SetArr: type|nome|10;				<-- array de tamanho 10 sem valores predefinidos
 SetArr: type|nome|{amam, $b, $c#1};	<-- array de tamanho 3 com valores predefinidos
 
@@ -58,7 +59,7 @@ GLength: $(num)|$#;
 
 --Faz Operaçoes com as variaveis\valores dados
 Opr: $(num)|$\value|operador*|$\value; (c = b + a)
-*operadores: + - * /
+*operadores: + - * / %
 
 --Define flag
 NomeFlag:
@@ -78,16 +79,68 @@ If: $(bool)|flag_name;
 
 ################################################################
 
---Processos
-nome da variavel de entrada $INPUT
-
-
-...
-
-Def: TemPares|#int -> bool|{
+@Tabuada[num]{
+	Set: num|mult|1;
+	Set: num|rslt|0;
+	Set: bool|comp|false;
 	
+	Tabuada:
+		Print: $input1;
+		Print: *;
+		Print: $mult;
+		Print: =;
 
+	Opr: $rslt|$mult|*|$input1;
+	Printl: $rslt;
+	Opr: $mult|$mult|+|1;
 
+	Cmp: $comp|$rslt|<=|10;
+	If: $comp|Tabuada;
+
+	Printl:;
 }
 
-...
+Receber Array de numeros e returnar um array com os numeros impares;
+@Impares[#num]->#num{
+	Set: num|arrLenght|0;
+	Set: num|i|0;
+	Set: num|OddQuant|0;
+
+	Set: bool|comp|false;
+	Set: num|rslt|0;
+
+	GetLength: $arrLenght|$input1;
+
+	Contar:
+		Opr: $rslt|$input1#$i|%|2;
+		Cmp: $comp|$rslt|!=|0;
+		If: $comp|ContarNext;
+		Opr: $OddQuant|$OddQuant|+|1;
+		ContarNext:
+			Opr: $i|$i|+|1;
+			Cmp: $comp|$i|<|$arrLenght;
+			If: $comp|Contar;
+
+	SetArr: num|oddarray|$OddQuant;
+	Eql: $i|0;
+	Set: num|j|0;
+
+	Preencher:
+		Opr: $rslt|$input1#$i|%|2;
+		Cmp: $comp|$rslt|!=|0;
+		If: $comp|PreencherNext;
+		Eql: $oddarray#$j|$input1#$i;
+		Opr: $j|$j|+|1;
+		PreencherNext:
+			Opr: $i|$i|+|1;
+			Cmp: $comp|$i|<|$OddQuant;
+			If: $comp|Preencher;
+	
+	Return: $oddarray;
+}
+
+@Cmp[num,text,num]->bool{
+	Set: bool|comp|0;
+	Cmp: $comp|$input1|$input2|$input3;
+	Return: $comp;
+}

@@ -1,4 +1,6 @@
-[ ] 1. Add Blocks
+[ ] IMPORTANT FIX INTERPRETATION EXCEPTION 
+
+[kinda] 1. Add Blocks
 
 [x] 2. Add Arrays (fazer 9 primeiro)
 

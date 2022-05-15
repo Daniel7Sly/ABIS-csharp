@@ -576,7 +576,11 @@ namespace IntepretadorSAL
         }
 
         private static string Return(List<Variavel> var_list, string[] parameters){
-            throw new InterpretationExeption("RETURN ACTION NOT IMPLEMENTED YET!");
+            if(parameters.Length != 1){
+                throw new InterpretationExeption("Invalid param quantity.");
+            }
+
+            return parameters[0];
         }
 
 //#########################################################################################################
@@ -984,5 +988,4 @@ namespace IntepretadorSAL
             //     }
         }
     }
-    
 }

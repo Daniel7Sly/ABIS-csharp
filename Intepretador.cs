@@ -32,56 +32,26 @@ namespace IntepretadorSAL
         static string[] instrunçoes_do_Ficheiro = {};
         static int indexAtual;
 
+        static List<Block> block_list = new List<Block>();
+
         public static void Intepretar(string file_content)
         {
-            //Mostra todas as instruçoes recebidas
-            // foreach(string instruçao in instrunçoes_do_Ficheiro)
-            // {
-            //     Console.WriteLine("-"+instruçao);
-            // }
+            LexerParser(file_content);
 
-            Console.WriteLine("###################################");
-
-            //Lista de FLAGS - Flags sao definidas antes de intrepertar o codigo
-            List<Flag> lista_Flags = new List<Flag>();
-            List<Action> Açoes = new List<Action>();
-            //Com as instruções cria as Açoes e Flags
-            NewMethod(lista_Flags, Açoes);
-
-            //Cria lista de Variaveis
-            List<Variavel> lista_Variaveis = new List<Variavel>();
-
-            //intepreta as instruçoes
-            
-        }
-
-        private static void NewMethod(List<Flag> lista_Flags, List<Action> Açoes)
-        {
-            for (int i = 0, j = 0; i < instrunçoes_do_Ficheiro.Length; i++)
-            {
-                string[] a = instrunçoes_do_Ficheiro[i].Split(':');
-                switch (a.Length)
-                {
-                    case 3:
-                        lista_Flags.Add(new Flag(a[0], j));
-
-                        Açoes.Add(new Action(a[1].ToUpper(), a[2].Split('|')));
-                        j++;
-                        break;
-                    case 2:
-                        Açoes.Add(new Action(a[0].ToUpper(), a[1].Split('|')));
-                        j++;
-                        break;
-                    case 1:
-                        //não faz nada because seria um comentario
-                        //Açoes.Add(new Açao());
-                        break;
-                    default:
-                        //Action ignored
-                        break;
-                }
+            Block? mainBlock = block_list.Find((x) => x.name == "main");
+            if(mainBlock != null){
+                Intepretar(mainBlock);
             }
+
+            throw new InterpretationExeption("No 'main' block found");
         }
+
+        private static void Intepretar(Block mainBlock){
+            string[] noInputVars = {};
+            mainBlock.RunBlock(noInputVars);
+        }
+
+        
 
         private static void LexerParser(string file_content){
             //Remove quebras de linhas e espaços
@@ -89,11 +59,36 @@ namespace IntepretadorSAL
             file_content = file_content.Replace(System.Environment.NewLine, "");
             file_content = file_content.Replace("\t", "");
 
-            // System.Console.WriteLine(file_content);
-            // System.Console.WriteLine("----------");
+            
 
-            //array com todas as instruçoes cada index contem uma instruçao
-            instrunçoes_do_Ficheiro = file_content.Split(';'); //Ultimo index pode ser vazio
+            //Assumes that the blocks are build properly
+            //@Abis[..:..;..:..]->..{-----}@Block[..:..;..:..]->..{-----}
+            string[] blocks = file_content.Split("}");
+
+            for (int i = 0; i < blocks.Length; i++){
+                if(i == blocks.Length-1){
+                    break;
+                }
+
+                try{
+                    string blockHead = blocks[i].Split("{")[0];         //@Block[..:..;..:..]->..
+                    string blockInstructions = blocks[i].Split("{")[1]; //-----
+
+                    string[] blockHeadSplit = blockHead.Split("[");
+                    string blockName = "@"+blockHeadSplit[0].Split("@")[1];
+
+                    string[] inputOutput = blockHeadSplit[1].Split("]->"); //..:..;..:..   ]->   ..
+
+                    string[] inputVars = inputOutput[0].Split(";");
+
+                    string outputType = inputOutput[1];
+                    
+                    block_list.Add(new Block(blockName, outputType, inputVars,blockInstructions));
+                }
+                catch (System.Exception){
+                    throw new InterpretationExeption("Error Creating "+i+"º Block");
+                }
+            }
         }
 
 //---ACTIONS---
@@ -678,20 +673,20 @@ namespace IntepretadorSAL
         /// 
         /// </summary>
         /// <param name="lista_Variaveis"></param>
-        /// <param name="parametro"></param>
+        /// <param name="param"></param>
         /// <param name="paramIndex"></param>
         /// <returns>Returns the value in 'parametro'</returns>
-        private static string GetValue(List<Variavel> lista_Variaveis, string parametro, int paramIndex){
-            if(parametro.Length == 0){
-                return parametro;
+        private static string GetValue(List<Variavel> lista_Variaveis, string param, int paramIndex){
+            if(param.Length == 0){
+                return param;
             }
             
             //Verifica se o parametro é variavel
-            if(parametro[0] == '$'){
+            if(param[0] == '$'){
                 //Verifica se o parametro é referente a um valor dum array
-                if(parametro.Contains('#')){
+                if(param.Contains('#')){
                     //separa o nome do array do index
-                    string[] l = parametro.Split('#');
+                    string[] l = param.Split('#');
 
                     Variavel? var = lista_Variaveis.Find(x => x.id == l[0]);
                     if (var == null){
@@ -733,7 +728,7 @@ namespace IntepretadorSAL
                     return var.value;
                 }
                 else{//Caso  seja referente a um valor duma variavel
-                    Variavel? var = lista_Variaveis.Find(x => x.id == parametro);
+                    Variavel? var = lista_Variaveis.Find(x => x.id == param);
                     if(var == null){
                         throw new InterpretationExeption(paramIndex, "Variavel não encontrada/definida.");
                     }
@@ -744,8 +739,22 @@ namespace IntepretadorSAL
                     return var.value;
                 }
             }
-            else{//Caso não seja variavel
-                return parametro;
+            else if(param[0] == '@'){
+                if(!param.Contains('[') && param[param.Length-1] != ']'){
+                    throw new InterpretationExeption(paramIndex,"Invalid Block syntax");
+                }
+
+                Block? block = block_list.Find((x) => x.name == param.Split("[")[0]);
+                if(block == null){
+                    throw new InterpretationExeption(paramIndex,"Block not found");
+                }
+
+                string[] inputParams = param.Split("[")[1].Split("]")[0].Split(";");
+
+                return block.RunBlock(inputParams);
+            }
+            else{//Caso não seja variavel ou block
+                return param;
             }
         }
 
@@ -789,26 +798,35 @@ namespace IntepretadorSAL
             }
         }
 
+        // public enum Type
+        // {
+        //     num,
+        //     text,
+        //     boool
+        // }
+
         private class Block{
             public string name;
             public string outputType;
-            public string[] inputTypes;
+            public string[] inputVarsAndTypes;
 
             public List<Action> actions;
             public List<Flag> flag_list;
 
             public List<Variavel> var_list;
 
-            public Block(string name, string outputType, string[] inputTypes, List<Action> actions, List<Flag> flag_list){
+            public Block(string name, string outputType, string[] inputVarsAndTypes, string instructions){
                 this.name = name;
                 this.outputType = outputType;
-                this.inputTypes = inputTypes;
-                this.actions = actions;
-                this.flag_list = flag_list;
+                this.inputVarsAndTypes = inputVarsAndTypes;
+
+                this.var_list = new List<Variavel>();
+
+                this.flag_list = new List<Flag>();
+                this.actions = new List<Action>();
+
+                ParseIntructionsToBlockActions(this.flag_list, this.actions);
             }
-
-
-
 
             /// <summary>
             ///     Runs the block instructions. A Block must always return a value.
@@ -816,9 +834,12 @@ namespace IntepretadorSAL
             /// <returns>Returns value acording with output type.</returns>
             public string RunBlock(string[] inputValues){
                 //Create the input variables
-                for (int i = 0; i < inputTypes.Length; i++)
+                for (int i = 0; i < inputVarsAndTypes.Length; i++)
                 {
-                    var_list.Add(new Variavel(inputTypes[i],"in"+i,inputValues[i]));
+                    string[] inputs = inputVarsAndTypes[i].Split(":");
+                    string[] parameters = {inputs[0], inputs[1], inputValues[i]};
+
+                    Set(parameters,this.var_list);
                 }
 
                 //Runs the intructions in the block
@@ -874,7 +895,37 @@ namespace IntepretadorSAL
                             break;
                     }
                 }
+
+                if(this.name == "main"){
+                    return "";
+                }
+
                 throw new InterpretationExeption("Block finished without return statement");
+            }
+
+            private static void ParseIntructionsToBlockActions(List<Flag> lista_Flags, List<Action> Açoes){
+                for (int i = 0, j = 0; i < instrunçoes_do_Ficheiro.Length; i++){
+                    string[] a = instrunçoes_do_Ficheiro[i].Split(':');
+                    switch (a.Length){
+                        case 3:
+                            lista_Flags.Add(new Flag(a[0], j));
+
+                            Açoes.Add(new Action(a[1].ToUpper(), a[2].Split('|')));
+                            j++;
+                            break;
+                        case 2:
+                            Açoes.Add(new Action(a[0].ToUpper(), a[1].Split('|')));
+                            j++;
+                            break;
+                        case 1:
+                            //não faz nada because seria um comentario
+                            //Açoes.Add(new Açao());
+                            break;
+                        default:
+                            //Action ignored
+                            break;
+                    }
+                }
             }
         }
 

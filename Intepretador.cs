@@ -38,12 +38,12 @@ namespace IntepretadorSAL
         {
             LexerParser(file_content);
 
-            Block? mainBlock = block_list.Find((x) => x.name == "main");
-            if(mainBlock != null){
-                Intepretar(mainBlock);
+            Block? mainBlock = block_list.Find((x) => x.name == "@main");
+            if(mainBlock == null){
+                throw new InterpretationExeption("No 'main' block found");
             }
 
-            throw new InterpretationExeption("No 'main' block found");
+            Intepretar(mainBlock);
         }
 
         private static void Intepretar(Block mainBlock){
@@ -151,10 +151,10 @@ namespace IntepretadorSAL
             if(var_result.type != "bool"){
                 throw new InterpretationExeption(1,"Valor a ser atribuido a variavel não booleana.");
             }
-            
+            string comparator = GetValue(lista_Variaveis, parametros[2], 3);
             string tipo;
             //Valida 3º parametro comparador
-            switch(parametros[2]){
+            switch(comparator){
                 case "<": case ">": case "<=": case ">=":
                     tipo = "num";
                     break;
@@ -181,60 +181,60 @@ namespace IntepretadorSAL
                 float numval1 = a;
                 float numval2 = b;
                 //Faz a comparação de acordo com o comparador dado
-                switch(parametros[2]){
+                switch(comparator){
                     case "<":
                         if(numval1 < numval2){
-                            var_result.value = "true";
+                            var_result.value = "True";
                         }
                         else{
-                            var_result.value = "false";
+                            var_result.value = "False";
                         }
                         break;
                     case ">":
                         if(numval1 > numval2){
-                            var_result.value = "true";
+                            var_result.value = "True";
                         }
                         else{
-                            var_result.value = "false";
+                            var_result.value = "False";
                         }
                         break;
                     case "<=":
                         if(numval1 <= numval2){
-                            var_result.value = "true";
+                            var_result.value = "True";
                         }
                         else{
-                            var_result.value = "false";
+                            var_result.value = "False";
                         }
                         break;
                     case ">=":
                         if(numval1 >= numval2){
-                            var_result.value = "true";
+                            var_result.value = "True";
                         }
                         else{
-                            var_result.value = "false";
+                            var_result.value = "False";
                         }
                         break;
                     default:
-                        //não é suposto vir pra qui
+                        throw new InterpretationExeption("A place where u should not be.");
                         break;
                 }
             }
             else{
-                switch(parametros[2]){
+                switch(comparator){
                     case "==":
                         if(valor1 == valor2){
-                            var_result.value = "true";
+                            var_result.value = "True";
                         }
                         else{
-                            var_result.value = "false";
+                            var_result.value = "False";
                         }
                         break;
                     case "!=":
                         if(valor1 != valor2){
-                            var_result.value = "true";
+                            var_result.value = "True";
                         }
                         else{
-                            var_result.value = "false";
+                            var_result.value = "False";
                         }
                         break;
                 }
@@ -362,9 +362,9 @@ namespace IntepretadorSAL
                 throw new InterpretationExeption("Parametros em faltas.");
             }
             //Recebe e Valida a variavel do 1º parametro
-            Variavel? var = GetVariavel(lista_Variaveis, parametros[0], 1, false);
-            if(var.type != "bool"){
-                throw new InterpretationExeption(1,"Variavel de tipo invalido");
+            string value = GetValue(lista_Variaveis, parametros[0], 1);
+            if(value != "True" && value != "False"){
+                throw new InterpretationExeption(1,"Expected Bool value");
             }
             // if(var is Array){
             //     throw new InterpretationExeption(1,"Não é possivel ler valor de um array sem index especificado");
@@ -377,7 +377,7 @@ namespace IntepretadorSAL
             }
 
             //Retorna a posiçao da flag
-            if(var.value == "True"){
+            if(value == "True"){
                 return flag.posiçao;
             }
             //Retorna -1 caso seja false
@@ -580,7 +580,7 @@ namespace IntepretadorSAL
                 throw new InterpretationExeption("Invalid param quantity.");
             }
 
-            return parameters[0];
+            return GetValue(var_list, parameters[0], 1);
         }
 
 //#########################################################################################################
@@ -676,11 +676,11 @@ namespace IntepretadorSAL
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="lista_Variaveis"></param>
+        /// <param name="var_list"></param>
         /// <param name="param"></param>
         /// <param name="paramIndex"></param>
         /// <returns>Returns the value in 'parametro'</returns>
-        private static string GetValue(List<Variavel> lista_Variaveis, string param, int paramIndex){
+        private static string GetValue(List<Variavel> var_list, string param, int paramIndex){
             if(param.Length == 0){
                 return param;
             }
@@ -692,7 +692,7 @@ namespace IntepretadorSAL
                     //separa o nome do array do index
                     string[] l = param.Split('#');
 
-                    Variavel? var = lista_Variaveis.Find(x => x.id == l[0]);
+                    Variavel? var = var_list.Find(x => x.id == l[0]);
                     if (var == null){
                         throw new InterpretationExeption(paramIndex, "Variavel não encontrada/definida.");
                     }
@@ -702,7 +702,7 @@ namespace IntepretadorSAL
                     
                     //Vai buscando as variaveis/arrays de acordo com 
                     for (int i = 1; i < l.Length; i++){
-                        if (int.TryParse(GetValue(lista_Variaveis, l[i], paramIndex), out int index)){
+                        if (int.TryParse(GetValue(var_list, l[i], paramIndex), out int index)){
                             if (index >= ((Array)var).vars.Length){
                                 throw new InterpretationExeption(paramIndex, "Index indicado ultrapassa os limites do Array.");
                             }
@@ -732,7 +732,7 @@ namespace IntepretadorSAL
                     return var.value;
                 }
                 else{//Caso  seja referente a um valor duma variavel
-                    Variavel? var = lista_Variaveis.Find(x => x.id == param);
+                    Variavel? var = var_list.Find(x => x.id == param);
                     if(var == null){
                         throw new InterpretationExeption(paramIndex, "Variavel não encontrada/definida.");
                     }
@@ -753,7 +753,12 @@ namespace IntepretadorSAL
                     throw new InterpretationExeption(paramIndex,"Block not found");
                 }
 
-                string[] inputParams = param.Split("[")[1].Split("]")[0].Split(";");
+                string[] inputParams = param.Split("[")[1].Split("]")[0].Split(",");
+
+                for (int i = 0; i < inputParams.Length; i++)
+                {
+                    inputParams[i] = GetValue(var_list, inputParams[i], paramIndex);
+                }
 
                 return block.RunBlock(inputParams);
             }
@@ -829,7 +834,7 @@ namespace IntepretadorSAL
                 this.flag_list = new List<Flag>();
                 this.actions = new List<Action>();
 
-                ParseIntructionsToBlockActions(this.flag_list, this.actions);
+                ParseIntructionsToBlockActions(this.flag_list, this.actions, instructions);
             }
 
             /// <summary>
@@ -837,14 +842,17 @@ namespace IntepretadorSAL
             /// </summary>
             /// <returns>Returns value acording with output type.</returns>
             public string RunBlock(string[] inputValues){
-                //Create the input variables
-                for (int i = 0; i < inputVarsAndTypes.Length; i++)
-                {
-                    string[] inputs = inputVarsAndTypes[i].Split(":");
-                    string[] parameters = {inputs[0], inputs[1], inputValues[i]};
+                if(inputValues.Length != 0){
+                    //Create the input variables
+                    for (int i = 0; i < inputVarsAndTypes.Length; i++)
+                    {
+                        string[] inputs = inputVarsAndTypes[i].Split(":");
+                        string[] parameters = {inputs[0], inputs[1], inputValues[i]};
 
-                    Set(parameters,this.var_list);
+                        Set(parameters,this.var_list);
+                    }
                 }
+
 
                 //Runs the intructions in the block
                 for (int i = 0; i < actions.Count; i++){
@@ -881,7 +889,7 @@ namespace IntepretadorSAL
                         case "IF":
                             int p = IF(flag_list, var_list, actions[i].parameters);
                             if (p != -1){
-                                i = p - 1;
+                                i = p -1;
                             }
                             break;
                         case "JTXT":
@@ -900,16 +908,17 @@ namespace IntepretadorSAL
                     }
                 }
 
-                if(this.name == "main"){
+                if(this.name == "@main"){
                     return "";
                 }
 
                 throw new InterpretationExeption("Block finished without return statement");
             }
 
-            private static void ParseIntructionsToBlockActions(List<Flag> lista_Flags, List<Action> Açoes){
-                for (int i = 0, j = 0; i < instrunçoes_do_Ficheiro.Length; i++){
-                    string[] a = instrunçoes_do_Ficheiro[i].Split(':');
+            private static void ParseIntructionsToBlockActions(List<Flag> lista_Flags, List<Action> Açoes, string instructions){
+                string[] actions = instructions.Split(";");
+                for (int i = 0, j = 0; i < actions.Length; i++){
+                    string[] a = actions[i].Split(':');
                     switch (a.Length){
                         case 3:
                             lista_Flags.Add(new Flag(a[0], j));
@@ -960,8 +969,8 @@ namespace IntepretadorSAL
         [System.Serializable]
         public class InterpretationExeption : System.Exception{
             //public InterpretationExeption() {}
-            public InterpretationExeption(string message) : base(MontarMensagemErro(message)) {}
-            public InterpretationExeption(int parametro, string message) : base(MontarMensagemErro(parametro, message)) {}
+            public InterpretationExeption(string message) : base(message) {}
+            public InterpretationExeption(int parametro, string message) : base(parametro+message) {}
 
             //Monta uma mesagem que mostra a linha onde ocorreu o erro com as 3 linhas anteriores e a menssagem de erro;
             private static string MontarMensagemErro(int parametro, string mensagem){

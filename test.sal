@@ -1,13 +1,19 @@
+@Cmp[num:input1; text:comparator; num:input2]->bool{
+    Set: bool|comp|false;
+    Cmp: $comp|$input1|$comparator|$input2;
+    Return: $comp;
+}
 
-SetArr: num|a|10;
-SetArr: num|b|10;
+@main[]->{
+    Set: num|a|20;
+    Set: num|b|10;
 
+    If: @Cmp[$a,<,$b]|PrintC;
 
-SetArr: num|c|{1,2,3,4,5,6,7,8,9,0};
-Print: $c#1;
-
-Eql: $c#1|7;
-
-SetArr: array|x|{$a,$b,$c};
-
-Printl: $x#2#1;
+    PrintA:
+        Printl: A;
+    PrintB:
+        PrintL: B;
+    PrintC:
+        PrintL: C;
+}

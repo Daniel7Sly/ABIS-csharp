@@ -21,7 +21,7 @@ namespace Minha_Linguagem_Intepretador
                     Intepretador.Intepretar(comandos);
 
                     //Outputs
-                    Console.Read();
+                    Console.WriteLine("\n\nProgram finished without errors");
                 }
                 else
                 {

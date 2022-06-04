@@ -1,7 +1,7 @@
 ﻿/*
 MIT License
 
-Copyright (c) 2022 Daniel7Sly
+Copyright (c) 2022 Daniel Tomás <dani7sly12345@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,7 @@ using System;
 
 namespace IntepretadorSAL
 {
-    internal static class Intepretador
+    public static class Intepretador
     {
         //São definidas globalmente para serem usadas nas exeçoes
         static string[] instrunçoes_do_Ficheiro = {};
@@ -216,7 +216,6 @@ namespace IntepretadorSAL
                         break;
                     default:
                         throw new InterpretationExeption("A place where u should not be.");
-                        break;
                 }
             }
             else{
@@ -359,8 +358,9 @@ namespace IntepretadorSAL
 
         private static int IF(List<Flag> lista_Flags, List<Variavel> lista_Variaveis, string[] parametros){
             if(parametros.Length != 2){
-                throw new InterpretationExeption("Parametros em faltas.");
+                throw new InterpretationExeption("Expected 3 parameters.");
             }
+
             //Recebe e Valida a variavel do 1º parametro
             string value = GetValue(lista_Variaveis, parametros[0], 1);
             if(value != "True" && value != "False"){
@@ -381,6 +381,34 @@ namespace IntepretadorSAL
                 return flag.posiçao;
             }
             //Retorna -1 caso seja false
+            return -1;
+        }
+
+        private static int IFN(List<Flag> lista_Flags, List<Variavel> lista_Variaveis, string[] parametros){
+            if(parametros.Length != 2){
+                throw new InterpretationExeption("Expected 3 parameters.");
+            }
+
+            //Recebe e Valida a variavel do 1º parametro
+            string value = GetValue(lista_Variaveis, parametros[0], 1);
+            if(value != "True" && value != "False"){
+                throw new InterpretationExeption(1,"Expected Bool value");
+            }
+            // if(var is Array){
+            //     throw new InterpretationExeption(1,"Não é possivel ler valor de um array sem index especificado");
+            // }
+
+            //Valida a flag 2º parametro
+            Flag? flag = lista_Flags.Find(x => x.nome == parametros[1]);
+            if(flag == null){
+                throw new InterpretationExeption(2,"Flag não encontrada/definida");
+            }
+
+            //Retorna a posiçao da flag
+            if(value == "False"){
+                return flag.posiçao;
+            }
+            //Retorna -1 caso seja true
             return -1;
         }
 
@@ -887,9 +915,15 @@ namespace IntepretadorSAL
                             i = Goto(actions[i].parameters, flag_list, i) - 1;
                             break;
                         case "IF":
-                            int p = IF(flag_list, var_list, actions[i].parameters);
-                            if (p != -1){
-                                i = p -1;
+                            int p1 = IF(flag_list, var_list, actions[i].parameters);
+                            if (p1 != -1){
+                                i = p1 -1;
+                            }
+                            break;
+                        case "IFN":
+                            int p2 = IFN(flag_list, var_list, actions[i].parameters);
+                            if (p2 != -1){
+                                i = p2 -1;
                             }
                             break;
                         case "JTXT":

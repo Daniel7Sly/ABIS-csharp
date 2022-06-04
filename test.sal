@@ -8,7 +8,7 @@
     Set: num|a|20;
     Set: num|b|10;
 
-    If: @Cmp[$a,<,$b]|PrintC;
+    If: @Cmp[$a,>,$b]|PrintC;
 
     PrintA:
         Printl: A;

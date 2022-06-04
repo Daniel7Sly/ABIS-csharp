@@ -1,7 +1,7 @@
 @Cmp[num:input1; text:comparator; num:input2]->bool{
     Set: bool|comp|false;
     Cmp: $comp|$input1|$comparator|$input2;
-    Return: $comp;
+    Return: ;
 }
 
 @main[]->{

@@ -29,13 +29,13 @@ namespace IntepretadorSAL
     public static class Intepretador
     {
         //São definidas globalmente para serem usadas nas exeçoes
-        static string[] instrunçoes_do_Ficheiro = {};
+        //static string[] instrunçoes_do_Ficheiro = {};
         static int indexAtual;
+        static Stack<Block> blockStack = new Stack<Block>();
 
         static List<Block> block_list = new List<Block>();
 
-        public static void Intepretar(string file_content)
-        {
+        public static void Intepretar(string file_content){
             LexerParser(file_content);
 
             Block? mainBlock = block_list.Find((x) => x.name == "@main");
@@ -870,6 +870,7 @@ namespace IntepretadorSAL
             /// </summary>
             /// <returns>Returns value acording with output type.</returns>
             public string RunBlock(string[] inputValues){
+                blockStack.Push(this);
                 if(inputValues.Length != 0){
                     //Create the input variables
                     for (int i = 0; i < inputVarsAndTypes.Length; i++)
@@ -1003,26 +1004,44 @@ namespace IntepretadorSAL
         [System.Serializable]
         public class InterpretationExeption : System.Exception{
             //public InterpretationExeption() {}
-            public InterpretationExeption(string message) : base(message) {}
-            public InterpretationExeption(int parametro, string message) : base(parametro+message) {}
+            public InterpretationExeption(string message) : base(MontarMensagemErro(message)) {}
+            public InterpretationExeption(int parametro, string message) : base(MontarMensagemErro(parametro,message)) {}
 
             //Monta uma mesagem que mostra a linha onde ocorreu o erro com as 3 linhas anteriores e a menssagem de erro;
             private static string MontarMensagemErro(int parametro, string mensagem){
+                string stackTrace = "Block Trace: ";
+                Block currentBlock = blockStack.Peek();
+                foreach(Block block in blockStack){
+                    stackTrace += block.name +" <- ";
+                }
                 string ultimas3Instruçoes = "";
                 if(indexAtual >= 3)
-                    ultimas3Instruçoes = instrunçoes_do_Ficheiro[indexAtual-3]+'\n'+instrunçoes_do_Ficheiro[indexAtual-2]+'\n'+instrunçoes_do_Ficheiro[indexAtual-1]+'\n';
-                string instruçaoComErro = instrunçoes_do_Ficheiro[indexAtual];
-                return ("\n \n"+ultimas3Instruçoes + instruçaoComErro + " <-- \n Falha no: "+parametro+"º parametro.\n" + mensagem);
+                    ultimas3Instruçoes = GetBlockInstruction(currentBlock,indexAtual-3)+"\n"+GetBlockInstruction(currentBlock,indexAtual-2)+"\n"+GetBlockInstruction(currentBlock,indexAtual-1)+"\n";
+                string instruçaoComErro = GetBlockInstruction(currentBlock,indexAtual);
+                return ("\n \n"+stackTrace+"\n"+ultimas3Instruçoes + instruçaoComErro + " <-- \n Falha no: "+parametro+"º parametro.\n" + mensagem);
             }
 
             private static string MontarMensagemErro(string mensagem){
+                string stackTrace = "Block Trace: ";
+                Block currentBlock = blockStack.Peek();
+                foreach(Block block in blockStack){
+                    stackTrace += block.name +" <- ";
+                }
                 string ultimas3Instruçoes = "";
                 if(indexAtual >= 3)
-                    ultimas3Instruçoes = instrunçoes_do_Ficheiro[indexAtual-3]+'\n'+instrunçoes_do_Ficheiro[indexAtual-2]+'\n'+instrunçoes_do_Ficheiro[indexAtual-1]+'\n';
-                string instruçaoComErro = instrunçoes_do_Ficheiro[indexAtual];
-                return ("\n \n"+ultimas3Instruçoes + instruçaoComErro + " <-- \n \n" + mensagem);
+                    ultimas3Instruçoes = GetBlockInstruction(currentBlock,indexAtual-3)+"\n"+GetBlockInstruction(currentBlock,indexAtual-2)+"\n"+GetBlockInstruction(currentBlock,indexAtual-1)+"\n";
+                string instruçaoComErro = GetBlockInstruction(currentBlock,indexAtual);
+                return ("\n \n"+stackTrace+"\n"+ultimas3Instruçoes + instruçaoComErro + " <-- \n \n" + mensagem+"\n------------------------------------------------");
             }
 
+            private static string GetBlockInstruction(Block block, int index){
+                string paramss = "";
+                foreach(string paramm in block.actions[index].parameters){
+                    paramss += paramm+"|";
+                }
+                paramss = paramss.Remove(paramss.Length-1) + ";";
+                return block.actions[index].actionType+":"+paramss;
+            }
             // public InterpretationExeption(string message, System.Exception inner) : base(MontarMensagemErro(message), inner) { }
             // protected InterpretationExeption(
             //     System.Runtime.Serialization.SerializationInfo info,

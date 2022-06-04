@@ -6,6 +6,6 @@ This interpreter is supposed to be used in projects were you would like to give 
 
 This is going to be my PAP;
 
-# Instruções
+# Instructions
 
 Intruction Description [here](https://github.com/Daniel7Sly/SAL/blob/master/Linguagem%20minha.txt).

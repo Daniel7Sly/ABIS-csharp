@@ -24,9 +24,9 @@ SOFTWARE.
 
 using System;
 
-namespace IntepretadorSAL
+namespace AbisInterpreter
 {
-    public static class Intepretador
+    public static class Interpreter
     {
         //São definidas globalmente para serem usadas nas exeçoes
         //static string[] instrunçoes_do_Ficheiro = {};
@@ -790,6 +790,157 @@ namespace IntepretadorSAL
 
                 return block.RunBlock(inputParams);
             }
+            else if(param[0] == '('){//caso seja operação
+                //INPUT: (($a+$b)+($z+($x+$y)))
+                param = param.Remove(0, 1);
+                param = param.Remove(param.Length-1, 1);
+                // -> ($a+$b)+($z+($x+$y))
+                string opr = "+-*/%<>=!";
+                int splitChar = 0;
+                for (int i = 0, j = 0; i < param.Length; i++){
+                    if(param[i] == '('){
+                        j++;
+                    }
+                    else if(opr.Contains(param[i]) && j == 0){
+                        splitChar = i;
+                        break;
+                    }
+                    else if(param[i] == ')'){
+                        j--;
+                    }
+                }
+
+                string value1 = param.Substring(0,splitChar);
+                string value2 = param.Substring(splitChar+1);
+                value1 = GetValue(var_list, value1, paramIndex);
+                value2 = GetValue(var_list, value2, paramIndex);
+
+                string operatorr = param[splitChar].ToString();
+
+                string result = "";
+                
+                const string oprNum = "+-/*%";
+                const string oprComp = "<=>=!";
+                if(oprComp.Contains(operatorr)){
+                    string type = "";
+
+                    switch(operatorr){
+                        case "<": case ">": case "<=": case ">=":
+                            type = "num";
+                            break;
+                        case "=": case "!":
+                            type = "text";
+                            break;
+                        default:
+                            throw new InterpretationExeption(paramIndex,"Comparador invalido");
+                    }
+
+                    if(type == "num"){
+                        if(!float.TryParse(value1, out float a)){
+                            throw new InterpretationExeption(paramIndex,"Tipo de dado invalido para comparação pedida.");
+                        }
+                        if(!float.TryParse(value2, out float b)){
+                            throw new InterpretationExeption(paramIndex,"Tipo de dado invalido para comparação pedida.");
+                        }
+                        float numval1 = a;
+                        float numval2 = b;
+
+
+                        switch (operatorr)
+                        {
+                            case "<":
+                                if(numval1 < numval2){
+                                    result = "True";
+                                }
+                                else{
+                                    result= "False";
+                                }
+                                break;
+                            case ">":
+                                if(numval1 > numval2){
+                                    result = "True";
+                                }
+                                else{
+                                    result = "False";
+                                }
+                                break;
+                            case "<=":
+                                if(numval1 <= numval2){
+                                    result = "True";
+                                }
+                                else{
+                                    result = "False";
+                                }
+                                break;
+                            case ">=":
+                                if(numval1 >= numval2){
+                                    result = "True";
+                                }
+                                else{
+                                    result = "False";
+                                }
+                                break;
+                            default:
+                                throw new InterpretationExeption("A place where u should not be.");
+                        }
+                    }
+                    else{//"text"
+                        switch(operatorr){
+                            case "=":
+                                if(value1 == value2){
+                                    result = "True";
+                                }
+                                else{
+                                    result = "False";
+                                }
+                                break;
+                            case "!":
+                                if(value1 != value2){
+                                    result = "True";
+                                }
+                                else{
+                                    result = "False";
+                                }
+                                break;
+                        }
+                    }
+                }
+                else if(oprNum.Contains(operatorr)){
+                    //Verifica se os valores são numeros
+                    if(!float.TryParse(value1, out float a)){
+                        throw new InterpretationExeption(2,"Valor do parametro não é do tipo num.");
+                    }
+                    if(!float.TryParse(value2, out float b)){
+                        throw new InterpretationExeption(2,"Valor do parametro não é do tipo num.");
+                    }
+
+                    //Operaçao
+                    switch(operatorr){
+                        case "+":
+                            result = (a + b).ToString();
+                            break;
+                        case "-":
+                            result = (a - b).ToString();
+                            break;
+                        case "*":
+                            result = (a * b).ToString();
+                            break;
+                        case "/":
+                            result = (a / b).ToString();
+                            break;
+                        case "%":
+                            result = (a % b).ToString();
+                            break;
+                        default:
+                            throw new InterpretationExeption(paramIndex,"Invalid Operator.");
+                    }
+                }
+                else{
+                    throw new InterpretationExeption(paramIndex, "Invalid Operator.");
+                }
+                
+                return result;
+            }
             else{//Caso não seja variavel ou block
                 return param;
             }
@@ -903,14 +1054,8 @@ namespace IntepretadorSAL
                         case "READ":
                             Read(var_list, actions[i].parameters);
                             break;
-                        case "OPR":
-                            Operaçao(var_list, actions[i].parameters);
-                            break;
                         case "EQL":
                             Equals(var_list, actions[i].parameters);
-                            break;
-                        case "CMP":
-                            Comparaçao(var_list, actions[i].parameters);
                             break;
                         case "GOTO":
                             i = Goto(actions[i].parameters, flag_list, i) - 1;

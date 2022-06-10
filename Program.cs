@@ -1,5 +1,5 @@
 ﻿using System;
-using IntepretadorSAL;
+using AbisInterpreter;
 
 namespace Minha_Linguagem_Intepretador
 {
@@ -18,7 +18,7 @@ namespace Minha_Linguagem_Intepretador
                     input.Close();
                     //Console.WriteLine(comandos);
 
-                    Intepretador.Intepretar(comandos);
+                    Interpreter.Intepretar(comandos);
 
                     //Outputs
                     Console.WriteLine("\n\nProgram finished without errors");

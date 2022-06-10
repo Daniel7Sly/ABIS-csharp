@@ -1,4 +1,6 @@
-[ ] IMPORTANT FIX INTERPRETATION EXCEPTION 
+[kinda i guess] IMPORTANT FIX INTERPRETATION EXCEPTION 
+
+[ ] Fix '>=' & '<='
 
 [kinda] 1. Add Blocks
 

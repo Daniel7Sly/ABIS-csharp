@@ -1,19 +1,6 @@
-@Cmp[num:input1; text:comparator; num:input2]->bool{
-    Set: bool|comp|false;
-    Cmp: $comp|$input1|$comparator|$input2;
-    Return: ;
-}
-
 @main[]->{
     Set: num|a|20;
     Set: num|b|10;
-
-    If: @Cmp[$a,>,$b]|PrintC;
-
-    PrintA:
-        Printl: A;
-    PrintB:
-        PrintL: B;
-    PrintC:
-        PrintL: C;
+    
+    Printl: ((($a-$b) + $a) = ($b-10));
 }

@@ -137,6 +137,7 @@ namespace AbisInterpreter
             Console.Write('\n');
         }
 
+        //! DEPRECATE
         private static void Comparaçao(List<Variavel> lista_Variaveis, string[] parametros){
             //Valida a quantidade de parametros
             if(parametros.Length != 4){
@@ -301,7 +302,8 @@ namespace AbisInterpreter
 
             varr.value = ((Array)var1).vars.Length.ToString();
         }
-
+        
+        //! DEPRECATE
         private static void Operaçao(List<Variavel> lista_Variaveis, string[] parametros){
             //Valida a quantidade de parametros
             if(parametros.Length != 4){
@@ -713,11 +715,11 @@ namespace AbisInterpreter
                 return param;
             }
             
-            //Verifica se o parametro é variavel
+            //Checks if the param is a variable
             if(param[0] == '$'){
-                //Verifica se o parametro é referente a um valor dum array
+                //Checks if the value is of an idex of an array
                 if(param.Contains('#')){
-                    //separa o nome do array do index
+                    //separates the name of the array and the index
                     string[] l = param.Split('#');
 
                     Variavel? var = var_list.Find(x => x.id == l[0]);
@@ -791,10 +793,11 @@ namespace AbisInterpreter
                 return block.RunBlock(inputParams);
             }
             else if(param[0] == '('){//caso seja operação
-                //INPUT: (($a+$b)+($z+($x+$y)))
+                //Removes the first '(' and the last ')'
                 param = param.Remove(0, 1);
                 param = param.Remove(param.Length-1, 1);
-                // -> ($a+$b)+($z+($x+$y))
+                
+                //Finds the middle operator
                 string opr = "+-*/%<>=!";
                 int splitChar = 0;
                 for (int i = 0, j = 0; i < param.Length; i++){
@@ -810,15 +813,18 @@ namespace AbisInterpreter
                     }
                 }
 
+                //Gets the value on each side
                 string value1 = param.Substring(0,splitChar);
                 string value2 = param.Substring(splitChar+1);
                 value1 = GetValue(var_list, value1, paramIndex);
                 value2 = GetValue(var_list, value2, paramIndex);
-
+                
+                //Gets the operator
                 string operatorr = param[splitChar].ToString();
 
                 string result = "";
                 
+                //Checks what kind of operation are we doing
                 const string oprNum = "+-/*%";
                 const string oprComp = "<=>=!";
                 if(oprComp.Contains(operatorr)){
@@ -864,22 +870,25 @@ namespace AbisInterpreter
                                     result = "False";
                                 }
                                 break;
-                            case "<=":
-                                if(numval1 <= numval2){
-                                    result = "True";
-                                }
-                                else{
-                                    result = "False";
-                                }
-                                break;
-                            case ">=":
-                                if(numval1 >= numval2){
-                                    result = "True";
-                                }
-                                else{
-                                    result = "False";
-                                }
-                                break;
+                            
+                            //TODO: Currently not Working maybe fix this. 
+                            //TODO: The problem is that it only accepts 1 char operator
+                            // case "<=":
+                            //     if(numval1 <= numval2){
+                            //         result = "True";
+                            //     }
+                            //     else{
+                            //         result = "False";
+                            //     }
+                            //     break;
+                            // case ">=":
+                            //     if(numval1 >= numval2){
+                            //         result = "True";
+                            //     }
+                            //     else{
+                            //         result = "False";
+                            //     }
+                            //     break;
                             default:
                                 throw new InterpretationExeption("A place where u should not be.");
                         }
@@ -906,15 +915,15 @@ namespace AbisInterpreter
                     }
                 }
                 else if(oprNum.Contains(operatorr)){
-                    //Verifica se os valores são numeros
+                    //Checks if the values are 'num'
                     if(!float.TryParse(value1, out float a)){
-                        throw new InterpretationExeption(2,"Valor do parametro não é do tipo num.");
+                        throw new InterpretationExeption(2,"Value its not numeric.");
                     }
                     if(!float.TryParse(value2, out float b)){
-                        throw new InterpretationExeption(2,"Valor do parametro não é do tipo num.");
+                        throw new InterpretationExeption(2,"Value its not numeric.");
                     }
 
-                    //Operaçao
+                    //Operation
                     switch(operatorr){
                         case "+":
                             result = (a + b).ToString();
@@ -941,7 +950,7 @@ namespace AbisInterpreter
                 
                 return result;
             }
-            else{//Caso não seja variavel ou block
+            else{
                 return param;
             }
         }

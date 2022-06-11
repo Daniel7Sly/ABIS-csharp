@@ -2,7 +2,7 @@
   "profiles": {
     "Minha Linguagem Intepretador": {
       "commandName": "Project",
-      "commandLineArgs": "test.sal"
+      "commandLineArgs": "test.abis"
     }
   }
 }

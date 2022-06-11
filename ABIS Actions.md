@@ -49,17 +49,31 @@ FlagName:
 	Goto: FlagName;
 ```
 
+## Operations
+
+***TODO***
+
 # **Actions** 
 
 ## SET
 
-Define uma variavel com o tipo da variavel o nome e o valor dado.  
+Define uma variavel com o tipo da variavel o nome.  
 Ex: 
-> `Set: type|nome|value;`
-_________________
-> `Set: num|numero1|10;`
+> `Set: type|nome;`
 
-Isto cria a variavel `numero1` do tipo numerico com o valor 10;
+> `Set: num|numero1;`
+
+Isto cria a variavel `numero1` do tipo numerico com o valor 0;
+
+Parametros:
+> `type`: The type of the variable you wish to create.
+> 
+> `name`: The name that the variable will have.  
+
+Default values:
+> `num : 0`.  
+> `text : ''`  
+> `bool : false`
 
 ## SetArray
 
@@ -120,26 +134,11 @@ Obtem o tamanho do array dado (2º param) e atribui o valor á variavel 1º para
 GLength: $(num)|$#;
 ```
 
-## Operation
-
-Realiza a operação com os 2º e 3º param de acordo com o operador dado e atribui o resultado ao 1º param. 2º e 3º param têm de ser numericos.
-> operadores: + - * / %
-```
-Opr: $(num)|$\value:num|operador|$\value:num; (c = b + a)
-```
-
 ## Goto
 
 Vai até á flag especificada.
 ```
 Goto: flag_name;
-```
-## Comparation
-
-Atribui á variavel (1º param) o resultado da comparaçao com o 2º & 3º param.
-> comparadors: `<` `>` `>=` `<=` `==` `!=`
-```
-CMP: $(bool)|$\value|comparator|$\value;
 ```
 
 ## If
@@ -147,4 +146,11 @@ CMP: $(bool)|$\value|comparator|$\value;
 Caso o valor da variavel(1º param) dada for `true` é redirecionado para a flag indicada.
 ```
 If: $(bool)|flag_name;
+```
+
+## IfN
+
+Same as `IF` but the value of the variable has to be `false`.
+```
+IfN: $(bool)|flag_name;
 ```

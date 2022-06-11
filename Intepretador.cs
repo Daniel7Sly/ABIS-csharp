@@ -51,8 +51,6 @@ namespace AbisInterpreter
             mainBlock.RunBlock(noInputVars);
         }
 
-        
-
         private static void LexerParser(string file_content){
             //Remove quebras de linhas e espaços
             file_content = file_content.Replace(" ", "");
@@ -551,8 +549,7 @@ namespace AbisInterpreter
         private static void Set(string[] parametros, List<Variavel> lista_Variaveis)
         {
             //Verifica se chegam três parametros
-            if (parametros.Length != 3)
-            {
+            if (parametros.Length != 2){
                 throw new InterpretationExeption("Quantidade de Parametros Invalida.");
             }
 
@@ -562,33 +559,22 @@ namespace AbisInterpreter
             //Valida e obtem o nome do 2º parametro
             string name = GetVarName(parametros[1], lista_Variaveis, 2);
 
-            //Aplica o valor de acordo com o tipo expecificado
-            string param = GetValue(lista_Variaveis, parametros[2], 3);
+            
             string value = "";
             switch (type)
             {
                 case "num":
-                    if (float.TryParse(param, out float result_num)){
-                        value = result_num.ToString();
-                    }
-                    else{
-                        throw new InterpretationExeption(3, "Não foi possivel converter parametro para num.");
-                    }
+                    value = "0";
                     break;
                 case "bool":
-                    if (bool.TryParse(param, out bool result_bool)){
-                        value = result_bool.ToString();
-                    }
-                    else{
-                        throw new InterpretationExeption(3, "Não foi possivel converter parametro para bool.");
-                    }
+                    value = "false";
                     break;
                 case "text":
-                    value = param;
+                    value = "";
                     break;
             }
 
-            //Cria a variavel e acrecenta-a á lista de variaveis
+            //Creates the varable and adds it to the varable list.
             lista_Variaveis.Add(new Variavel(type, name, value));
         }
 

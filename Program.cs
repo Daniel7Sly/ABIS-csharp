@@ -1,7 +1,7 @@
 ﻿using System;
 using AbisInterpreter;
 
-namespace Minha_Linguagem_Intepretador
+namespace InterpretadorAbis
 {
     internal class Program
     {
@@ -12,16 +12,29 @@ namespace Minha_Linguagem_Intepretador
                 var path = args[0];
                 if (File.Exists(path))
                 {
-                    //Recives and reads the file
-                    StreamReader input = File.OpenText(path);
-                    string comandos = input.ReadToEnd();
-                    input.Close();
-                    //Console.WriteLine(comandos);
-
-                    Interpreter.Intepretar(comandos);
-
+                    do
+                    {
+                        //Recives and reads the file
+                        StreamReader input = File.OpenText(path);
+                        string comandos = input.ReadToEnd();
+                        input.Close();
+                        //Console.WriteLine(comandos);
+                        try
+                        {
+                            Interpreter.Intepretar(comandos);
+                        }
+                        catch (Interpreter.InterpretationExeption ex)
+                        {
+                            System.Console.WriteLine("Program finished with errors!");
+                            System.Console.WriteLine(ex.Message);
+                        }
+                        System.Console.WriteLine("-----------------------------------------------------------");
+                        if(Console.ReadLine() == "e") break;
+    
+                    } while (true);
+                    
                     //Outputs
-                    Console.WriteLine("\n\nProgram finished without errors");
+                    Console.WriteLine("\n\nProgram finished.");
                 }
                 else
                 {

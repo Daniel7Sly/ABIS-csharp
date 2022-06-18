@@ -26,16 +26,19 @@ using System;
 
 namespace AbisInterpreter
 {
-    public static class Interpreter
+    public class Interpreter
     {
         //São definidas globalmente para serem usadas nas exeçoes
         //static string[] instrunçoes_do_Ficheiro = {};
         static int indexAtual;
-        static Stack<Block> blockStack = new Stack<Block>();
-
-        static List<Block> block_list = new List<Block>();
+        static Stack<Block> blockStack;
+        static List<Block> block_list;
 
         public static void Intepretar(string file_content){
+            indexAtual = 0;
+            block_list = new List<Block>();
+            blockStack = new Stack<Block>();
+
             LexerParser(file_content);
 
             Block? mainBlock = block_list.Find((x) => x.name == "@main");
@@ -412,7 +415,8 @@ namespace AbisInterpreter
             return -1;
         }
 
-        private static void Equals(List<Variavel> lista_Variaveis, string[] parametros){
+        private static void Equalss(List<Variavel> lista_Variaveis, string[] parametros){
+            
             //verifica se chegou dois parametros
             if(parametros.Length != 2){
                 throw new InterpretationExeption("Quantidade de Parametros Invalida.");
@@ -1022,9 +1026,11 @@ namespace AbisInterpreter
                     for (int i = 0; i < inputVarsAndTypes.Length; i++)
                     {
                         string[] inputs = inputVarsAndTypes[i].Split(":");
-                        string[] parameters = {inputs[0], inputs[1], inputValues[i]};
+                        string[] parametersSet = {inputs[0], inputs[1]};
+                        string[] parametersEqualss = {"$"+inputs[1], inputValues[i]};
 
-                        Set(parameters,this.var_list);
+                        Set(parametersSet,this.var_list);
+                        Equalss(var_list, parametersEqualss);
                     }
                 }
 
@@ -1050,7 +1056,7 @@ namespace AbisInterpreter
                             Read(var_list, actions[i].parameters);
                             break;
                         case "EQL":
-                            Equals(var_list, actions[i].parameters);
+                            Equalss(var_list, actions[i].parameters);
                             break;
                         case "GOTO":
                             i = Goto(actions[i].parameters, flag_list, i) - 1;
@@ -1162,6 +1168,9 @@ namespace AbisInterpreter
             }
 
             private static string MontarMensagemErro(string mensagem){
+                if(mensagem == "No 'main' block found"){
+                    return mensagem;
+                }
                 string stackTrace = "Block Trace: ";
                 Block currentBlock = blockStack.Peek();
                 foreach(Block block in blockStack){

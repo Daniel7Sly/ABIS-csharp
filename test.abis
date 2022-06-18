@@ -1,6 +1,22 @@
 @main[]->{
-    Set: num|a|20;
-    Set: num|b|10;
+	
+    PrintL: @Factorial[5];
     
-    Printl: ((($a-$b) + $a) = ($b-10));
+    End::;
+}
+
+@Factorial[num:num]->num{
+    Set:num|i;
+    Eql:$i|1;
+    
+    Set:num|rslt;
+    Eql:$rslt|1;
+
+    Loop:
+        Eql:$rslt|($rslt * $i);
+    LoopEnd:
+        Eql:$i|($i + 1);
+        If:($i < ($num + 1))|Loop;
+
+    Return: $rslt;
 }

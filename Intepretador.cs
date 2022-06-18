@@ -92,7 +92,7 @@ namespace AbisInterpreter
 
                     string outputType = inputOutput[1];
                     
-                    block_list.Add(new Block(blockName, outputType, inputVars,blockInstructions));
+                    block_list.Add(new Block(blockName, outputType, inputVars, blockInstructions));
                 }
                 catch (System.Exception){
                     throw new InterpretationExeption("Error Creating "+i+"º Block");
@@ -1008,14 +1008,14 @@ namespace AbisInterpreter
             public List<Action> actions;
             public List<Flag> flag_list;
 
-            public List<Variavel> var_list;
+            public List<Variavel>? var_list;
 
             public Block(string name, string outputType, string[] inputVarsAndTypes, string instructions){
                 this.name = name;
                 this.outputType = outputType;
                 this.inputVarsAndTypes = inputVarsAndTypes;
 
-                this.var_list = new List<Variavel>();
+                //this.var_list = new List<Variavel>();
 
                 this.flag_list = new List<Flag>();
                 this.actions = new List<Action>();
@@ -1028,11 +1028,12 @@ namespace AbisInterpreter
             /// </summary>
             /// <returns>Returns value acording with output type.</returns>
             public string RunBlock(string[] inputValues){
+                this.var_list = new List<Variavel>();
                 blockStack.Push(this);
+                
+                //Create the input variables
                 if(inputValues.Length != 0){
-                    //Create the input variables
-                    for (int i = 0; i < inputVarsAndTypes.Length; i++)
-                    {
+                    for (int i = 0; i < inputVarsAndTypes.Length; i++){
                         string[] inputs = inputVarsAndTypes[i].Split(":");
                         string[] parametersSet = {inputs[0], inputs[1]};
                         string[] parametersEqualss = {"$"+inputs[1], inputValues[i]};
@@ -1091,7 +1092,11 @@ namespace AbisInterpreter
                             Parse(var_list, actions[i].parameters);
                             break;
                         case "RETURN":
-                            return Return(var_list, actions[i].parameters);
+                            string result = Return(var_list, actions[i].parameters);     
+                            this.var_list.Clear();
+                            this.var_list = null;
+                            blockStack.Pop();                            
+                            return result;
                         default:
                             break;
                     }

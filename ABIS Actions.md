@@ -1,6 +1,6 @@
 **ABIS**
 ============
-## Intructions
+## Actions
 
 Actions are the instructions of ABIS.
 Every action have a name (ex: `Eql`) and parameters. Every parameter
@@ -14,8 +14,15 @@ As showned bellow.
   ^        |          |
 actionName |Parameters|
 ```
- 
+Every ABIS Script starts executing at the `@main` block.
 
+Hello world in ABIS:
+```
+@main[]->{
+	PrintL: Hello_World!;
+}
+```
+> Output: `Hello World!`
 ## Variaveis
 
 Variaveis são usadas para armazenar valores e fornecer valores a parametros de ações do tipo correspondente.
@@ -24,6 +31,11 @@ Existem 3 tipos de Variaveis:
 > `num` 	-> com um valor numerico(pode ter casas decimais).  
 > `bool` 	-> valor 'true' ou 'false'.  
 > `text` 	-> contem texto.  
+
+When a variable is created it starts with a default value:
+> `num` 	-> 0  
+> `bool` 	-> false  
+> `text` 	-> ''. (empty)
 
 Variaveis são indetificadas no codigo por `'$'` seguido pelo nome.
 > Ex: `$variavel`
@@ -34,13 +46,44 @@ Em arrays é usado o `'#'` depois do nome para indicar o index que queremos o va
 Também é possivel identificar o index do array com uma variavel.
 > Ex: `$listaNumeros#$index` ($index é uma variavel num)
 
-## Blocos
+## Blocks
 
-***TODO***
+Blocks are pieces of code that preform intructions and return a value.
 
+A Block must be defined out side of other blocks. To define a
+Block start with `'@'` and then the name of the block. After
+open `'[]'` and inside goes the input variables/parameters of
+the block, first the type and than the name separated by `':'`, 
+separate each parameter with `';'`. After the `'[]'` comes the
+`->` and then the output type. Then open `'{ }'` and inside goes
+all the actions of the block. A Block cannot finnish without
+`RETURN` someting.
+
+The example bellow shows a block which recives two numbers `a` and `b` , and returns the sum of the squares of that numbers.
+```
+@SumOfSquare[num:a;num:b] -> num {
+	Set: num|rslt;
+	Eql: $rslt|(($a * $a) + ($b * $b));
+	Return:$rslt;
+}
+```
+
+The example below show a program that prints the Sum of the
+squares of the numbers `$i` and `$j` using the `@SumOfSquares`
+block created above:
+```
+Set: num|i; Eql: $i | 5;
+Set: num|j; Eql: $j | 10;
+
+PrintL: @SumOfSquares[$i, $j];
+```
+
+>Output: `125`
 ## Flags
 
 Flags servem para marcar posições no codigo para ser redirecionado com `IF` & `Goto`. Flags são marcadas com `:` seguido de uma ação.
+
+Não é possivel redirecionar para flags de blocos diferentes.
 
 Ex:
 ```
@@ -51,7 +94,31 @@ FlagName:
 
 ## Operations
 
-***TODO***
+Operations are used to make comparations and operations.
+To do an operation you have open and close `( )` and inside the
+operation you want to do. You can use variable to, like showned
+below where we are summing 5 to the value of `$a` (a is num):
+
+Ex: `($a + 5)`
+
+Operations return a `num` value or a `bool` value, it depends on what operator you are using.
+
+List of operators
+> operators that return `num`.  
+> `+ - * / %`  
+> operators that return `bool`  
+> `< > = !`  
+> All the operators that return `num` can only work with `num`
+> values.  
+> The operators that return `bool` can only work with `num`
+> values with the exception of `=` and `!` which can work with 
+> `num`, `bool`, and `text`.
+
+You can also do operations inside operations and call blocks. Ex:
+```
+If: (($a + $b) > (@SumOfSquares[$i, $j] - 100))| flag;
+```
+
 
 # **Actions** 
 
@@ -59,7 +126,7 @@ FlagName:
 
 Define uma variavel com o tipo da variavel o nome.  
 Ex: 
-> `Set: type|nome;`
+> `Set: type|name;`
 
 > `Set: num|numero1;`
 
@@ -120,7 +187,7 @@ Jtxt: $(text)|value|value;
 
 ## Parse
 
-Tenta converter o valor dado para num e atribui o valor á variavel dada.
+Tenta converter o valor dado para num.
 Atribui true á variavel do 1º param se a conversão foi feita com sucesso senão atribui false.
 Se conseguir converter o resultado é atribuido á 2ª variavel.
 ```

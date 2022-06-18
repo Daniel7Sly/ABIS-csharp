@@ -1,6 +1,5 @@
---returns the factorial of the given number.
-# returns the factorial of the given number.
 
+# returns the factorial of the given number.
 @Factorial[num:num]->num{
     Set:num|i;
     Eql:$i|1;

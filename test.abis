@@ -8,7 +8,6 @@
 @Factorial[num:num]->num{
     Set:num|i;
     Eql:$i|1;
-    
     Set:num|rslt;
     Eql:$rslt|1;
 
@@ -16,7 +15,7 @@
         Eql:$rslt|($rslt * $i);
     LoopEnd:
         Eql:$i|($i + 1);
-        If:($i < ($num + 1))|Loop;
+        If:($i < $num)|Loop;
 
     Return: $rslt;
 }

@@ -55,12 +55,20 @@ namespace AbisInterpreter
         }
 
         private static void LexerParser(string file_content){
-            //Remove quebras de linhas e espaços
+
+            //Removes Spaces tabs and newlines
             file_content = file_content.Replace(" ", "");
-            file_content = file_content.Replace(System.Environment.NewLine, "");
+            //file_content = file_content.Replace(System.Environment.NewLine, "");
             file_content = file_content.Replace("\t", "");
 
-            
+            //Removes comments
+            List<string> lines = file_content.Split(System.Environment.NewLine).ToList();
+            file_content = "";
+            foreach (string line in lines){
+                if(!line.StartsWith('#')){
+                    file_content += line;
+                }
+            }
 
             //Assumes that the blocks are build properly
             //@Abis[..:..;..:..]->..{-----}@Block[..:..;..:..]->..{-----}

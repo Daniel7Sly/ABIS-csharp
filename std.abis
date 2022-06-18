@@ -1,0 +1,18 @@
+--returns the factorial of the given number.
+# returns the factorial of the given number.
+
+@Factorial[num:num]->num{
+    Set:num|i;
+    Eql:$i|1;
+    
+    Set:num|rslt;
+    Eql:$rslt|1;
+
+    Loop:
+        Eql:$rslt|($rslt * $i);
+    LoopEnd:
+        Eql:$i|($i + 1);
+        If:($i < ($num + 1))|Loop;
+
+    Return: $rslt;
+}

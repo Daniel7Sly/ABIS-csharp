@@ -94,9 +94,9 @@ FlagName:
 
 ## Operations
 
-Operations are used to make comparations and operations.
+Operations are used to make comparations and Arithmetics.
 To do an operation you have open and close `( )` and inside the
-operation you want to do. You can use variable to, like showned
+operation you want to do. You can use variables to, like showned
 below where we are summing 5 to the value of `$a` (a is num):
 
 Ex: `($a + 5)`
@@ -118,7 +118,33 @@ You can also do operations inside operations and call blocks. Ex:
 ```
 If: (($a + $b) > (@SumOfSquares[$i, $j] - 100))| flag;
 ```
+### Tenary Operator
 
+The tenary operator is a special kind of operator. The tenary operator
+allows you to do quick IF-ELSE atributions. The tenary operator differently
+from the other operators this one has to be placed twice in a statement
+because it takes 3 arguments instead of 2.
+
+Ex:  
+`((value1) ? value2 ? value3)`
+
+How it works.  
+> If the `value1` is `true` the `value2` is returned.  
+> Otherwise it returns `value3`.  
+> `value1` must be a bool value.
+
+Example:  
+In this example we are checking if `a` is bigger than `b`,if so the
+value `Bigger` is assign to `x` other wise the value `Smaller` is assign.
+```
+Eql: $x | (($a > $b) ? Bigger ? Smaller);
+PrintL: $x;
+```
+> a = 10 , b = 20  
+> Output `Smaller`
+
+> a = 10 , b = 5  
+> Output `Bigger`  
 
 # **Actions** 
 

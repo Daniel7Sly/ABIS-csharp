@@ -790,61 +790,61 @@ namespace AbisInterpreter
 
                 return block.RunBlock(inputParams);
             }
-            else if(param[0] == '('){//caso seja operação
+            else if(param[0] == '(')
+            {//caso seja operação
                 //Removes the first '(' and the last ')'
                 param = param.Remove(0, 1);
-                param = param.Remove(param.Length-1, 1);
-                
+                param = param.Remove(param.Length - 1, 1);
+
                 //Finds the middle operator
-                string opr = "+-*/%<>=!";
-                int splitChar = 0;
-                for (int i = 0, j = 0; i < param.Length; i++){
-                    if(param[i] == '('){
-                        j++;
-                    }
-                    else if(opr.Contains(param[i]) && j == 0){
-                        splitChar = i;
-                        break;
-                    }
-                    else if(param[i] == ')'){
-                        j--;
-                    }
-                }
+                const string opr = "+-*/%<>=!?";
+                int splitChar = FindMiddleOperator(param, opr);
 
                 //Gets the value on each side
-                string value1 = param.Substring(0,splitChar);
-                string value2 = param.Substring(splitChar+1);
-                value1 = GetValue(var_list, value1, paramIndex);
-                value2 = GetValue(var_list, value2, paramIndex);
+                string value1 = param.Substring(0, splitChar);
+                string value2 = param.Substring(splitChar + 1);
                 
+
                 //Gets the operator
                 string operatorr = param[splitChar].ToString();
 
                 string result = "";
-                
+
                 //Checks what kind of operation are we doing
                 const string oprNum = "+-/*%";
                 const string oprComp = "<=>=!";
-                if(oprComp.Contains(operatorr)){
+                const string oprTenary = "?";
+                if (oprComp.Contains(operatorr))
+                {
+                    value1 = GetValue(var_list, value1, paramIndex);
+                    value2 = GetValue(var_list, value2, paramIndex);
                     string type = "";
 
-                    switch(operatorr){
-                        case "<": case ">": case "<=": case ">=":
+                    switch (operatorr)
+                    {
+                        case "<":
+                        case ">":
+                        case "<=":
+                        case ">=":
                             type = "num";
                             break;
-                        case "=": case "!":
+                        case "=":
+                        case "!":
                             type = "text";
                             break;
                         default:
-                            throw new InterpretationExeption(paramIndex,"Comparador invalido");
+                            throw new InterpretationExeption(paramIndex, "Comparador invalido");
                     }
 
-                    if(type == "num"){
-                        if(!float.TryParse(value1, out float a)){
-                            throw new InterpretationExeption(paramIndex,"Tipo de dado invalido para comparação pedida.");
+                    if (type == "num")
+                    {
+                        if (!float.TryParse(value1, out float a))
+                        {
+                            throw new InterpretationExeption(paramIndex, "Tipo de dado invalido para comparação pedida.");
                         }
-                        if(!float.TryParse(value2, out float b)){
-                            throw new InterpretationExeption(paramIndex,"Tipo de dado invalido para comparação pedida.");
+                        if (!float.TryParse(value2, out float b))
+                        {
+                            throw new InterpretationExeption(paramIndex, "Tipo de dado invalido para comparação pedida.");
                         }
                         float numval1 = a;
                         float numval2 = b;
@@ -853,22 +853,26 @@ namespace AbisInterpreter
                         switch (operatorr)
                         {
                             case "<":
-                                if(numval1 < numval2){
+                                if (numval1 < numval2)
+                                {
                                     result = "True";
                                 }
-                                else{
-                                    result= "False";
-                                }
-                                break;
-                            case ">":
-                                if(numval1 > numval2){
-                                    result = "True";
-                                }
-                                else{
+                                else
+                                {
                                     result = "False";
                                 }
                                 break;
-                            
+                            case ">":
+                                if (numval1 > numval2)
+                                {
+                                    result = "True";
+                                }
+                                else
+                                {
+                                    result = "False";
+                                }
+                                break;
+
                             //TODO: Currently not Working maybe fix this. 
                             //TODO: The problem is that it only accepts 1 char operator
                             // case "<=":
@@ -891,38 +895,51 @@ namespace AbisInterpreter
                                 throw new InterpretationExeption("A place where u should not be.");
                         }
                     }
-                    else{//"text"
-                        switch(operatorr){
+                    else
+                    {//"text"
+                        switch (operatorr)
+                        {
                             case "=":
-                                if(value1 == value2){
+                                if (value1 == value2)
+                                {
                                     result = "True";
                                 }
-                                else{
+                                else
+                                {
                                     result = "False";
                                 }
                                 break;
                             case "!":
-                                if(value1 != value2){
+                                if (value1 != value2)
+                                {
                                     result = "True";
                                 }
-                                else{
+                                else
+                                {
                                     result = "False";
                                 }
                                 break;
                         }
                     }
                 }
-                else if(oprNum.Contains(operatorr)){
+                else if (oprNum.Contains(operatorr))
+                {
+                    value1 = GetValue(var_list, value1, paramIndex);
+                    value2 = GetValue(var_list, value2, paramIndex);
+
                     //Checks if the values are 'num'
-                    if(!float.TryParse(value1, out float a)){
-                        throw new InterpretationExeption(2,"Value its not numeric.");
+                    if (!float.TryParse(value1, out float a))
+                    {
+                        throw new InterpretationExeption(paramIndex, "Value its not numeric.");
                     }
-                    if(!float.TryParse(value2, out float b)){
-                        throw new InterpretationExeption(2,"Value its not numeric.");
+                    if (!float.TryParse(value2, out float b))
+                    {
+                        throw new InterpretationExeption(paramIndex, "Value its not numeric.");
                     }
 
                     //Operation
-                    switch(operatorr){
+                    switch (operatorr)
+                    {
                         case "+":
                             result = (a + b).ToString();
                             break;
@@ -939,16 +956,59 @@ namespace AbisInterpreter
                             result = (a % b).ToString();
                             break;
                         default:
-                            throw new InterpretationExeption(paramIndex,"Invalid Operator.");
+                            throw new InterpretationExeption(paramIndex, "Invalid Operator.");
                     }
+                }
+                else if (oprTenary.Contains(operatorr))
+                {
+                    //((1) ? (2) ? (3))
+                    //value1 = (1)
+                    //valeu2 = (2) ? (3)
+
+                    splitChar = FindMiddleOperator(value2, "?");
+                    string value3 = value2.Substring(splitChar+1);
+                    value2 = value2.Substring(0,splitChar);
+
+                    value1 = GetValue(var_list, value1, paramIndex);
+                    value2 = GetValue(var_list, value2, paramIndex);
+                    value3 = GetValue(var_list, value3, paramIndex);
+
+                    if (!bool.TryParse(value1, out bool cmp)){
+                        throw new InterpretationExeption(paramIndex, "Invalid type of data for requested operation.");
+                    }
+                    
+                    result = cmp ? value2 : value3;
                 }
                 else{
                     throw new InterpretationExeption(paramIndex, "Invalid Operator.");
                 }
-                
+
                 return result;
+
+                int FindMiddleOperator(string param, string opr){
+                    int splitChar = 0;
+                    for (int i = 0, j = 0; i < param.Length; i++)
+                    {
+                        if (param[i] == '(')
+                        {
+                            j++;
+                        }
+                        else if (opr.Contains(param[i]) && j == 0)
+                        {
+                            splitChar = i;
+                            break;
+                        }
+                        else if (param[i] == ')')
+                        {
+                            j--;
+                        }
+                    }
+
+                    return splitChar;
+                }
             }
-            else{
+            else
+            {
                 return param;
             }
         }

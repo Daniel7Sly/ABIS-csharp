@@ -1,19 +1,6 @@
 @main[]->{
 	
-    PrintL: @Factorial[5];
-    
-    Set: num|igreja; 
-    # Eql: $i | daas;
-    Set: num|igreja; Eql: $j | 1000;
-
-    PrintL: @SumOfSquares[$i, $j];
-
-    If: (($i + $j) > (@SumOfSquares[$i, $j] - 1000))| flag;
-
-    End::; Return: ;
-
-    flag:
-        PrintL : YAY;
+    PrintL: ((10 > 20)?TRUE?FLASE);
 }
 
 @Factorial[num:num]->num{

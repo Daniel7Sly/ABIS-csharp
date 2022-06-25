@@ -2,17 +2,18 @@
 	
     PrintL: @Factorial[5];
     
-    Set: num|i; Eql: $i | 5;
-    Set: num|j; Eql: $j | 1000;
+    Set: num|igreja; 
+    # Eql: $i | daas;
+    Set: num|igreja; Eql: $j | 1000;
 
     PrintL: @SumOfSquares[$i, $j];
 
     If: (($i + $j) > (@SumOfSquares[$i, $j] - 1000))| flag;
 
-    End::; Return:;
+    End::; Return: ;
 
     flag:
-        PrintL:YAY;
+        PrintL : YAY;
 }
 
 @Factorial[num:num]->num{
@@ -35,3 +36,8 @@
 	Eql: $rslt|(($a * $a) + ($b * $b));
 	Return:$rslt;
 }
+
+
+
+
+

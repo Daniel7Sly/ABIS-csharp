@@ -19,22 +19,23 @@ namespace InterpretadorAbis
                         string comandos = input.ReadToEnd();
                         input.Close();
                         //Console.WriteLine(comandos);
-                        // try
-                        // {
+                        
+                        try
+                        {
                              Interpreter.Intepretar(comandos);
-                        // }
-                        // catch (Interpreter.InterpretationExeption ex)
-                        // {
-                        //     System.Console.WriteLine("Program finished with errors!");
-                        //     System.Console.WriteLine(ex.Message);
-                        // }
-                        System.Console.WriteLine("-----------------------------------------------------------");
+                        }
+                        catch (Interpreter.InterpretationExeption ex)
+                        {
+                            //System.Console.WriteLine("Program finished with errors!");
+                            System.Console.WriteLine(ex.Message);
+                        }
+                        System.Console.WriteLine("############################################################################");
                         if(Console.ReadLine() == "e") break;
     
                     } while (true);
                     
                     //Outputs
-                    Console.WriteLine("\n\nProgram finished.");
+                    Console.WriteLine("\n\nProgram Closed.");
                 }
                 else
                 {

@@ -1,10 +1,8 @@
-
 # returns the factorial of the given number.
 @Factorial[num:num]->num{
-    Set:num|i;
+    SET:num|i;
     Eql:$i|1;
-    
-    Set:num|rslt;
+    Set :  num|rslt;
     Eql:$rslt|1;
 
     Loop:

@@ -1092,7 +1092,7 @@ namespace AbisInterpreter
                             Parse(var_list, actions[i].parameters);
                             break;
                         case "RETURN":
-                            string result = Return(var_list, actions[i].parameters);     
+                            string result = Return(var_list, actions[i].parameters);
                             this.var_list.Clear();
                             this.var_list = null;
                             blockStack.Pop();                            
@@ -1173,25 +1173,60 @@ namespace AbisInterpreter
                 foreach(Block block in blockStack){
                     stackTrace += block.name +" <- ";
                 }
+
                 string ultimas3Instruçoes = "";
                 if(indexAtual >= 3)
                     ultimas3Instruçoes = GetBlockInstruction(currentBlock,indexAtual-3)+"\n"+GetBlockInstruction(currentBlock,indexAtual-2)+"\n"+GetBlockInstruction(currentBlock,indexAtual-1)+"\n";
+                
                 string instruçaoComErro = GetBlockInstruction(currentBlock,indexAtual);
-                return ("\n \n"+stackTrace+"\n"+ultimas3Instruçoes + instruçaoComErro + " <-- \n Falha no: "+parametro+"º parametro.\n" + mensagem);
+                return ("\n-----------------<ERROR>----------------\n"+
+                        stackTrace+"\n\n"+
+                        ultimas3Instruçoes +
+                        instruçaoComErro + "\n"+
+                        BuildErrorArrow(instruçaoComErro, parametro, mensagem)+"\n"+
+                        "-----------------<ERROR>----------------"
+                        );
+            }
+
+            //Returns the Error Arrow
+            private static string BuildErrorArrow(string wrongInstruction, int wrongParamIndex, string message){
+                //Set:num|amam;
+                //        ^^^^#>Variavel ja Existente.
+                
+                string[] words = wrongInstruction.Split(':','|',';');
+                int wrongParamLenght = words[wrongParamIndex].Length;
+                
+                
+                int wordIndex = wrongInstruction.IndexOf(words[wrongParamIndex]);
+                
+                string arrow = BuildThings(wordIndex, ' ') + BuildThings(wrongParamLenght, '^') + "  # " + message + "("+wrongParamIndex+"ª)";
+                
+                return arrow;
+
+                string BuildThings(int length, char character){
+                    string arrow = "";
+                    for(int i = 0;i<length;i++){
+                        arrow += character;
+                    }
+                    return arrow;
+                }
             }
 
             private static string MontarMensagemErro(string mensagem){
                 if(mensagem == "No 'main' block found"){
                     return mensagem;
                 }
+
                 string stackTrace = "Block Trace: ";
                 Block currentBlock = blockStack.Peek();
                 foreach(Block block in blockStack){
                     stackTrace += block.name +" <- ";
                 }
+
                 string ultimas3Instruçoes = "";
                 if(indexAtual >= 3)
                     ultimas3Instruçoes = GetBlockInstruction(currentBlock,indexAtual-3)+"\n"+GetBlockInstruction(currentBlock,indexAtual-2)+"\n"+GetBlockInstruction(currentBlock,indexAtual-1)+"\n";
+                
                 string instruçaoComErro = GetBlockInstruction(currentBlock,indexAtual);
                 return ("\n \n"+stackTrace+"\n"+ultimas3Instruçoes + instruçaoComErro + " <-- \n \n" + mensagem+"\n------------------------------------------------");
             }
@@ -1204,6 +1239,7 @@ namespace AbisInterpreter
                 paramss = paramss.Remove(paramss.Length-1) + ";";
                 return block.actions[index].actionType+":"+paramss;
             }
+
             // public InterpretationExeption(string message, System.Exception inner) : base(MontarMensagemErro(message), inner) { }
             // protected InterpretationExeption(
             //     System.Runtime.Serialization.SerializationInfo info,

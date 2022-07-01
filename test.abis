@@ -1,30 +1,8 @@
 @main[]->{
-	
-    PrintL: ((10 > 20)?TRUE?FLASE);
+	PrintL:(false & true);
 }
 
-@Factorial[num:num]->num{
-    Set:num|i;
-    Eql:$i|1;
-    Set:num|rslt;
-    Eql:$rslt|1;
-
-    Loop:
-        Eql:$rslt|($rslt * $i);
-    LoopEnd:
-        Eql:$i|($i + 1);
-        If:($i < ($num + 1))|Loop;
-
-    Return: $rslt;
+@Test[num:arr]->num{
+    Return: $arr#1;
 }
-
-@SumOfSquares[num:a;num:b] -> num {
-	Set: num|rslt;
-	Eql: $rslt|(($a * $a) + ($b * $b));
-	Return:$rslt;
-}
-
-
-
-
 

@@ -1,0 +1,87 @@
+#RULE 110 Implementation in ABIS.
+#requirements:
+# x	& operator
+#	arrays in block arguments
+#	array overflow
+#	no return block
+#	Exe Action
+@main[]{
+	SetArr:num|arr|50;
+	#places first cell at the end
+	Eql: $arr#49|1;
+	
+	Set:num|count;
+	Loop:
+		Eql:$arr|@procGen[$arr];
+		Exe:@printGen[$arr];
+	LoopEnd:
+		Eql:$count|($count + 1);
+		IF: ($count < 50)|Loop;		
+}
+
+#returns the next stage of the generation
+@procGen[#num:arr]->#num{
+	Set:num|count;
+	GetArrLength:$count|$arr;
+	Set:num|index1;
+	Set:num|index2;Eql:$index2|1;
+	Set:num|index3;Eql:$index2|2;
+
+	Loop:
+		#Paterns
+		IF:(($index1 = 1)&(($index2 = 1)&($index3 = 1)))|Patern-111;
+		IF:(($index1 = 1)&(($index2 = 1)&($index3 = 0)))|Patern-110;
+		IF:(($index1 = 1)&(($index2 = 0)&($index3 = 1)))|Patern-101;
+		IF:(($index1 = 1)&(($index2 = 0)&($index3 = 0)))|Patern-100;
+		IF:(($index1 = 0)&(($index2 = 1)&($index3 = 1)))|Patern-011;
+		IF:(($index1 = 0)&(($index2 = 1)&($index3 = 0)))|Patern-010;
+		IF:(($index1 = 0)&(($index2 = 0)&($index3 = 1)))|Patern-001;
+		IF:(($index1 = 0)&(($index2 = 0)&($index3 = 0)))|Patern-000;
+		
+		Patern-111:
+			Eql:$arr#index2|0;
+			Goto:LoopEnd;
+		Patern-110:
+			Eql:$arr#index2|1;
+			Goto:LoopEnd;
+		Patern-101:
+			Eql:$arr#index2|1;
+			Goto:LoopEnd;
+		Patern-100:
+			Eql:$arr#index2|0;
+			Goto:LoopEnd;
+		Patern-011:
+			Eql:$arr#index2|1;
+			Goto:LoopEnd;
+		Patern-010:
+			Eql:$arr#index2|1;
+			Goto:LoopEnd;
+		Patern-001:
+			Eql:$arr#index2|1;
+			Goto:LoopEnd;
+		Patern-000:
+			Eql:$arr#index2|0;
+			Goto:LoopEnd;
+
+	LoopEnd:
+		Eql:$index1|($index1 + 1);
+		Eql:$index2|($index2 + 1);
+		Eql:$index3|($index3 + 1);
+		IF: ($index1 < $count)|Loop;
+	
+	Return:arr;
+}
+
+#prints the given generation
+@printGen[#num:arr]{
+	Set:num|index;
+	Set:text|x;
+	Loop:
+		Eql:$x|(($arr#$index = 0) ? ' ? #);
+		Print:$x;
+	LoopEnd:
+		Eql:$index|($index + 1);
+		IF: ($index < 50)|Loop;
+
+	PrintL:;
+}

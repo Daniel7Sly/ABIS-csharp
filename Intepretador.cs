@@ -30,9 +30,9 @@ namespace AbisInterpreter
     {
         //São definidas globalmente para serem usadas nas exeçoes
         //static string[] instrunçoes_do_Ficheiro = {};
-        static int indexAtual;
-        static Stack<Block> blockStack;
-        static List<Block> block_list;
+        private static int indexAtual;
+        private static Stack<Block> blockStack;
+        private static List<Block> block_list;
 
         public static void Intepretar(string file_content){
             indexAtual = 0;
@@ -797,7 +797,7 @@ namespace AbisInterpreter
                 param = param.Remove(param.Length - 1, 1);
 
                 //Finds the middle operator
-                const string opr = "+-*/%<>=!?";
+                const string opr = "+-*/%<>=!?&\"";
                 int splitChar = FindMiddleOperator(param, opr);
 
                 //Gets the value on each side
@@ -814,6 +814,7 @@ namespace AbisInterpreter
                 const string oprNum = "+-/*%";
                 const string oprComp = "<=>=!";
                 const string oprTenary = "?";
+                const string oprLogic = "&\"";
                 if (oprComp.Contains(operatorr))
                 {
                     value1 = GetValue(var_list, value1, paramIndex);
@@ -920,6 +921,27 @@ namespace AbisInterpreter
                                 }
                                 break;
                         }
+                    }
+                }
+                else if(oprLogic.Contains(operatorr)){
+                    if (!bool.TryParse(value1, out bool a))
+                    {
+                        throw new InterpretationExeption(paramIndex, "Invalid data type for request operation '"+operatorr+"'");
+                    }
+                    if (!bool.TryParse(value2, out bool b))
+                    {
+                        throw new InterpretationExeption(paramIndex, "Invalid data type for request operation '"+operatorr+"'");
+                    }
+                    bool boolval1 = a;
+                    bool boolval2 = b;
+
+                    switch(operatorr){
+                        case "&":
+                            result = (boolval1 && boolval2 ? true : false).ToString();
+                            break;
+                        case "\"":
+                            result = (boolval1 || boolval2 ? true : false).ToString();
+                            break;
                     }
                 }
                 else if (oprNum.Contains(operatorr))
@@ -1050,6 +1072,15 @@ namespace AbisInterpreter
             
             public Array(string type, string name, int length) : base(type, name, "Array"){
                 this.vars = new Variavel[length];
+
+                string value = "";
+                
+                if(type == "num") value = "0";
+                else if(type == "bool") value = "False";
+                
+                for (int i = 0; i < this.vars.Length; i++){
+                    vars[i] = new Variavel(type,"",value);
+                }
             }
         }
 

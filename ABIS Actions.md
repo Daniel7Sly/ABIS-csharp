@@ -107,11 +107,12 @@ List of operators
 > operators that return `num`.  
 > `+ - * / %`  
 > operators that return `bool`  
-> `< > = !`  
+> `< > = ! & "`  
 > All the operators that return `num` can only work with `num`
 > values.  
 > The operators that return `bool` can only work with `num`
-> values with the exception of `=` and `!` which can work with 
+> with the exception of `&` and `"` that only work with `bool`,
+> and the exception of `=` and `!` which can work with 
 > `num`, `bool`, and `text`.
 
 You can also do operations inside operations and call blocks. Ex:

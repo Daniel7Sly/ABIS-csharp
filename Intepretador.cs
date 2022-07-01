@@ -86,16 +86,17 @@ namespace AbisInterpreter
                     string[] blockHeadSplit = blockHead.Split("[");
                     string blockName = "@"+blockHeadSplit[0].Split("@")[1];
 
-                    string[] inputOutput = blockHeadSplit[1].Split("]->"); //..:..;..:..   ]->   ..
+                    string[] inputOutput = blockHeadSplit[1].Split("]"); //..:..;..:..   ]   ->..
 
                     string[] inputVars = inputOutput[0].Split(";");
 
-                    string outputType = inputOutput[1];
+                    string outputType = (inputOutput[1].StartsWith("->") ? inputOutput[1].Split("->")[1] : "");
+
                     
                     block_list.Add(new Block(blockName, outputType, inputVars, blockInstructions));
                 }
-                catch (System.Exception){
-                    throw new InterpretationExeption("Error Creating "+i+"º Block");
+                catch (System.Exception e){
+                    throw new InterpretationExeption("Error Creating "+i+"º Block. Error:"+e.Message);
                 }
             }
         }
@@ -562,7 +563,7 @@ namespace AbisInterpreter
         {
             //Verifica se chegam três parametros
             if (parametros.Length != 2){
-                throw new InterpretationExeption("Quantidade de Parametros Invalida.");
+                throw new InterpretationExeption("Invalid param quantity.");
             }
 
             //Valida o 1º parametro se é um tipo valido
@@ -601,6 +602,13 @@ namespace AbisInterpreter
 
             //Acrescenta a flag á lista de flags
             lista_Flags.Add(new Flag(parametros[0], i));
+        }
+
+        private static void Execute(List<Variavel> var_list, string[] parametros){
+            if(parametros.Length != 1){
+                throw new InterpretationExeption("Invalid param quantity.");
+            }
+            GetValue(var_list, parametros[0],1);
         }
 
         private static string Return(List<Variavel> var_list, string[] parameters){
@@ -759,10 +767,10 @@ namespace AbisInterpreter
                     
                     return var.value;
                 }
-                else{//Caso  seja referente a um valor duma variavel
+                else{//Caso  seja referente a um valor duma variavel normal
                     Variavel? var = var_list.Find(x => x.id == param);
                     if(var == null){
-                        throw new InterpretationExeption(paramIndex, "Variavel não encontrada/definida.");
+                        throw new InterpretationExeption(paramIndex, "Variable not found.");
                     }
                     if(var is Array){
                         throw new InterpretationExeption(paramIndex, "Não é possivel obter valor de Variavel do tipo Array sem index especificado.");
@@ -786,6 +794,10 @@ namespace AbisInterpreter
                 for (int i = 0; i < inputParams.Length; i++)
                 {
                     inputParams[i] = GetValue(var_list, inputParams[i], paramIndex);
+                }
+
+                if(inputParams.Length == 1 && inputParams[0] == ""){
+                    return block.RunBlock(new string[] {});
                 }
 
                 return block.RunBlock(inputParams);
@@ -834,18 +846,18 @@ namespace AbisInterpreter
                             type = "text";
                             break;
                         default:
-                            throw new InterpretationExeption(paramIndex, "Comparador invalido");
+                            throw new InterpretationExeption(paramIndex, "Invalid comparator.");
                     }
 
                     if (type == "num")
                     {
                         if (!float.TryParse(value1, out float a))
                         {
-                            throw new InterpretationExeption(paramIndex, "Tipo de dado invalido para comparação pedida.");
+                            throw new InterpretationExeption(paramIndex, "Invalid data type for comparation.");
                         }
                         if (!float.TryParse(value2, out float b))
                         {
-                            throw new InterpretationExeption(paramIndex, "Tipo de dado invalido para comparação pedida.");
+                            throw new InterpretationExeption(paramIndex, "Invalid data type for comparation.");
                         }
                         float numval1 = a;
                         float numval2 = b;
@@ -919,7 +931,7 @@ namespace AbisInterpreter
                                 {
                                     result = "False";
                                 }
-                                break;
+                            break;
                         }
                     }
                 }
@@ -1121,9 +1133,10 @@ namespace AbisInterpreter
             public string RunBlock(string[] inputValues){
                 this.var_list = new List<Variavel>();
                 blockStack.Push(this);
+                indexAtual = -1;
                 
                 //Create the input variables
-                if(inputValues.Length != 0){
+                if(inputValues.Length > 0){
                     for (int i = 0; i < inputVarsAndTypes.Length; i++){
                         string[] inputs = inputVarsAndTypes[i].Split(":");
                         string[] parametersSet = {inputs[0], inputs[1]};
@@ -1133,7 +1146,6 @@ namespace AbisInterpreter
                         Equalss(var_list, parametersEqualss);
                     }
                 }
-
 
                 //Runs the intructions in the block
                 for (int i = 0; i < actions.Count; i++){
@@ -1182,11 +1194,14 @@ namespace AbisInterpreter
                         case "PRS":
                             Parse(var_list, actions[i].parameters);
                             break;
+                        case "EXE":
+                            Execute(var_list, actions[i].parameters);
+                            break;
                         case "RETURN":
                             string result = Return(var_list, actions[i].parameters);
                             this.var_list.Clear();
                             this.var_list = null;
-                            blockStack.Pop();                            
+                            blockStack.Pop();                        
                             return result;
                         default:
                             break;
@@ -1194,10 +1209,20 @@ namespace AbisInterpreter
                 }
 
                 if(this.name == "@main"){
+                    this.var_list.Clear();
+                    this.var_list = null;
+                    blockStack.Pop();
                     return "";
                 }
+                else if(this.outputType != ""){
+                    throw new InterpretationExeption("Block finished without return statement.");
+                }
 
-                throw new InterpretationExeption("Block finished without return statement");
+                this.var_list.Clear();
+                this.var_list = null;
+                blockStack.Pop();
+
+                return "";
             }
 
             private static void ParseIntructionsToBlockActions(List<Flag> lista_Flags, List<Action> Açoes, string instructions){
@@ -1274,7 +1299,7 @@ namespace AbisInterpreter
                         stackTrace+"\n\n"+
                         ultimas3Instruçoes +
                         instruçaoComErro + "\n"+
-                        BuildErrorArrow(instruçaoComErro, parametro, mensagem)+"\n"+
+                        (indexAtual >= 0 ? BuildErrorArrow(instruçaoComErro, parametro, mensagem):"# "+mensagem)+"\n"+
                         "-----------------<ERROR>----------------"
                         );
             }
@@ -1324,6 +1349,9 @@ namespace AbisInterpreter
 
             private static string GetBlockInstruction(Block block, int index){
                 string paramss = "";
+                if(index == -1){
+                    return "";
+                }
                 foreach(string paramm in block.actions[index].parameters){
                     paramss += paramm+"|";
                 }

@@ -29,6 +29,10 @@ namespace InterpretadorAbis
                             //System.Console.WriteLine("Program finished with errors!");
                             System.Console.WriteLine(ex.Message);
                         }
+                        catch(System.Exception ex){
+                            System.Console.WriteLine(ex.Message);
+                            System.Console.WriteLine(ex.StackTrace);
+                        }
                         System.Console.WriteLine("############################################################################");
                         if(Console.ReadLine() == "e") break;
     

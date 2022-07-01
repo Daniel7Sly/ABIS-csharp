@@ -1,8 +1,8 @@
-@main[]->{
-	PrintL:(false & true);
+@main[]{
+	Exe:@Test[AABBCC];
 }
 
-@Test[num:arr]->num{
-    Return: $arr#1;
+@Test[text:a]{
+    PrintL:$a;
 }
 

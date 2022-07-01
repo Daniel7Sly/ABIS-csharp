@@ -3,7 +3,7 @@
 # x	& operator
 #	arrays in block arguments
 #	array overflow
-#	no return block
+# x	no return block
 #	Exe Action
 @main[]{
 	SetArr:num|arr|50;

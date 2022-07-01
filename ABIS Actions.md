@@ -18,7 +18,7 @@ Every ABIS Script starts executing at the `@main` block.
 
 Hello world in ABIS:
 ```
-@main[]->{
+@main[]{
 	PrintL: Hello_World!;
 }
 ```

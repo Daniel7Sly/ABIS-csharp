@@ -125,7 +125,7 @@ namespace AbisInterpreter
                 } 
             }
             else{
-                throw new InterpretationExeption("Variavel recebida não é do tipo text.");
+                throw new InterpretationExeption(1,"Variavel recebida não é do tipo text.");
             }
         }
 
@@ -936,6 +936,10 @@ namespace AbisInterpreter
                     }
                 }
                 else if(oprLogic.Contains(operatorr)){
+
+                    value1 = GetValue(var_list, value1, paramIndex);
+                    value2 = GetValue(var_list, value2, paramIndex);
+
                     if (!bool.TryParse(value1, out bool a))
                     {
                         throw new InterpretationExeption(paramIndex, "Invalid data type for request operation '"+operatorr+"'");

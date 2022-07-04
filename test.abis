@@ -1,70 +1,8 @@
 @main[]{
-  Set: text|n1;
-  Set: text|n2;
-  
-  Set: bool| deu1;
-  Set: bool| deu2;
-  Set: num | valor1;
-  Set: num | valor2;
+  SetArr:num|arr|3;
+  Eql:$arr#0|1;
+  Eql:$arr#1|2;
+  Eql:$arr#2|3;
 
-  Verifyingthenrs:
-    PrintL: Pick_two_numbers;
-    Read: $n1;
-    Read: $n2;
-
-    Prs: $deu1 | $valor1 | $n1;
-    Prs: $deu2 | $valor2 | $n2;
-
-    IfN:($deu1 & $deu2)|Else;
-    
-    # ela descubriu esta anomalia que funfa xD
-    Print: Your_sum_is_;
-    PrintL: ($valor1 + $valor2);
-}
-
-# numero1
-# numero2
-# The sum of your numbers are num1+num2
-@Exemplo1[]{
-  Set: bool|deu;
-  Set: num|idade;
-
-  Prs: $deu | $idade | 50 ;
-
-  PrintL: $deu;
-  PrintL: $idade;
-}
-
-@FirstDianaCode[]{
-  PrintL:Tell_me_your_name_please);
-  Set: text|name;
-  Read: $name;
-
-  Print:Perfect!_Now_tell_me_your_age;
-  Set: num|age;
-  Read: $age;
-
-  Print:Hello_person_;
-  Print:$name;
-  Print:_with_;
-  Print:$age;
-  Print:_years_.
-}
-
-@Diana2ºCode[]{
-  Set: text|n1;
-  Set: text|n2;
-  PrintL: Pick_two_numbers;
-  Read: $n1;
-  Read: $n2;
-
-  Set: bool|deu;
-  Set: num | valor1;
-  Set: num | valor2;
-
-  Prs: $deu | $valor1 | $n1;
-  Prs: $deu | $valor2 | $n2;
-  
-  # ela descubriu esta anomalia que funfa xD
-  PrintL: ($n1 + $n2);
+  PrintL:$arr#6;
 }

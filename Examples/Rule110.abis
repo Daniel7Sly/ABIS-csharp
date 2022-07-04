@@ -2,9 +2,9 @@
 #requirements:
 # x	& operator
 #	arrays in block arguments
-#	array overflow
+# x	array overflow
 # x	no return block
-#	Exe Action
+# x	Exe Action
 @main[]{
 	SetArr:num|arr|50;
 	#places first cell at the end

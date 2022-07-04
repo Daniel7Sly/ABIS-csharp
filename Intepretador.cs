@@ -730,19 +730,21 @@ namespace AbisInterpreter
 
                     Variavel? var = var_list.Find(x => x.id == l[0]);
                     if (var == null){
-                        throw new InterpretationExeption(paramIndex, "Variavel não encontrada/definida.");
+                        throw new InterpretationExeption(paramIndex, "Variable not found.");
                     }
                     if (!(var is Array)){
-                        throw new InterpretationExeption(paramIndex, "Variavel indicada não é do tipo array.");
+                        throw new InterpretationExeption(paramIndex, "Variable is not of an array.");
                     }
                     
-                    //Vai buscando as variaveis/arrays de acordo com 
+                    //Vai buscando as variaveis/arrays de acordo com os '#'
                     for (int i = 1; i < l.Length; i++){
                         if (int.TryParse(GetValue(var_list, l[i], paramIndex), out int index)){
-                            if (index >= ((Array)var).vars.Length){
-                                throw new InterpretationExeption(paramIndex, "Index indicado ultrapassa os limites do Array.");
-                            }
                             
+                            //simulates index overflow
+                            while(index >= ((Array)var).vars.Length){
+                                index -= ((Array)var).vars.Length;
+                            }
+
                             //Variable contained in specified index($arr#i)
                             var = ((Array)var).vars[index];
                             
@@ -757,7 +759,7 @@ namespace AbisInterpreter
                             }
                         }
                         else{
-                            throw new InterpretationExeption(paramIndex, "Invalid Index.");
+                            throw new InterpretationExeption(paramIndex, "Specified index is not a num.");
                         }
                     }
 
@@ -773,7 +775,7 @@ namespace AbisInterpreter
                         throw new InterpretationExeption(paramIndex, "Variable not found.");
                     }
                     if(var is Array){
-                        throw new InterpretationExeption(paramIndex, "Não é possivel obter valor de Variavel do tipo Array sem index especificado.");
+                        throw new InterpretationExeption(paramIndex, "Can not get value from Array without specified index");
                     }
                     
                     return var.value;
@@ -791,8 +793,7 @@ namespace AbisInterpreter
 
                 string[] inputParams = param.Split("[")[1].Split("]")[0].Split(",");
 
-                for (int i = 0; i < inputParams.Length; i++)
-                {
+                for (int i = 0; i < inputParams.Length; i++){
                     inputParams[i] = GetValue(var_list, inputParams[i], paramIndex);
                 }
 

@@ -1,0 +1,10 @@
+
+@ArrLenght[#num:arr]->num{
+
+}
+
+SetArr: num|array|
+Eql: $x | @ArrLenght[];
+
+
+#a|C|C|C|W|QQA|DS|D|ES|W|D|ED|S

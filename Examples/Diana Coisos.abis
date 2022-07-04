@@ -1,0 +1,33 @@
+@FirstDianaCode[]{
+  PrintL:Tell_me_your_name_please);
+  Set: text|name;
+  Read: $name;
+
+  Print:Perfect!_Now_tell_me_your_age;
+  Set: num|age;
+  Read: $age;
+
+  Print:Hello_person_;
+  Print:$name;
+  Print:_with_;
+  Print:$age;
+  Print:_years_.
+}
+
+@Diana2ºCode[]{
+  Set: text|n1;
+  Set: text|n2;
+  PrintL: Pick_two_numbers;
+  Read: $n1;
+  Read: $n2;
+
+  Set: bool|deu;
+  Set: num | valor1;
+  Set: num | valor2;
+
+  Prs: $deu | $valor1 | $n1;
+  Prs: $deu | $valor2 | $n2;
+  
+  # ela descubriu esta anomalia que funfa xD
+  PrintL: ($n1 + $n2);
+}

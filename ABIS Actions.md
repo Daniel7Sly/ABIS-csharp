@@ -62,7 +62,8 @@ separate each parameter with `';'`. After the `'[]'` comes the
 all the actions of the block. A Block cannot finnish without
 `RETURN` someting.
 
-The example bellow shows a block which recives two numbers `a` and `b` , and returns the sum of the squares of that numbers.
+The example bellow shows a block which recives two numbers `a` and `b` , and returns the sum
+of the squares of that numbers.
 ```
 @SumOfSquare[num:a;num:b] -> num {
 	Set: num|rslt;

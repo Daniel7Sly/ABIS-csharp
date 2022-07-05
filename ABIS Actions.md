@@ -25,26 +25,29 @@ Hello world in ABIS:
 > Output: `Hello World!`
 ## Variaveis
 
-Variaveis são usadas para armazenar valores e fornecer valores a parametros de ações do tipo correspondente.
+Variables are used to store and provide values to parameters of actions of 
+the corresponding type.
 
-Existem 3 tipos de Variaveis:  
-> `num` 	-> com um valor numerico(pode ter casas decimais).  
-> `bool` 	-> valor 'true' ou 'false'.  
-> `text` 	-> contem texto.  
+There are 3 types of variables:  
+> `num` 	-> stores a number(can have decimal places).  
+> `bool` 	-> value 'true' ot 'false'.  
+> `text` 	-> just stores text.  
 
 When a variable is created it starts with a default value:
 > `num` 	-> 0  
 > `bool` 	-> false  
 > `text` 	-> ''. (empty)
 
-Variaveis são indetificadas no codigo por `'$'` seguido pelo nome.
+Variables are identified in code by the `'$'` followed by the name.
+
 > Ex: `$variavel`
 
-Em arrays é usado o `'#'` depois do nome para indicar o index que queremos o valor.
-> Ex: `$listaNomes#23` --> dá o valor da posição 23
+In arrays is used the `'#'` after the name to identify the index that we 
+want the value.
+> Ex: `$listaNomes#23` --> gives the value in position 23.
 
-Também é possivel identificar o index do array com uma variavel.
-> Ex: `$listaNumeros#$index` ($index é uma variavel num)
+It is also possible to identify the index with a variable.
+> Ex: `$listaNumeros#$index` ($index is of type num)
 
 ## Blocks
 
@@ -81,9 +84,10 @@ PrintL: @SumOfSquares[$i, $j];
 >Output: `125`
 ## Flags
 
-Flags servem para marcar posições no codigo para ser redirecionado com `IF` & `Goto`. Flags são marcadas com `:` seguido de uma ação.
+Flags are used to mark positions in code to be redirected with IF or GOTO
+actions. Flags are marked with `:` before the next action name.
 
-Não é possivel redirecionar para flags de blocos diferentes.
+It´s not possible to jump to flags of diferent blocks.
 
 Ex:
 ```
@@ -151,15 +155,15 @@ PrintL: $x;
 
 ## SET
 
-Define uma variavel com o tipo da variavel o nome.  
+Creates a variable of the given type and name.  
 Ex: 
 > `Set: type|name;`
 
 > `Set: num|numero1;`
 
-Isto cria a variavel `numero1` do tipo numerico com o valor 0;
+This creates the variable `number1` of type num.
 
-Parametros:
+Parameters:
 > `type`: The type of the variable you wish to create.
 > 
 > `name`: The name that the variable will have.  
@@ -171,73 +175,75 @@ Default values:
 
 ## SetArray
 
-***DEPRECATE***  
-> ~~Define um array do tipo de dado, com os valores/tamanho 
-SetArr: type|nome|{1,2,3,4}; 		<-- array com tamanho 4 e valores predefinidos
-SetArr: type|nome|$(num);			<-- array de tamanho do numero da variavel, sem valores predefinidos
-SetArr: type|nome|10;				<-- array de tamanho 10 sem valores predefinidos
-SetArr: type|nome|{amam, $b, $c#1};	<-- array de tamanho 3 com valores predefinidos~~
+***! ARRAYS ARE NOT TOTALY IMPLEMENTED!***  
+Define um array do tipo de dado, com os valores/tamanho.
+
+>``SetArr: type|nome|{1,2,3,4};`` 		<-- array com tamanho 4 e valores 
+>predefinidos
+>
+>``SetArr: type|nome|$(num);``			<-- array de tamanho do numero davariavel, >sem valores predefinidos
+>
+>``SetArr: type|nome|10;``				<-- array de tamanho 10 sem valores
+>predefinidos
+>
+>``SetArr: type|nome|{amam, $b, $c#1};``	<-- array de tamanho 3 com valores
+>predefinidos
 
 ## Print
 
-Escreve o valor na consola. `'_'` são substituidos por espaços
+Writes the given value in the console. `'_'` are subtituted 
 ```
 Print: text;
 ```
 
 ## Read
 
-***OUTDATED***  
->Lê o que o usuario escrever no terminal.
-Caso a variavel seja num ou bool READ tentará converter o texto recebido para o tipo dado.
-Caso não consiga rebenta
+Reads what the user writes in the console and atributed the values to the given variable.
 ```
-Read: $;
+Read: $(text);
 ```
 
 ## Equals
 
-Atribui o valor (2º param) á variavel(1º param). O valor recebido tem que corresponder ao
-tipo da variavel recebida.
+Gives to the variable the given value.
 ```
-Eql: $:type|$\value;
+Eql: $:type|value:(type);
 ```
 
 ## JoinText
 
-Junta os valores (param 2 & 3) como se fossem texto e atribui o resultado á variavel dada.
-
-Pode ser usado para converter `bool` e `num` para text.
+Merges the 2º and 3º param values as text and atributes the value to the given
+variable(1º param).
 ```
 Jtxt: $(text)|value|value;
 ```
 
 ## Parse
 
-Tenta converter o valor dado para num.
-Atribui true á variavel do 1º param se a conversão foi feita com sucesso senão atribui false.
-Se conseguir converter o resultado é atribuido á 2ª variavel.
+Trys to parse the given text into a number.
+If the convertion fails `false` is atributed to the 1º param, otherwise `true`
+is given and the convertion result is given to the variable(2º param).
 ```
 Prs: $(bool) | $(num) | $\value(text);
 ```
 
 ## GetArrayLegth
 
-Obtem o tamanho do array dado (2º param) e atribui o valor á variavel 1º param.
+Atributes to the 1º param the lenght of the given variable.
 ```
 GLength: $(num)|$#;
 ```
 
 ## Goto
 
-Vai até á flag especificada.
+Goes to the specified flag.
 ```
 Goto: flag_name;
 ```
 
 ## If
 
-Caso o valor da variavel(1º param) dada for `true` é redirecionado para a flag indicada.
+If the variable is true, jumps to the indicated flag.
 ```
 If: $(bool)|flag_name;
 ```

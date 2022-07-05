@@ -8,3 +8,8 @@ Eql: $x | @ArrLenght[];
 
 
 #a|C|C|C|W|QQA|DS|D|ES|W|D|ED|S
+
+
+Set:num|a; Eql:$a|20;
+Set:num|b; Eql:$b|10;
+PrintL:($a + $b);

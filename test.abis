@@ -1,8 +1,5 @@
 @main[]{
-  SetArr:num|arr|3;
-  Eql:$arr#0|1;
-  Eql:$arr#1|2;
-  Eql:$arr#2|3;
-
-  PrintL:$arr#6;
+  Set:num|a; Eql:$a|20;
+  Set:num|b; Eql:$b|10;
+  PrintL:($a + $b);
 }

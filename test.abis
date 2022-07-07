@@ -1,5 +1,9 @@
 @main[]{
-  Set:num|a; Eql:$a|20;
-  Set:num|b; Eql:$b|10;
-  PrintL:($a + $b);
+  SetArr:text|textArr|0;
+  SplitText: $textArr | 2020/40/35 | /;
+  
+  PrintL: $textArr#0;
+  PrintL: $textArr#1;
+  PrintL: $textArr#2;
 }
+

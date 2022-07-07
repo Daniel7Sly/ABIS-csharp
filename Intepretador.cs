@@ -45,7 +45,7 @@ namespace AbisInterpreter
             if(mainBlock == null){
                 throw new InterpretationExeption("No 'main' block found");
             }
-
+                
             Intepretar(mainBlock);
         }
 
@@ -266,6 +266,28 @@ namespace AbisInterpreter
             }
 
             var_result.value = valor1 + valor2;
+        }
+
+        private static void SplitText(List<Variavel> var_list, string[] parametros){
+            if(parametros.Length != 3){
+                throw new InterpretationExeption("Invalid parameter count. Expected 3, got: "+ parametros.Length);
+            }
+
+            Array array = (Array)GetVariavel(var_list, parametros[0], 1, true);
+            string textToSplit = GetValue(var_list,parametros[1],2);
+            string splitText = GetValue(var_list,parametros[2],3);
+
+            string[] values = textToSplit.Split(splitText); 
+
+            array.vars = strArrToVarArr(values);
+
+            Variavel[] strArrToVarArr(string[] values){
+                Variavel[] arr = new Variavel[values.Length];
+                for(int i = 0; i < values.Length; i++){
+                    arr[i] = new Variavel(values[i], "text");
+                }
+                return arr;
+            }
         }
 
         private static void Parse(List<Variavel> lista_Variaveis, string[] parametros){
@@ -1199,6 +1221,9 @@ namespace AbisInterpreter
                         case "PRS":
                             Parse(var_list, actions[i].parameters);
                             break;
+                        case "SPLITTEXT":
+                            SplitText(var_list, actions[i].parameters);
+                            break;
                         case "EXE":
                             Execute(var_list, actions[i].parameters);
                             break;
@@ -1337,6 +1362,8 @@ namespace AbisInterpreter
                 if(mensagem == "No 'main' block found"){
                     return mensagem;
                 }
+
+                return mensagem;
 
                 string stackTrace = "Block Trace: ";
                 Block currentBlock = blockStack.Peek();

@@ -219,6 +219,29 @@ variable(1º param).
 Jtxt: $(text)|value|value;
 ```
 
+## SplitText
+
+Splits the given text(2º param) with the text spliter(3º param) and asigns each part to
+the text array(1º param).
+```
+SplitText: #rsltArr(text) | textToDivide:(text) | Divisor:(text);
+```
+Example:
+```
+  SetArr:text|textArr|0;
+  
+  SplitText: $textArr | 2020/40/35 | /;
+  
+  PrintL: $textArr#0;
+  PrintL: $textArr#1;
+  PrintL: $textArr#2;
+  --------------------
+  Output: 	2020
+			40
+			35
+```
+
+
 ## Parse
 
 Trys to parse the given text into a number.

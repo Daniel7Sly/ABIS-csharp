@@ -21,4 +21,3 @@
     Eql: $mult | ($mult + 1);
     IF: ($mult < 11) | Loop;
 }
-

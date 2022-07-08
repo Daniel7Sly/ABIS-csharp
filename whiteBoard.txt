@@ -18,3 +18,30 @@ PrintL:($a + $b);
 Eql: $c | ($a + ($b * 2));
 
 SplitText: #rsltArr(text)|textToDivide:(text)|Divisor:(text);
+
+IF: ($x > 100) | LoopEnd;
+
+
+@main[]{
+  Set: text|userNumText;
+  Set: bool|rigth;
+  Set: num|numero;
+  
+  Question:
+    PrintL: Digite_o_numero_para_ver_a_tabuada;    
+    Read: $userNumText;
+    Prs: $rigth | $numero | $userNumText;
+
+  IfN: $rigth | Question;
+
+  Set:num|mult; Eql: $mult | 1;
+  Loop:
+    Print :$numero;
+    Print :*;
+    Print :$mult;
+    Print :=;
+    PrintL:($numero * $mult);
+  LoopEnd:
+    Eql: $mult | ($mult + 1);
+    IF: ($mult < 11) | Loop;
+}

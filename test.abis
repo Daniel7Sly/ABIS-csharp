@@ -1,24 +1,4 @@
-@Tabuada[]{
-  Set: text|userNumText;
-  Set: bool|rigth;
-  Set: num|numero;
+@main[]{
+  Set: algo|a;
+}    
   
-  Question:
-    PrintL: Digite_o_numero_para_ver_a_tabuada;    
-    Read: $userNumText;
-    Prs: $rigth | $numero | $userNumText;
-
-  IfN: $rigth | Question;
-
-  Set:num|mult; Eql: $mult | 1;
-  Loop:
-    Print :$numero;
-    Print :_*_;
-    Print :$mult;
-    Print :_=_;
-    PrintL:($numero * $mult);
-  LoopEnd:
-    Eql: $mult | ($mult + 1);
-    IF: ($mult < 11) | Loop;
-}
-

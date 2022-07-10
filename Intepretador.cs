@@ -28,7 +28,7 @@ namespace AbisInterpreter
 {
     public class Interpreter
     {
-        //São definidas globalmente para serem usadas nas exeçoes
+        //They are defined globaly to be used in the exceptions
         //static string[] instrunçoes_do_Ficheiro = {};
         private static int indexAtual;
         private static Stack<Block> blockStack;
@@ -104,10 +104,10 @@ namespace AbisInterpreter
 //---ACTIONS---
 //################################################################################################
 
-        //! Isto é apenas uma solução temporaria!
+        //! Temporary Solution!
         private static void Read(List<Variavel> lista_Variaveis, string[] parametros){
             if(parametros.Length != 1){
-                throw new InterpretationExeption("Quantidade de parametros invalida.");
+                throw new InterpretationExeption("Invalid param quantity.");
             }
 
             Variavel var = GetVariavel(lista_Variaveis,parametros[0],1, false);
@@ -125,11 +125,11 @@ namespace AbisInterpreter
                 } 
             }
             else{
-                throw new InterpretationExeption(1,"Variavel recebida não é do tipo text.");
+                throw new InterpretationExeption(1,"Received variable is not of type text.");
             }
         }
 
-        //! Isto é apenas uma solução temporaria!
+        //! Temporary Solution!
         private static void Print(List<Variavel> lista_Variaveis, string[] parametros){
             // if(parametros.Length < 1){
             //     throw new InterpretationExeption("Parametro em falta");
@@ -141,7 +141,7 @@ namespace AbisInterpreter
             
         }
         
-        //! Isto é apenas uma solução temporaria!
+        //! Temporary Solution!
         private static void PrintL(List<Variavel> lista_Variaveis, string[] parametros){
             Print(lista_Variaveis,parametros);
             Console.Write('\n');
@@ -151,7 +151,7 @@ namespace AbisInterpreter
         private static void Comparaçao(List<Variavel> lista_Variaveis, string[] parametros){
             //Valida a quantidade de parametros
             if(parametros.Length != 4){
-                throw new InterpretationExeption("Quantidade de parametros invalida.");
+                throw new InterpretationExeption("Invalid param quantity.");
             }
 
             //Valida o 1º parametro, tem de ser variavel.
@@ -160,7 +160,7 @@ namespace AbisInterpreter
             //     throw new InterpretationExeption(1,"Não pode ser atribuido um valor a um array sem index expecificado.");
             // }
             if(var_result.type != "bool"){
-                throw new InterpretationExeption(1,"Valor a ser atribuido a variavel não booleana.");
+                throw new InterpretationExeption(1,"Variable is not of type bool.");
             }
             string comparator = GetValue(lista_Variaveis, parametros[2], 3);
             string tipo;
@@ -173,7 +173,7 @@ namespace AbisInterpreter
                     tipo = "text";
                     break;
                 default:
-                    throw new InterpretationExeption(3,"Comparador invalido");
+                    throw new InterpretationExeption(3,"Invalid Comparator.");
             }
 
             //Obtem e valida os valores a comparar
@@ -184,10 +184,10 @@ namespace AbisInterpreter
             //Faz a comparação
             if(tipo == "num"){
                 if(!float.TryParse(valor1, out float a)){
-                    throw new InterpretationExeption(2,"Tipo de dado invalido para comparação pedida.");
+                    throw new InterpretationExeption(2,"Invalid data type for requested comparison.");
                 }
                 if(!float.TryParse(valor2, out float b)){
-                    throw new InterpretationExeption(4,"Tipo de dado invalido para comparação pedida.");
+                    throw new InterpretationExeption(4,"Invalid data type for requested comparison.");
                 }
                 float numval1 = a;
                 float numval2 = b;
@@ -254,7 +254,7 @@ namespace AbisInterpreter
         private static void JoinText(List<Variavel> lista_Variaveis, string[] parametros){
             //Valida a quantidade de parametros
             if(parametros.Length != 3){
-                 throw new InterpretationExeption("Quantidade de parametros invalida.");
+                 throw new InterpretationExeption("Invalid param Quantity.");
             }
             
             Variavel var_result = GetVariavel(lista_Variaveis,parametros[0],1,false);
@@ -262,7 +262,7 @@ namespace AbisInterpreter
             string valor2 = GetValue(lista_Variaveis,parametros[2],3);
 
             if(var_result.type != "text"){
-                throw new InterpretationExeption(1,"Variavel não é do tipo 'text'");
+                throw new InterpretationExeption(1,"Variable is not of type text.");
             }
 
             var_result.value = valor1 + valor2;
@@ -292,7 +292,7 @@ namespace AbisInterpreter
 
         private static void Parse(List<Variavel> lista_Variaveis, string[] parametros){
             if(parametros.Length != 3){
-                throw new InterpretationExeption("Quantidade de parametros invalida.");
+                throw new InterpretationExeption("Invalid param Quantity.");
             }
             
             //Recebe os parametros
@@ -302,10 +302,10 @@ namespace AbisInterpreter
 
             //Valida as variaveis
             if(var1.type != "bool"){
-                throw new InterpretationExeption(1,"Variavel não é do tipo bool.");
+                throw new InterpretationExeption(1,"Variable is not of type bool.");
             }
             if(var2.type != "num"){
-                throw new InterpretationExeption(2  ,"Variavel não é do tipo num.");
+                throw new InterpretationExeption(2  ,"Variable is not of type num.");
             }
 
             //Realiza o parse
@@ -318,7 +318,7 @@ namespace AbisInterpreter
 
         private static void GetLength(List<Variavel> lista_Variaveis, string[] parametros){
             if(parametros.Length != 2){
-                throw new InterpretationExeption("Quantidade de parametros invalida.");
+                throw new InterpretationExeption("Invalid Param Quantity.");
             }
 
             //Busca a variavel e o array
@@ -326,10 +326,10 @@ namespace AbisInterpreter
             Variavel var1 = GetVariavel(lista_Variaveis,parametros[1],2, true);
 
             if(varr.type != "num"){
-                throw new InterpretationExeption(1,"Variavel de atribuição não é do tipo num.");
+                throw new InterpretationExeption(1,"Varible is not of type num.");
             }
             if(var1 !is Array){
-                throw new InterpretationExeption(2,"Parametro não é do tipo Array.");
+                throw new InterpretationExeption(2,"Variable is not of type Array.");
             }
 
             varr.value = ((Array)var1).vars.Length.ToString();
@@ -339,7 +339,7 @@ namespace AbisInterpreter
         private static void Operaçao(List<Variavel> lista_Variaveis, string[] parametros){
             //Valida a quantidade de parametros
             if(parametros.Length != 4){
-                throw new InterpretationExeption("Quantidade de parametros invalida.");
+                throw new InterpretationExeption("Invalid Param Quantity.");
             }
             
             //Valida o 1º parametro
@@ -348,7 +348,7 @@ namespace AbisInterpreter
             //     throw new InterpretationExeption(1,"Não pode ser atribuido um valor a um array sem index expecificado.");
             // }
             if(var.type != "num"){
-                throw new InterpretationExeption(1,"Valor a ser atribuido a variavel não numerica.");
+                throw new InterpretationExeption(1,"Variable is not of type num.");
             }
 
             //Valida 2º parametro e atribui o valor á variavel varlor1
@@ -407,7 +407,7 @@ namespace AbisInterpreter
             //Valida a flag 2º parametro
             Flag? flag = lista_Flags.Find(x => x.nome == parametros[1]);
             if(flag == null){
-                throw new InterpretationExeption(2,"Flag não encontrada/definida");
+                throw new InterpretationExeption(2,"Flag not found.");
             }
 
             //Retorna a posiçao da flag
@@ -435,7 +435,7 @@ namespace AbisInterpreter
             //Valida a flag 2º parametro
             Flag? flag = lista_Flags.Find(x => x.nome == parametros[1]);
             if(flag == null){
-                throw new InterpretationExeption(2,"Flag não encontrada/definida");
+                throw new InterpretationExeption(2,"Flag not found.");
             }
 
             //Retorna a posiçao da flag
@@ -450,7 +450,7 @@ namespace AbisInterpreter
             
             //verifica se chegou dois parametros
             if(parametros.Length != 2){
-                throw new InterpretationExeption("Quantidade de Parametros Invalida.");
+                throw new InterpretationExeption("Invalid Param Quantity.");
             }
 
 
@@ -471,7 +471,7 @@ namespace AbisInterpreter
                         valor = result_num.ToString();
                     }
                     else{
-                        throw new InterpretationExeption(2,"Não foi possivel converter parametro para num.");
+                        throw new InterpretationExeption(2,"Could not convert parameter to num.");
                     }
                     break;
                 case "bool":
@@ -479,7 +479,7 @@ namespace AbisInterpreter
                         valor = result_bool.ToString();
                     }
                     else{
-                        throw new InterpretationExeption(2,"Não foi possivel converter parametro para bool.");
+                        throw new InterpretationExeption(2,"Could not convert parameter to bool.");
                     }
                     break;
                 case "text":
@@ -496,12 +496,12 @@ namespace AbisInterpreter
         private static int Goto(string[] parametros, List<Flag> lista_Flags, int index){
             //valida o parametro
             if(parametros[0] == ""){
-                throw new InterpretationExeption("Parametro em falta.");
+                throw new InterpretationExeption("Invalid Param Quantity.");
             }
             Flag? flag = lista_Flags.Find(x => x.nome == parametros[0]);
             if (flag == null)
             {
-                throw new InterpretationExeption(1,"Flag não encontrada/definida.");
+                throw new InterpretationExeption(1,"Flag not found.");
             }
             
             //Define i para a posiçao da flag
@@ -512,7 +512,7 @@ namespace AbisInterpreter
         private static void SetArr(List<Variavel> lista_Variaveis, string[] parametros){
             //Verifica se chegam três parametros
             if(parametros.Length != 3){
-                throw new InterpretationExeption("Quantidade de Parametros Invalida.");
+                throw new InterpretationExeption("Invalid Param Quantity.");
             }
 
             //Valida o 1º parametro se é um tipo valido (num, bool, text)
@@ -531,7 +531,7 @@ namespace AbisInterpreter
             if(var != null){
                 if(var is Array){
                     if(((Array)var).type != type){
-                        throw new InterpretationExeption(3,"Tipo de dados dos arrays não condizem");
+                        throw new InterpretationExeption(3,"Arrays types do not match.");
                     }
                     //Cria um array com os mesmos valores que o array dado
                     lista_Variaveis.Add(new Array(type, name, ((Array)var).vars));
@@ -541,7 +541,7 @@ namespace AbisInterpreter
                     if(var.type == "num"){
                         lista_Variaveis.Add(new Array(type, name, int.Parse(var.value)));
                     }
-                    throw new InterpretationExeption(3,"Variavel dada não é do tipo num.");
+                    throw new InterpretationExeption(3,"Given variable is not of type num.");
                 }
             }
             else{//Por fim verifica se é dada uma lista de valores.
@@ -556,14 +556,14 @@ namespace AbisInterpreter
                         case "num":
                             foreach (string valor in valores){
                                 if(int.TryParse(GetValue(lista_Variaveis, valor,3), out int a) == false){
-                                    throw new InterpretationExeption(3,"Não foi possivel converter um dos valores para num");
+                                    throw new InterpretationExeption(3,"Could not convert one of the values to a num");
                                 }
                             }
                         break;
                         case "bool":
                             foreach (string valor in valores){
                                 if(bool.TryParse(GetValue(lista_Variaveis, valor,3), out bool a) == false){
-                                    throw new InterpretationExeption(3,"Não foi possivel converter um dos valores para bool");
+                                    throw new InterpretationExeption(3,"Could not convert one of the values to a bool");
                                 }
                             }
                         break;
@@ -576,7 +576,7 @@ namespace AbisInterpreter
                     lista_Variaveis.Add(new Array(type, name, valores));
                 }
                 else{
-                    throw new InterpretationExeption(3,"O parametro não contem um tamanho nem uma lista de valores para o array.");
+                    throw new InterpretationExeption(3,"The parameter does not contain a size or a list of values for the array.");
                 }
             }
         }
@@ -613,10 +613,11 @@ namespace AbisInterpreter
             lista_Variaveis.Add(new Variavel(type, name, value));
         }
 
+        //! DEPRECATE
         private static void Flags(string[] parametros, List<Flag> lista_Flags, int i){
             //Valida o parametro nome
             if(parametros == null || parametros.Length != 1 || parametros[0] == ""){
-                throw new InterpretationExeption("Parametro 'nome' invalido.");
+                throw new InterpretationExeption("Invalid 'name' parameter.");
             }
             if(lista_Flags.Find(x => x.nome == parametros[0]) != null){
                 throw new InterpretationExeption("Nome de Flag repetido/já existente");
@@ -653,7 +654,7 @@ namespace AbisInterpreter
         private static Variavel GetVariavel(List<Variavel> lista_Variaveis, string parametro, int paramIndex, bool isArray){
             //Verifica se o parametro é variavel
             if(parametro[0] != '$'){
-                throw new InterpretationExeption(paramIndex,"Parametro não é variavel.");
+                throw new InterpretationExeption(paramIndex,"Parameter is not variable.");
             }
 
             Variavel? var;
@@ -663,43 +664,43 @@ namespace AbisInterpreter
                 string[] l = parametro.Split('#');
                 var = lista_Variaveis.Find(x => x.id == l[0]);
                 if(var == null){
-                    throw new InterpretationExeption(paramIndex, "Variavel não encontrada/definida.");
+                    throw new InterpretationExeption(paramIndex, "Variable not found.");
                 }
                 if(!(var is Array)){
-                    throw new InterpretationExeption(paramIndex, "Variavel dada não é do tipo array");
+                    throw new InterpretationExeption(paramIndex, "Given variable is not array type");
                 }
 
                 if(int.TryParse(GetValue(lista_Variaveis,l[1],1),out int index)){
                     if(index >= ((Array)var).vars.Length || index < 0){
-                        throw new InterpretationExeption(paramIndex, "Index indicado ultrapassa os limites do Array.");
+                        throw new InterpretationExeption(paramIndex, "Indicated index exceeds the limits of the Array.");
                     }
 
                     //Verifica se a variavel do Array é um array(não sei se vou manter isto ja que não da para obter o valor de um dos index do array interno)
                     if(((Array)var).vars[index] !is Array && isArray){
-                        throw new InterpretationExeption(paramIndex, "A variavel recebida não é um Array.");
+                        throw new InterpretationExeption(paramIndex, "The received variable is not an Array.");
                     }
                     if(((Array)var).vars[index] is Array && !isArray){
-                        throw new InterpretationExeption(paramIndex, "Recebido Array esperado variavel normal");
+                        throw new InterpretationExeption(paramIndex, "Received Array expected normal variable");
                     }
 
                     //Retorna a variavel do Array no index especificado
                     return ((Array)var).vars[index];
                 }
                 else{
-                    throw new InterpretationExeption(paramIndex,"Index especificado invalido.");
+                    throw new InterpretationExeption(paramIndex,"Invalid specified index.");
                 }
             }
             else{//Busca a Variavel correspondente ao parametro
                 var = lista_Variaveis.Find(x => x.id == parametro);
                 if(var == null){
-                    throw new InterpretationExeption(paramIndex, "Variavel não encontrada/definida.");
+                    throw new InterpretationExeption(paramIndex, "Variable not found.");
                 }
 
                 if(!(var is Array) && isArray){
-                    throw new InterpretationExeption(paramIndex, "A variavel recebida não é um Array.");
+                    throw new InterpretationExeption(paramIndex, "received variable is not an Array.");
                 }
                 if(var is Array && !isArray){
-                    throw new InterpretationExeption(paramIndex, "Recebido Array esperado variavel normal");
+                    throw new InterpretationExeption(paramIndex, "Received Array expected normal value.");
                 }
 
             }
@@ -710,13 +711,13 @@ namespace AbisInterpreter
         private static string GetVarName(string parametro, List<Variavel> lista_Variaveis, int paramIndex)
         {
             if (parametro == ""){
-                throw new InterpretationExeption(paramIndex, "Nome de variavel vazio / não definido.");
+                throw new InterpretationExeption(paramIndex, "Empty / undefined variable name.");
             }
             if (parametro.Contains('#') || parametro.Contains('$')){
-                throw new InterpretationExeption(paramIndex, "Nomes de variaveis não podem conter caracters especiais.('#', '$')");
+                throw new InterpretationExeption(paramIndex, "Variable names cannot contain special characters.('#', '$')");
             }
             if (lista_Variaveis.Find(x => x.id == "$" + parametro) != null){
-                throw new InterpretationExeption(paramIndex, "Variavel ja existente.");
+                throw new InterpretationExeption(paramIndex, "Existing variable.");
             }
             return parametro;
         }
@@ -725,7 +726,7 @@ namespace AbisInterpreter
         {
             if (parametro != "num" && parametro != "bool" && parametro != "text")
             {
-                throw new InterpretationExeption(paramIndex, "Parametro tipo invalido. Type must be num, bool, or text.");
+                throw new InterpretationExeption(paramIndex, "Invalid parameter type. Type must be num, bool, or text.");
             }
 
             return parametro;

@@ -96,7 +96,8 @@ namespace AbisInterpreter
                     block_list.Add(new Block(blockName, outputType, inputVars, blockInstructions));
                 }
                 catch (System.Exception e){
-                    throw new InterpretationExeption("Error Creating "+(i+1)+"º Block. Error:"+e.Message);
+                    //throw new InterpretationExeption("Error Creating "+(i+1)+"º Block. Error:"+e.Message);
+                    throw new InterpretationExeption("Error Creating "+(i+1)+"º Block.");
                 }
             }
         }
@@ -1377,7 +1378,13 @@ namespace AbisInterpreter
                     ultimas3Instruçoes = GetBlockInstruction(currentBlock,indexAtual-3)+"\n"+GetBlockInstruction(currentBlock,indexAtual-2)+"\n"+GetBlockInstruction(currentBlock,indexAtual-1)+"\n";
                 
                 string instruçaoComErro = GetBlockInstruction(currentBlock,indexAtual);
-                return ("\n \n"+stackTrace+"\n"+ultimas3Instruçoes + instruçaoComErro + " <-- \n \n" + mensagem+"\n------------------------------------------------");
+                return ("\n-----------------<ERROR>----------------\n"+
+                        stackTrace+"\n\n"+
+                        ultimas3Instruçoes +
+                        instruçaoComErro + "\n"+
+                        "# "+ mensagem +"\n"+
+                        "-----------------<ERROR>----------------"
+                        );
             }
 
             private static string GetBlockInstruction(Block block, int index){

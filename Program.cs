@@ -22,7 +22,7 @@ namespace InterpretadorAbis
                         
                         try
                         {
-                             Interpreter.Intepretar(comandos);
+                            Interpreter.Intepretar(comandos);
                         }
                         catch (Interpreter.InterpretationExeption ex)
                         {
@@ -30,8 +30,12 @@ namespace InterpretadorAbis
                             System.Console.WriteLine(ex.Message);
                         }
                         catch(System.Exception ex){
-                            System.Console.WriteLine(ex.Message);
-                            System.Console.WriteLine(ex.StackTrace);
+                            System.Console.WriteLine(
+                                "\n-----------------<ERROR>----------------\n"+
+                                "Caught Unhandled Error:"+ ex.Message+
+                                "\n-----------------<ERROR>----------------"
+                            );
+                            //System.Console.WriteLine(ex.StackTrace);
                         }
                         System.Console.WriteLine("############################################################################");
                         if(Console.ReadLine() == "e") break;

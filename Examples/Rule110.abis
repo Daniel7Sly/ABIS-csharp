@@ -1,4 +1,5 @@
 #RULE 110 Implementation in ABIS.
+#THIS CODE DOES NOT RUN YET!
 #requirements:
 # x	& operator
 #	arrays in block arguments

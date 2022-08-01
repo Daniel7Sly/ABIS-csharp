@@ -24,7 +24,7 @@ namespace InterpretadorAbis
                         {
                             Interpreter.Intepretar(comandos);
                         }
-                        catch (Interpreter.InterpretationExeption ex)
+                        catch (Interpreter.InterpretationException ex)
                         {
                             //System.Console.WriteLine("Program finished with errors!");
                             System.Console.WriteLine(ex.Message);
@@ -54,6 +54,24 @@ namespace InterpretadorAbis
             {
                 Console.WriteLine("No File Expecified!");
             }
+        }
+
+        static void Tabuda_Csharp(){
+
+            int numero;
+            do {
+                Console.WriteLine("Digite o numero para ver a tabuada");
+                if(int.TryParse(Console.ReadLine(), out int result)){
+                    numero = result;
+                    break;
+                }
+            } while(true);
+
+            for(int i = 1; i <= 10; i++)
+            {
+                Console.WriteLine("{0} * {1} = {2}", numero, i, (numero * i));
+            }
+
         }
     }
 }

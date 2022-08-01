@@ -28,7 +28,7 @@ IF: ($x > 100) | LoopEnd;
   Set: num|numero;
   
   Question:
-    PrintL: Digite_o_numero_para_ver_a_tabuada;    
+    PrintL: Digite_o_numero_para_ver_a_tabuada;
     Read: $userNumText;
     Prs: $rigth | $numero | $userNumText;
 
@@ -45,3 +45,101 @@ IF: ($x > 100) | LoopEnd;
     Eql: $mult | ($mult + 1);
     IF: ($mult < 11) | Loop;
 }
+
+
+Set: type | name | value ;
+
+Eql: $ | $\value ;
+
+Cmp: $ | value1 | comparator | value2 ;
+
+Opr: $ | value1 | operator | value2 ;
+
+Flag: FlagName ;
+
+If: $ | FlagName ;
+
+Goto: FlagName;
+
+Print\PrintL: value;
+
+Read: $ ;
+
+
+
+Flag: Inicio;
+PrintL: Hello_World!;
+Goto: A;
+
+Inicio:
+  PrintL: Hello_World!;
+  Goto: A;
+
+
+SetArr: type | name | size ;
+
+GLength: $num | $array ;
+
+
+
+SetArr: text | arr | 3 ;
+Eql: $arr#0 | 77 ;
+Eql: $arr#1 | AABBCC ;
+PrintL: $arr#0 ;
+PrintL: $arr#1 ;
+PrintL: $arr#2 ;
+
+
+
+Cmp: $varBool | value1 | comparador | value2 ;
+
+Opr: $varNum | value1 | operador | value2 ;
+
+
+
+Set: bool | CmpRslt ;
+..
+Cmp: $CmpRslt | $a | > | 20 ;
+If: $CmpRslt | Flag ;
+
+
+If: ($a > 20) | Flag;
+
+Eql: $a | (($a > 20)? 20 ? $a) ;
+
+( bool ? value1 ? value2 )
+
+(($a < 10) & ($a > 5))
+
+EXEMPLO OPERADORES
+Set: num | a; Eql: $a | 50;
+Eql: $a | (($a > 20) ? 20 ? $a);
+PrintL: $a;
+
+
+@main[]{
+  Set: text|userNumText;
+  Set: bool|rigth;
+  Set: num|numero;
+
+  Question:
+    PrintL: Digite_o_numero_para_ver_se_é_par_ou_impar ;    
+    Read: $userNumText;
+    Prs: $rigth | $numero | $userNumText;
+
+  IfN: $rigth | Question;
+
+  If: @IsEven[$numero]| Par ;
+    PrintL: O_seu_numero_é_impar;
+    Goto: End;
+  Par:
+    PrintL: O_seu_numero_é_par ;
+  End::;
+}
+
+@IsEven[num: number] -> bool{
+  Return: ((($number % 2 ) = 0) ? True ? False);
+}
+
+
+Exe: @blockName[] ;

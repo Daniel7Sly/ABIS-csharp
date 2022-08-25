@@ -1,25 +1,33 @@
-@main[]{
-  Set: text|userNumText;
-  Set: bool|rigth;
-  Set: num|numero;
+@FirstDianaCode[]{
+  PrintL:Tell_me_your_name_please);
+  Set: text|name;
+  Read: $name;
 
-  Question:
-    PrintL: Digite_o_numero_para_ver_se_é_par_ou_impar ;
-    Read: $userNumText;
-    Prs: $rigth | $numero | $userNumText;
+  Print:Perfect!_Now_tell_me_your_age;
+  Set: num|age;
+  Read: $age;
 
-  IfN: $rigth | Question;
+  Print:Hello_person_;
+  Print:$name;
+  Print:_with_;
+  Print:$age;
+  Print:_years_.
+}
 
-  If: ((($numero % 2 ) = 0) ? True ? False) | Even ;
-    PrintL: O_seu_numero_é_impar;
-    Goto: End;
-  Even:
-    PrintL: O_seu_numero_é_par ;
+@Diana2ºCode[]{
+  Set: text|n1;
+  Set: text|n2;
+  PrintL: Pick_two_numbers;
+  Read: $n1;
+  Read: $n2;
+
+  Set: bool|deu;
+  Set: num | valor1;
+  Set: num | valor2;
+
+  Prs: $deu | $valor1 | $n1;
+  Prs: $deu | $valor2 | $n2;
   
-  End::;
+  # ela descubriu esta anomalia que funfa xD
+  PrintL: ($n1 + $n2);
 }
-
-@IsEven[num: number] -> bool{
-  Return: ((($number % 2 ) = 0) ? True ? False);
-}
-

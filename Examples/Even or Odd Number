@@ -1,0 +1,22 @@
+@main[]{
+  Set: text|userNumText;
+  Set: bool|rigth;
+  Set: num|numero;
+
+  Question:
+    PrintL: Digite_o_numero_para_ver_se_é_par_ou_impar ;
+    Read: $userNumText;
+    Prs: $rigth | $numero | $userNumText;
+
+  IfN: $rigth | Question;
+
+  If: @IsEven[$numero] | Even ;
+    PrintL: O_seu_numero_é_impar;
+    Return:;
+  Even:
+    PrintL: O_seu_numero_é_par ;
+}
+
+@IsEven[num: number] -> bool{
+  Return: ((($number % 2 ) = 0) ? True ? False);
+}

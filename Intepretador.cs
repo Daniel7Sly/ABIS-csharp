@@ -45,7 +45,7 @@ namespace AbisInterpreter
             Block? mainBlock = block_list.Find((x) => x.name == "@main");
             if (mainBlock == null)
             {
-                throw new InterpretationException("No 'main' block found");
+                throw new InterpretationException(InterpretationExceptionType.NoMainBlockFound);
             }
 
             Intepretar(mainBlock);
@@ -506,7 +506,7 @@ namespace AbisInterpreter
             //changes the current index for the index of the flag, the -1 is because of the loop where the actions are executed.
             if (value == "True")
             {
-                currentActionIndex = flag.posiçao - 1;
+                currentBlock.nextAction = flag.posiçao - 1;
             }
 
             return;
@@ -781,7 +781,7 @@ namespace AbisInterpreter
             GetValue(var_list, parameters[0], 1);
         }
 
-        private static string Return(Block currentBlock)
+        private static void Return(Block currentBlock)
         {
             string[] parameters = currentBlock.actions[currentActionIndex].parameters;
             List<Variavel> var_list = (currentBlock.var_list != null ? currentBlock.var_list : throw new InterpretationException(InterpretationExceptionType.NullBlockVarList));
@@ -791,7 +791,7 @@ namespace AbisInterpreter
                 throw new InterpretationException("Invalid param quantity.");
             }
 
-            return GetValue(var_list, parameters[0], 1);
+            currentBlock.outputValue = GetValue(var_list, parameters[0], 1);
         }
 
         //#########################################################################################################
@@ -1329,13 +1329,6 @@ namespace AbisInterpreter
             }
         }
 
-        // public enum Type
-        // {
-        //     num,
-        //     text,
-        //     boool
-        // }
-
         //Map of the actions
         private static Dictionary<string, Action<Block>> map = new Dictionary<string, Action<Block>>{
             {"SET", Set},
@@ -1351,15 +1344,17 @@ namespace AbisInterpreter
             {"READ", Read},
             {"IF", IF},
             {"IFN", IFN},
-            {"GOTO", Goto}
-            //TODO: ADD RETURN ACTION
+            {"GOTO", Goto},
+            {"RETURN", Return},
         };
 
         private class Block
         {
             public string name;
             public string outputType;
+            public string outputValue = "";
             public string[] inputVarsAndTypes;
+            public int nextAction; //Used in IF, IFN & GOTO
 
             public List<Action> actions;
             public List<Flag> flag_list;
@@ -1399,9 +1394,7 @@ namespace AbisInterpreter
                         string[] parametersSet = { inputs[0], inputs[1] };
                         string[] parametersEqualss = { "$" + inputs[1], inputValues[i] };
 
-                        //TODO: FIX THIS
-                        // Set(parametersSet,this.var_list);
-                        // Equalss(var_list, parametersEqualss);
+                        this.var_list.Add(new Variavel(inputs[0], inputs[1], inputValues[i]));
                     }
                 }
 
@@ -1409,14 +1402,19 @@ namespace AbisInterpreter
                 for (int i = 0; i < actions.Count; i++)
                 {
                     currentActionIndex = i;
+                    nextAction = i;
+
                     string action = actions[i].actionType;
-                    if(map.ContainsKey(action)){
+                    if (map.ContainsKey(action))
+                    {
                         map[action](this);
+
+                        if (action == "RETURN")
+                            break;
                     }
-                    else{
-                        throw new InterpretationException(InterpretationExceptionType.ActionNotFound);
-                    }
-                    i = currentActionIndex;
+                    else throw new InterpretationException(InterpretationExceptionType.ActionNotFound);
+
+                    i = nextAction;
                 }
 
                 if (this.name == "@main")
@@ -1426,16 +1424,16 @@ namespace AbisInterpreter
                     blockStack.Pop();
                     return "";
                 }
-                else if (this.outputType != "")
-                {
-                    throw new InterpretationException("Block finished without return statement.");
-                }
+                // else if (this.outputType != "")
+                // {
+                //     throw new InterpretationException("Block finished without return statement.");
+                // }
 
                 this.var_list.Clear();
                 this.var_list = null;
                 blockStack.Pop();
 
-                return "";
+                return outputValue;
             }
 
             private static void ParseIntructionsToBlockActions(List<Flag> lista_Flags, List<Action> Açoes, string instructions)
@@ -1520,6 +1518,7 @@ namespace AbisInterpreter
             NullBlockVarList,
             NullBlockFlagList,
             ActionNotFound,
+            NoMainBlockFound,
         }
 
         [System.Serializable]

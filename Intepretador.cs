@@ -33,6 +33,7 @@ namespace AbisInterpreter
         private static int currentActionIndex;
         private static Stack<Block> blockStack;
         private static List<Block> block_list;
+        private static List<Struct> struct_list;
 
         public static void Intepretar(string file_content)
         {
@@ -45,7 +46,7 @@ namespace AbisInterpreter
             Block? mainBlock = block_list.Find((x) => x.name == "@main");
             if (mainBlock == null)
             {
-                throw new InterpretationException(InterpretationExceptionType.NoMainBlockFound);
+                throw new InterpretationException(InterExecpType.NoMainBlockFound);
             }
 
             Intepretar(mainBlock);
@@ -53,7 +54,7 @@ namespace AbisInterpreter
 
         private static void Intepretar(Block mainBlock)
         {
-            string[] noInputVars = { };
+            Value[] noInputVars = { };
             mainBlock.RunBlock(noInputVars);
         }
 
@@ -101,14 +102,36 @@ namespace AbisInterpreter
 
                     string outputType = (inputOutput[1].StartsWith("->") ? inputOutput[1].Split("->")[1] : "");
 
+                    //if(existsDuplicateVarName(inputVars)) throw new InterpretationException(InterExecpType.DuplicateInputBlockVariableName);
 
                     block_list.Add(new Block(blockName, outputType, inputVars, blockInstructions));
                 }
+                catch (InterpretationException e)
+                {
+                    throw new InterpretationException("Error Creating " + (i + 1) + "º Block. Error: " + e.Message);
+                }
                 catch (System.Exception e)
                 {
-                    //throw new InterpretationExeption("Error Creating "+(i+1)+"º Block. Error:"+e.Message);
-                    throw new InterpretationException("Error Creating " + (i + 1) + "º Block.");
+                    throw new InterpretationException("Error Creating " + (i + 1) + "º Block. Error:" + e.Message + "\n" + e.StackTrace);
+                    //throw new InterpretationException("Error Creating " + (i + 1) + "º Block.");
                 }
+            }
+
+            bool existsDuplicateVarName(string[] inputVarsAndTypes)
+            {
+                for (int i = 0; i < inputVarsAndTypes.Length; i++)
+                {
+                    for (int j = 0; j < inputVarsAndTypes.Length; j++)
+                    {
+                        if (i == j) continue;
+
+                        if (inputVarsAndTypes[i].Split(":")[1] == inputVarsAndTypes[j].Split(":")[1])
+                        {
+                            return true;
+                        }
+                    }
+                }
+                return false;
             }
         }
 
@@ -119,33 +142,33 @@ namespace AbisInterpreter
         private static void Read(Block currentBlock)
         {
             string[] parameters = currentBlock.actions[currentActionIndex].parameters;
-            List<Variavel> var_list = (currentBlock.var_list != null ? currentBlock.var_list : throw new InterpretationException(InterpretationExceptionType.NullBlockVarList));
+            List<Variable> var_list = (currentBlock.var_list != null ? currentBlock.var_list : throw new InterpretationException(InterExecpType.NullBlockVarList));
 
             if (parameters.Length != 1)
             {
                 throw new InterpretationException("Invalid param quantity.");
             }
 
-            Variavel var = GetVariavel(var_list, parameters[0], 1, false);
+            Variable var = GetVariavel(var_list, parameters[0], 1, false);
             // if(var is Array){
             //     throw new InterpretationExeption(1,"Impossivel ");
             // }
 
-            if (var.type == "text")
+            if (var.type == TYPE_TEXT)
             {
                 string? valor = Console.ReadLine();
                 if (valor == null)
                 {
-                    var.value = "";
+                    var.value.basicValue = "";
                 }
                 else
                 {
-                    var.value = valor;
+                    var.value.basicValue = valor;
                 }
             }
             else
             {
-                throw new InterpretationException(1, "Received variable is not of type text.");
+                throw new InterpretationException(1, "Expected Variable of type Text. Got: " + var.type);
             }
         }
 
@@ -153,15 +176,17 @@ namespace AbisInterpreter
         private static void Print(Block currentBlock)
         {
             string[] parameters = currentBlock.actions[currentActionIndex].parameters;
-            List<Variavel> var_list = (currentBlock.var_list != null ? currentBlock.var_list : throw new InterpretationException(InterpretationExceptionType.NullBlockVarList));
+            List<Variable> var_list = (currentBlock.var_list != null ? currentBlock.var_list : throw new InterpretationException(InterExecpType.NullBlockVarList));
 
             // if(parametros.Length < 1){
             //     throw new InterpretationExeption("Parametro em falta");
             // }
 
-            string value = GetValue(var_list, parameters[0], 1);
+            Value value = GetValue(var_list, parameters[0], 1);
 
-            Console.Write(value.Replace('_', ' '));
+            if (value.isStruct) throw new InterpretationException(1, "Cannot Print Composite Values.");
+
+            Console.Write(value.basicValue.Replace('_', ' '));
 
         }
 
@@ -172,8 +197,8 @@ namespace AbisInterpreter
             Console.Write('\n');
         }
 
-        //! DEPRECATE
-        private static void Comparaçao(List<Variavel> lista_Variaveis, string[] parametros)
+        /*//! DEPRECATE
+        private static void Comparaçao(List<Variable> lista_Variaveis, string[] parametros)
         {
             //Valida a quantidade de parametros
             if (parametros.Length != 4)
@@ -182,7 +207,7 @@ namespace AbisInterpreter
             }
 
             //Valida o 1º parametro, tem de ser variavel.
-            Variavel? var_result = GetVariavel(lista_Variaveis, parametros[0], 1, false);
+            Variable? var_result = GetVariavel(lista_Variaveis, parametros[0], 1, false);
             // if(var_result is Array){
             //     throw new InterpretationExeption(1,"Não pode ser atribuido um valor a um array sem index expecificado.");
             // }
@@ -301,34 +326,31 @@ namespace AbisInterpreter
                 }
             }
         }
-
+        */
         private static void JoinText(Block currentBlock)
         {
             string[] parameters = currentBlock.actions[currentActionIndex].parameters;
-            List<Variavel> var_list = (currentBlock.var_list != null ? currentBlock.var_list : throw new InterpretationException(InterpretationExceptionType.NullBlockVarList));
+            List<Variable> var_list = (currentBlock.var_list != null ? currentBlock.var_list : throw new InterpretationException(InterExecpType.NullBlockVarList));
 
             //Valida a quantidade de parametros
             if (parameters.Length != 3)
             {
-                throw new InterpretationException("Invalid param Quantity.");
+                throw new InterpretationException(0, "Invalid param Quantity.");
             }
 
-            Variavel var_result = GetVariavel(var_list, parameters[0], 1, false);
-            string valor1 = GetValue(var_list, parameters[1], 2);
-            string valor2 = GetValue(var_list, parameters[2], 3);
+            Variable var_result = GetVariavel(var_list, parameters[0], 1, false);
+            Value valor1 = GetValue(var_list, parameters[1], 2);
+            Value valor2 = GetValue(var_list, parameters[2], 3);
 
-            if (var_result.type != "text")
-            {
-                throw new InterpretationException(1, "Variable is not of type text.");
-            }
+            if (var_result.type != TYPE_TEXT) throw new InterpretationException(1, "Variable is not of type text.");
 
-            var_result.value = valor1 + valor2;
+            var_result.value.basicValue = valor1.basicValue + valor2.basicValue;
         }
-
+        /*
         private static void SplitText(Block currentBlock)
         {
             string[] parameters = currentBlock.actions[currentActionIndex].parameters;
-            List<Variavel> var_list = (currentBlock.var_list != null ? currentBlock.var_list : throw new InterpretationException(InterpretationExceptionType.NullBlockVarList));
+            List<Variable> var_list = (currentBlock.var_list != null ? currentBlock.var_list : throw new InterpretationException(InterExecpType.NullBlockVarList));
 
             if (parameters.Length != 3)
             {
@@ -343,21 +365,21 @@ namespace AbisInterpreter
 
             array.vars = strArrToVarArr(values);
 
-            Variavel[] strArrToVarArr(string[] values)
+            Variable[] strArrToVarArr(string[] values)
             {
-                Variavel[] arr = new Variavel[values.Length];
+                Variable[] arr = new Variable[values.Length];
                 for (int i = 0; i < values.Length; i++)
                 {
-                    arr[i] = new Variavel(values[i], "text");
+                    arr[i] = new Variable(values[i], "text");
                 }
                 return arr;
             }
         }
-
+        */
         private static void Parse(Block currentBlock)
         {
             string[] parameters = currentBlock.actions[currentActionIndex].parameters;
-            List<Variavel> var_list = (currentBlock.var_list != null ? currentBlock.var_list : throw new InterpretationException(InterpretationExceptionType.NullBlockVarList));
+            List<Variable> var_list = (currentBlock.var_list != null ? currentBlock.var_list : throw new InterpretationException(InterExecpType.NullBlockVarList));
 
             if (parameters.Length != 3)
             {
@@ -365,33 +387,28 @@ namespace AbisInterpreter
             }
 
             //Recebe os parametros
-            Variavel var1 = GetVariavel(var_list, parameters[0], 1, false);
-            Variavel var2 = GetVariavel(var_list, parameters[1], 2, false);
-            string valor = GetValue(var_list, parameters[2], 3);
+            Variable var1 = GetVariavel(var_list, parameters[0], 1, false);
+            Variable var2 = GetVariavel(var_list, parameters[1], 2, false);
+            Value val = GetValue(var_list, parameters[2], 3);
 
             //Valida as variaveis
-            if (var1.type != "bool")
-            {
-                throw new InterpretationException(1, "Variable is not of type bool.");
-            }
-            if (var2.type != "num")
-            {
-                throw new InterpretationException(2, "Variable is not of type num.");
-            }
+            if (var1.type != TYPE_BOOL) throw new InterpretationException(1, "Variable is not of type bool.");
+            if (var2.type != TYPE_NUM) throw new InterpretationException(2, "Variable is not of type num.");
+            if (val.type != TYPE_TEXT) throw new InterpretationException(2, "Value is not of type text.");
 
             //Realiza o parse
-            bool parse = float.TryParse(valor, out float num);
-            var1.value = parse.ToString();
-            if (parse)
+            bool parsed = float.TryParse(val.basicValue, out float num);
+            var1.value.basicValue = parsed.ToString();
+            if (parsed)
             {
-                var2.value = num.ToString();
+                var2.value.basicValue = num.ToString();
             }
         }
-
+        /*
         private static void GetLength(Block currentBlock)
         {
             string[] parameters = currentBlock.actions[currentActionIndex].parameters;
-            List<Variavel> var_list = (currentBlock.var_list != null ? currentBlock.var_list : throw new InterpretationException(InterpretationExceptionType.NullBlockVarList));
+            List<Variable> var_list = (currentBlock.var_list != null ? currentBlock.var_list : throw new InterpretationException(InterExecpType.NullBlockVarList));
 
             if (parameters.Length != 2)
             {
@@ -399,8 +416,8 @@ namespace AbisInterpreter
             }
 
             //Busca a variavel e o array
-            Variavel varr = GetVariavel(var_list, parameters[0], 1, false);
-            Variavel var1 = GetVariavel(var_list, parameters[1], 2, true);
+            Variable varr = GetVariavel(var_list, parameters[0], 1, false);
+            Variable var1 = GetVariavel(var_list, parameters[1], 2, true);
 
             if (varr.type != "num")
             {
@@ -413,9 +430,9 @@ namespace AbisInterpreter
 
             varr.value = ((Array)var1).vars.Length.ToString();
         }
-
+        */
         //! DEPRECATE
-        private static void Operaçao(List<Variavel> lista_Variaveis, string[] parametros)
+        /*private static void Operaçao(List<Variable> lista_Variaveis, string[] parametros)
         {
             //Valida a quantidade de parametros
             if (parametros.Length != 4)
@@ -424,7 +441,7 @@ namespace AbisInterpreter
             }
 
             //Valida o 1º parametro
-            Variavel? var = GetVariavel(lista_Variaveis, parametros[0], 1, false);
+            Variable? var = GetVariavel(lista_Variaveis, parametros[0], 1, false);
             // if(var is Array){
             //     throw new InterpretationExeption(1,"Não pode ser atribuido um valor a um array sem index expecificado.");
             // }
@@ -474,23 +491,24 @@ namespace AbisInterpreter
                     throw new InterpretationException(3, "Operador invalido.");
             }
         }
+        */
 
         private static void IF(Block currentBlock)
         {
             string[] parameters = currentBlock.actions[currentActionIndex].parameters;
-            List<Variavel> var_list = (currentBlock.var_list != null ? currentBlock.var_list : throw new InterpretationException(InterpretationExceptionType.NullBlockVarList));
-            List<Flag> flag_list = (currentBlock.flag_list != null ? currentBlock.flag_list : throw new InterpretationException(InterpretationExceptionType.NullBlockFlagList));
+            List<Variable> var_list = (currentBlock.var_list != null ? currentBlock.var_list : throw new InterpretationException(InterExecpType.NullBlockVarList));
+            List<Flag> flag_list = (currentBlock.flag_list != null ? currentBlock.flag_list : throw new InterpretationException(InterExecpType.NullBlockFlagList));
 
             if (parameters.Length != 2)
             {
-                throw new InterpretationException("Expected 3 parameters.");
+                throw new InterpretationException(0, "Expected 3 parameters.");
             }
 
             //Recebe e Valida a variavel do 1º parametro
-            string value = GetValue(var_list, parameters[0], 1);
-            if (value != "True" && value != "False")
+            Value value = GetValue(var_list, parameters[0], 1);
+            if (value.type != TYPE_BOOL)
             {
-                throw new InterpretationException(1, "Expected Bool value");
+                throw new InterpretationException(1, "Expected Bool value. Got: " + value.type);
             }
             // if(var is Array){
             //     throw new InterpretationExeption(1,"Não é possivel ler valor de um array sem index especificado");
@@ -504,19 +522,17 @@ namespace AbisInterpreter
             }
 
             //changes the current index for the index of the flag, the -1 is because of the loop where the actions are executed.
-            if (value == "True")
+            if (value.basicValue == "True")
             {
                 currentBlock.nextAction = flag.posiçao - 1;
             }
-
-            return;
         }
 
         private static void IFN(Block currentBlock)
         {
             string[] parameters = currentBlock.actions[currentActionIndex].parameters;
-            List<Variavel> var_list = (currentBlock.var_list != null ? currentBlock.var_list : throw new InterpretationException(InterpretationExceptionType.NullBlockVarList));
-            List<Flag> flag_list = (currentBlock.flag_list != null ? currentBlock.flag_list : throw new InterpretationException(InterpretationExceptionType.NullBlockFlagList));
+            List<Variable> var_list = (currentBlock.var_list != null ? currentBlock.var_list : throw new InterpretationException(InterExecpType.NullBlockVarList));
+            List<Flag> flag_list = (currentBlock.flag_list != null ? currentBlock.flag_list : throw new InterpretationException(InterExecpType.NullBlockFlagList));
 
 
             if (parameters.Length != 2)
@@ -525,14 +541,11 @@ namespace AbisInterpreter
             }
 
             //Recebe e Valida a variavel do 1º parametro
-            string value = GetValue(var_list, parameters[0], 1);
-            if (value != "True" && value != "False")
+            Value value = GetValue(var_list, parameters[0], 1);
+            if (value.type != TYPE_BOOL)
             {
-                throw new InterpretationException(1, "Expected Bool value");
+                throw new InterpretationException(1, "Expected Bool value. Got: " + value.type);
             }
-            // if(var is Array){
-            //     throw new InterpretationExeption(1,"Não é possivel ler valor de um array sem index especificado");
-            // }
 
             //Valida a flag 2º parametro
             Flag? flag = flag_list.Find(x => x.nome == parameters[1]);
@@ -542,79 +555,44 @@ namespace AbisInterpreter
             }
 
             //changes the current index for the index of the flag, the -1 is because of the loop where the actions are executed.
-            if (value == "False")
+            if (value.basicValue == "False")
             {
-                currentActionIndex = flag.posiçao - 1;
+                currentBlock.nextAction = flag.posiçao - 1;
             }
-            //Retorna -1 caso seja true
-            return;
         }
 
         private static void Equalss(Block currentBlock)
         {
             string[] parameters = currentBlock.actions[currentActionIndex].parameters;
-            List<Variavel> var_list = (currentBlock.var_list != null ? currentBlock.var_list : throw new InterpretationException(InterpretationExceptionType.NullBlockVarList));
+            List<Variable> var_list = (currentBlock.var_list != null ? currentBlock.var_list : throw new InterpretationException(InterExecpType.NullBlockVarList, 0));
 
             //verifica se chegou dois parametros
             if (parameters.Length != 2)
             {
-                throw new InterpretationException(0, "Invalid Param Quantity.");
+                throw new InterpretationException(InterExecpType.InvalidParameterQuantity, 0);
             }
-
 
             //verifica se o primeiro parametro é uma variavel valida
-            Variavel? var1 = GetVariavel(var_list, parameters[0], 1, false);
-            // if(var1 is Array){
-            //     throw new InterpretationExeption(1,"Não pode ser atribuido um valor a um array sem index expecificado.");
-            // }
+            Variable? var1 = GetVariavel(var_list, parameters[0], 1, false);
+
             //obtem o valor do 2º parametro
-            string value2 = GetValue(var_list, parameters[1], 2);
+            Value value = GetValue(var_list, parameters[1], 2);
 
-
-            string valor = "";
             //Aplica a atribuição correspondente ao tipo de dado da var1
-            switch (var1.type)
-            {
-                case "num":
-                    if (float.TryParse(value2, out float result_num))
-                    {
-                        valor = result_num.ToString();
-                    }
-                    else
-                    {
-                        throw new InterpretationException(2, "Could not convert parameter to num.");
-                    }
-                    break;
-                case "bool":
-                    if (bool.TryParse(value2, out bool result_bool))
-                    {
-                        valor = result_bool.ToString();
-                    }
-                    else
-                    {
-                        throw new InterpretationException(2, "Could not convert parameter to bool.");
-                    }
-                    break;
-                case "text":
-                    valor = value2;
-                    break;
-                default:
-                    break;
-            }
+            if (var1.type != value.type) throw new InterpretationException(InterExecpType.TypesDontMatch, 2);
 
-            var1.value = valor;
-
+            var1.value = value;
         }
 
         private static void Goto(Block currentBlock)
         {
             string[] parameters = currentBlock.actions[currentActionIndex].parameters;
-            List<Flag> flag_list = (currentBlock.flag_list != null ? currentBlock.flag_list : throw new InterpretationException(InterpretationExceptionType.NullBlockFlagList));
+            List<Flag> flag_list = (currentBlock.flag_list != null ? currentBlock.flag_list : throw new InterpretationException(InterExecpType.NullBlockFlagList));
 
             //valida o parametro
             if (parameters[0] == "")
             {
-                throw new InterpretationException("Invalid Param Quantity.");
+                throw new InterpretationException(InterExecpType.InvalidParameterQuantity);
             }
             Flag? flag = flag_list.Find(x => x.nome == parameters[0]);
             if (flag == null)
@@ -624,11 +602,11 @@ namespace AbisInterpreter
 
             currentActionIndex = flag.posiçao - 1;
         }
-
+        /*
         private static void SetArr(Block currentBlock)
         {
             string[] parameters = currentBlock.actions[currentActionIndex].parameters;
-            List<Variavel> var_list = (currentBlock.var_list != null ? currentBlock.var_list : throw new InterpretationException(InterpretationExceptionType.NullBlockVarList));
+            List<Variable> var_list = (currentBlock.var_list != null ? currentBlock.var_list : throw new InterpretationException(InterExecpType.NullBlockVarList));
 
             //Verifica se chegam três parametros
             if (parameters.Length != 3)
@@ -649,7 +627,7 @@ namespace AbisInterpreter
                 return;
             }
 
-            Variavel? var = var_list.Find(x => x.id == parameters[2]);
+            Variable? var = var_list.Find(x => x.id == parameters[2]);
             if (var != null)
             {
                 if (var is Array)
@@ -715,11 +693,11 @@ namespace AbisInterpreter
                 }
             }
         }
-
+        */
         private static void Set(Block currentBlock)
         {
             string[] parameters = currentBlock.actions[currentActionIndex].parameters;
-            List<Variavel> var_list = (currentBlock.var_list != null ? currentBlock.var_list : throw new InterpretationException(InterpretationExceptionType.NullBlockVarList));
+            List<Variable> var_list = (currentBlock.var_list != null ? currentBlock.var_list : throw new InterpretationException(InterExecpType.NullBlockVarList));
 
             //Verifica se chegam três parametros
             if (parameters.Length != 2)
@@ -733,23 +711,8 @@ namespace AbisInterpreter
             //Valida e obtem o nome do 2º parametro
             string name = GetVarName(parameters[1], var_list, 2);
 
-
-            string value = "";
-            switch (type)
-            {
-                case "num":
-                    value = "0";
-                    break;
-                case "bool":
-                    value = "false";
-                    break;
-                case "text":
-                    value = "";
-                    break;
-            }
-
             //Creates the varable and adds it to the varable list.
-            var_list.Add(new Variavel(type, name, value));
+            var_list.Add(new Variable(type, name));
         }
 
         //! DEPRECATE
@@ -772,19 +735,46 @@ namespace AbisInterpreter
         private static void Execute(Block currentBlock)
         {
             string[] parameters = currentBlock.actions[currentActionIndex].parameters;
-            List<Variavel> var_list = (currentBlock.var_list != null ? currentBlock.var_list : throw new InterpretationException(InterpretationExceptionType.NullBlockVarList));
+            List<Variable> var_list = (currentBlock.var_list != null ? currentBlock.var_list : throw new InterpretationException(InterExecpType.NullBlockVarList,0));
 
-            if (parameters.Length != 1)
+            if (parameters.Length != 1) throw new InterpretationException(0, "Invalid param quantity.");
+            string param = parameters[0];
+            if (param[0] == '@')
             {
-                throw new InterpretationException("Invalid param quantity.");
+                if (!param.Contains('[') && param[param.Length - 1] != ']')
+                    throw new InterpretationException(InterExecpType.InvalidBlockCallSyntax, 1);
+
+                Block? blockToBeRun = block_list.Find((x) => x.name == param.Split("[")[0]);
+                if (blockToBeRun == null)
+                    throw new InterpretationException(InterExecpType.BlockNotFound, 1);
+
+                if(blockToBeRun.name == "@main") throw new InterpretationException(1, "Block main cannot be called.");
+
+                //if (blockToBeRun.outputType == null) throw new InterpretationException(InterExecpType.GettingValueFromBlockWithoutReturnValue, 1);
+
+                //TODO: maybe implement BlockCall support in blockCalls
+                string[] inputParams = param.Split('[')[1].Split(']')[0].Split(",");
+
+                if(inputParams.Length == 1 && inputParams[0] == "")
+                    inputParams = new string[0];
+
+                Value[] inputValues = new Value[inputParams.Length];
+
+                for (int i = 0; i < inputParams.Length; i++)
+                {
+                    Value value = GetValue(var_list, inputParams[i], 1);
+                    inputValues[i] = (blockToBeRun.inputVarsAndTypes[i].Item1 == value.type ? value : throw new InterpretationException(InterExecpType.TypesDontMatch, 1));
+                }
+
+                Value? rtrn = blockToBeRun.RunBlock(inputValues);
             }
-            GetValue(var_list, parameters[0], 1);
+            else throw new InterpretationException(1, "parameter is not a block call.");
         }
 
         private static void Return(Block currentBlock)
         {
             string[] parameters = currentBlock.actions[currentActionIndex].parameters;
-            List<Variavel> var_list = (currentBlock.var_list != null ? currentBlock.var_list : throw new InterpretationException(InterpretationExceptionType.NullBlockVarList));
+            List<Variable> var_list = (currentBlock.var_list != null ? currentBlock.var_list : throw new InterpretationException(InterExecpType.NullBlockVarList));
 
             if (parameters.Length != 1)
             {
@@ -796,6 +786,10 @@ namespace AbisInterpreter
 
         //#########################################################################################################
 
+        const string TYPE_TEXT = "text";
+        const string TYPE_NUM = "num";
+        const string TYPE_BOOL = "bool";
+
         /// <summary>
         ///     Verifica se existe. Verifica se é de um array e valida se o index é valido caso dado.
         /// </summary>
@@ -803,78 +797,80 @@ namespace AbisInterpreter
         /// <param name="parametro"></param>
         /// <param name="paramIndex"></param>
         /// <returns>Retorna a variavel pedida(normal ou de array). Não retorna NULL</returns>
-        private static Variavel GetVariavel(List<Variavel> lista_Variaveis, string parametro, int paramIndex, bool isArray)
+        private static Variable GetVariavel(List<Variable> lista_Variaveis, string parametro, int paramIndex, bool isArray)
         {
             //Verifica se o parametro é variavel
             if (parametro[0] != '$')
             {
-                throw new InterpretationException(paramIndex, "Parameter is not variable.");
+                throw new InterpretationException(InterExecpType.ExpectedVariable, paramIndex);
             }
 
-            Variavel? var;
+            Variable? var;
 
             //Verifica se é uma variavel de um array
             if (parametro.Contains('#'))
             {
-                string[] l = parametro.Split('#');
-                var = lista_Variaveis.Find(x => x.id == l[0]);
-                if (var == null)
-                {
-                    throw new InterpretationException(paramIndex, "Variable not found.");
-                }
-                if (!(var is Array))
-                {
-                    throw new InterpretationException(paramIndex, "Given variable is not array type");
-                }
+                //TODO FIX THIS
+                throw new InterpretationException(InterExecpType.TODO);
+                // string[] l = parametro.Split('#');
+                // var = lista_Variaveis.Find(x => x.id == l[0]);
+                // if (var == null)
+                // {
+                //     throw new InterpretationException(paramIndex, "Variable not found.");
+                // }
+                // if (!(var is Array))
+                // {
+                //     throw new InterpretationException(paramIndex, "Given variable is not array type");
+                // }
 
-                if (int.TryParse(GetValue(lista_Variaveis, l[1], 1), out int index))
-                {
-                    if (index >= ((Array)var).vars.Length || index < 0)
-                    {
-                        throw new InterpretationException(paramIndex, "Indicated index exceeds the limits of the Array.");
-                    }
+                // if (int.TryParse(GetValue(lista_Variaveis, l[1], 1), out int index))
+                // {
+                //     if (index >= ((Array)var).vars.Length || index < 0)
+                //     {
+                //         throw new InterpretationException(paramIndex, "Indicated index exceeds the limits of the Array.");
+                //     }
 
-                    //Verifica se a variavel do Array é um array(não sei se vou manter isto ja que não da para obter o valor de um dos index do array interno)
-                    if (((Array)var).vars[index]! is Array && isArray)
-                    {
-                        throw new InterpretationException(paramIndex, "The received variable is not an Array.");
-                    }
-                    if (((Array)var).vars[index] is Array && !isArray)
-                    {
-                        throw new InterpretationException(paramIndex, "Received Array expected normal variable");
-                    }
+                //     //Verifica se a variavel do Array é um array(não sei se vou manter isto ja que não da para obter o valor de um dos index do array interno)
+                //     if (((Array)var).vars[index]! is Array && isArray)
+                //     {
+                //         throw new InterpretationException(paramIndex, "The received variable is not an Array.");
+                //     }
+                //     if (((Array)var).vars[index] is Array && !isArray)
+                //     {
+                //         throw new InterpretationException(paramIndex, "Received Array expected normal variable");
+                //     }
 
-                    //Retorna a variavel do Array no index especificado
-                    return ((Array)var).vars[index];
-                }
-                else
-                {
-                    throw new InterpretationException(paramIndex, "Invalid specified index.");
-                }
+                //     //Retorna a variavel do Array no index especificado
+                //     return ((Array)var).vars[index];
+                // }
+                // else
+                // {
+                //     throw new InterpretationException(paramIndex, "Invalid specified index.");
+                // }
             }
             else
             {//Busca a Variavel correspondente ao parametro
                 var = lista_Variaveis.Find(x => x.id == parametro);
                 if (var == null)
                 {
-                    throw new InterpretationException(paramIndex, "Variable not found.");
+                    throw new InterpretationException(InterExecpType.VariableNotFound, paramIndex);
                 }
 
-                if (!(var is Array) && isArray)
-                {
-                    throw new InterpretationException(paramIndex, "received variable is not an Array.");
-                }
-                if (var is Array && !isArray)
-                {
-                    throw new InterpretationException(paramIndex, "Received Array expected normal value.");
-                }
+                // if (!(var is Array) && isArray)
+                // {
+                //     throw new InterpretationException(paramIndex, "received variable is not an Array.");
+                // }
+                // if (var is Array && !isArray)
+                // {
+                //     throw new InterpretationException(paramIndex, "Received Array expected normal value.");
+                // }
 
             }
 
             return var;
         }
 
-        private static string GetVarName(string parametro, List<Variavel> lista_Variaveis, int paramIndex)
+        private static string GetVarName(string parametro, List<Variable> lista_Variaveis, int paramIndex)
         {
             if (parametro == "")
             {
@@ -893,6 +889,7 @@ namespace AbisInterpreter
 
         private static string GetType(string parametro, int paramIndex)
         {
+            //TODO: Add Structs name check
             if (parametro != "num" && parametro != "bool" && parametro != "text")
             {
                 throw new InterpretationException(paramIndex, "Invalid parameter type. Type must be num, bool, or text.");
@@ -908,11 +905,11 @@ namespace AbisInterpreter
         /// <param name="param"></param>
         /// <param name="paramIndex"></param>
         /// <returns>Returns the value in 'parametro'</returns>
-        private static string GetValue(List<Variavel> var_list, string param, int paramIndex)
+        private static Value GetValue(List<Variable> var_list, string param, int paramIndex)
         {
             if (param.Length == 0)
             {
-                return param;
+                return new Value(TYPE_TEXT); //Represents a Value with empty text
             }
 
             //Checks if the param is a variable
@@ -921,10 +918,13 @@ namespace AbisInterpreter
                 //Checks if the value is of an idex of an array
                 if (param.Contains('#'))
                 {
+                    //TODO: FIX THIS
+                    throw new InterpretationException(InterExecpType.TODO);
+                    /*
                     //separates the name of the array and the index
                     string[] l = param.Split('#');
 
-                    Variavel? var = var_list.Find(x => x.id == l[0]);
+                    Variable? var = var_list.Find(x => x.id == l[0]);
                     if (var == null)
                     {
                         throw new InterpretationException(paramIndex, "Variable not found.");
@@ -937,7 +937,7 @@ namespace AbisInterpreter
                     //Vai buscando as variaveis/arrays de acordo com os '#'
                     for (int i = 1; i < l.Length; i++)
                     {
-                        if (int.TryParse(GetValue(var_list, l[i], paramIndex), out int index))
+                        if (int.TryParse(GetValue(var_list, l[i], paramIndex).normalvalue, out int index))
                         {
 
                             //simulates index overflow
@@ -974,18 +974,12 @@ namespace AbisInterpreter
                     }
 
                     return var.value;
+                    */
                 }
                 else
                 {//Caso  seja referente a um valor duma variavel normal
-                    Variavel? var = var_list.Find(x => x.id == param);
-                    if (var == null)
-                    {
-                        throw new InterpretationException(paramIndex, "Variable not found.");
-                    }
-                    if (var is Array)
-                    {
-                        throw new InterpretationException(paramIndex, "Can not get value from Array without specified index");
-                    }
+                    Variable? var = var_list.Find(x => x.id == param);
+                    if (var == null) throw new InterpretationException(paramIndex, "Variable not found.");
 
                     return var.value;
                 }
@@ -994,28 +988,36 @@ namespace AbisInterpreter
             {
                 if (!param.Contains('[') && param[param.Length - 1] != ']')
                 {
-                    throw new InterpretationException(paramIndex, "Invalid Block syntax");
+                    throw new InterpretationException(InterExecpType.InvalidBlockCallSyntax, paramIndex);
                 }
 
-                Block? block = block_list.Find((x) => x.name == param.Split("[")[0]);
-                if (block == null)
+                Block? blockToBeRun = block_list.Find((x) => x.name == param.Split("[")[0]);
+                if (blockToBeRun == null)
                 {
-                    throw new InterpretationException(paramIndex, "Block not found");
+                    throw new InterpretationException(InterExecpType.BlockNotFound, paramIndex);
                 }
 
-                string[] inputParams = param.Split("[")[1].Split("]")[0].Split(",");
+                if (blockToBeRun.outputType == null) throw new InterpretationException(InterExecpType.GettingValueFromBlockWithoutReturnValue, paramIndex);
+
+                //TODO: maybe implement BlockCall support in blockCalls
+                string[] inputParams = param.Split('[')[1].Split(']')[0].Split(",");
+
+                if(inputParams.Length == 1 && inputParams[0] == "")
+                    inputParams = new string[0];
+                
+                Value[] inputValues = new Value[inputParams.Length];
 
                 for (int i = 0; i < inputParams.Length; i++)
                 {
-                    inputParams[i] = GetValue(var_list, inputParams[i], paramIndex);
+                    Value value = GetValue(var_list, inputParams[i], paramIndex);
+                    inputValues[i] = (blockToBeRun.inputVarsAndTypes[i].Item1 == value.type ? value : throw new InterpretationException(InterExecpType.TypesDontMatch, paramIndex));
                 }
 
-                if (inputParams.Length == 1 && inputParams[0] == "")
-                {
-                    return block.RunBlock(new string[] { });
-                }
+                Value? rtrn = blockToBeRun.RunBlock(inputValues);
 
-                return block.RunBlock(inputParams);
+                if (rtrn != null) return rtrn;
+
+                throw new InterpretationException(paramIndex, "This should not had happen. Block returned null in GetValue method.");
             }
             else if (param[0] == '(')
             {//caso seja operação
@@ -1028,14 +1030,14 @@ namespace AbisInterpreter
                 int splitChar = FindMiddleOperator(param, opr);
 
                 //Gets the value on each side
-                string value1 = param.Substring(0, splitChar);
-                string value2 = param.Substring(splitChar + 1);
+                string strValue1 = param.Substring(0, splitChar);
+                string strValue2 = param.Substring(splitChar + 1);
 
 
                 //Gets the operator
                 string operatorr = param[splitChar].ToString();
 
-                string result = "";
+                Value result = new Value(TYPE_TEXT);
 
                 //Checks what kind of operation are we doing
                 const string oprNum = "+-/*%";
@@ -1044,8 +1046,8 @@ namespace AbisInterpreter
                 const string oprLogic = "&\"";
                 if (oprComp.Contains(operatorr))
                 {
-                    value1 = GetValue(var_list, value1, paramIndex);
-                    value2 = GetValue(var_list, value2, paramIndex);
+                    Value value1 = GetValue(var_list, strValue1, paramIndex);
+                    Value value2 = GetValue(var_list, strValue2, paramIndex);
                     string type = "";
 
                     switch (operatorr)
@@ -1054,50 +1056,46 @@ namespace AbisInterpreter
                         case ">":
                         case "<=":
                         case ">=":
-                            type = "num";
+                            type = TYPE_NUM;
                             break;
                         case "=":
                         case "!":
-                            type = "text";
+                            type = TYPE_TEXT;
                             break;
                         default:
                             throw new InterpretationException(paramIndex, "Invalid comparator.");
                     }
 
-                    if (type == "num")
+                    if (type == TYPE_NUM)
                     {
-                        if (!float.TryParse(value1, out float a))
-                        {
-                            throw new InterpretationException(paramIndex, "Invalid data type for comparation.");
-                        }
-                        if (!float.TryParse(value2, out float b))
-                        {
-                            throw new InterpretationException(paramIndex, "Invalid data type for comparation.");
-                        }
-                        float numval1 = a;
-                        float numval2 = b;
+                        if (value1.type != type) throw new InterpretationException(paramIndex, "Invalid data type for request comparation '" + operatorr + "', got value of type: " + value1.type);
+                        if (value2.type != type) throw new InterpretationException(paramIndex, "Invalid data type for request comparation '" + operatorr + "', got value of type: " + value2.type);
 
+                        float numval1 = (float.TryParse(value1.basicValue, out float a) ? a : throw new InterpretationException(InterExecpType.GotNullBasicValue, paramIndex));
+                        float numval2 = (float.TryParse(value2.basicValue, out float b) ? b : throw new InterpretationException(InterExecpType.GotNullBasicValue, paramIndex));
+
+                        result.type = TYPE_BOOL;
 
                         switch (operatorr)
                         {
                             case "<":
                                 if (numval1 < numval2)
                                 {
-                                    result = "True";
+                                    result.basicValue = "True";
                                 }
                                 else
                                 {
-                                    result = "False";
+                                    result.basicValue = "False";
                                 }
                                 break;
                             case ">":
                                 if (numval1 > numval2)
                                 {
-                                    result = "True";
+                                    result.basicValue = "True";
                                 }
                                 else
                                 {
-                                    result = "False";
+                                    result.basicValue = "False";
                                 }
                                 break;
 
@@ -1125,26 +1123,27 @@ namespace AbisInterpreter
                     }
                     else
                     {//"text"
+                        result.type = TYPE_BOOL;
                         switch (operatorr)
                         {
                             case "=":
-                                if (value1 == value2)
+                                if (value1.basicValue == value2.basicValue)
                                 {
-                                    result = "True";
+                                    result.basicValue = "True";
                                 }
                                 else
                                 {
-                                    result = "False";
+                                    result.basicValue = "False";
                                 }
                                 break;
                             case "!":
-                                if (value1 != value2)
+                                if (value1.basicValue != value2.basicValue)
                                 {
-                                    result = "True";
+                                    result.basicValue = "True";
                                 }
                                 else
                                 {
-                                    result = "False";
+                                    result.basicValue = "False";
                                 }
                                 break;
                         }
@@ -1152,63 +1151,55 @@ namespace AbisInterpreter
                 }
                 else if (oprLogic.Contains(operatorr))
                 {
+                    Value value1 = GetValue(var_list, strValue1, paramIndex);
+                    Value value2 = GetValue(var_list, strValue2, paramIndex);
 
-                    value1 = GetValue(var_list, value1, paramIndex);
-                    value2 = GetValue(var_list, value2, paramIndex);
+                    if (value1.type != TYPE_BOOL) throw new InterpretationException(paramIndex, "Invalid data type for request comparation '" + operatorr + "', got value of type: " + value1.type);
+                    if (value2.type != TYPE_BOOL) throw new InterpretationException(paramIndex, "Invalid data type for request comparation '" + operatorr + "', got value of type: " + value2.type);
 
-                    if (!bool.TryParse(value1, out bool a))
-                    {
-                        throw new InterpretationException(paramIndex, "Invalid data type for request operation '" + operatorr + "'");
-                    }
-                    if (!bool.TryParse(value2, out bool b))
-                    {
-                        throw new InterpretationException(paramIndex, "Invalid data type for request operation '" + operatorr + "'");
-                    }
-                    bool boolval1 = a;
-                    bool boolval2 = b;
+                    bool boolval1 = (bool.TryParse(value1.basicValue, out bool a) ? a : throw new InterpretationException(InterExecpType.GotNullBasicValue, paramIndex));
+                    bool boolval2 = (bool.TryParse(value2.basicValue, out bool b) ? b : throw new InterpretationException(InterExecpType.GotNullBasicValue, paramIndex));
 
+                    result.type = TYPE_BOOL;
                     switch (operatorr)
                     {
                         case "&":
-                            result = (boolval1 && boolval2 ? true : false).ToString();
+                            result.basicValue = (boolval1 && boolval2 ? true : false).ToString();
                             break;
                         case "\"":
-                            result = (boolval1 || boolval2 ? true : false).ToString();
+                            result.basicValue = (boolval1 || boolval2 ? true : false).ToString();
                             break;
                     }
                 }
                 else if (oprNum.Contains(operatorr))
                 {
-                    value1 = GetValue(var_list, value1, paramIndex);
-                    value2 = GetValue(var_list, value2, paramIndex);
+                    Value value1 = GetValue(var_list, strValue1, paramIndex);
+                    Value value2 = GetValue(var_list, strValue2, paramIndex);
 
-                    //Checks if the values are 'num'
-                    if (!float.TryParse(value1, out float a))
-                    {
-                        throw new InterpretationException(paramIndex, "Value its not numeric.");
-                    }
-                    if (!float.TryParse(value2, out float b))
-                    {
-                        throw new InterpretationException(paramIndex, "Value its not numeric.");
-                    }
+                    if (value1.type != TYPE_NUM) throw new InterpretationException(paramIndex, "Invalid data type for request operation '" + operatorr + "', got value of type: " + value1.type);
+                    if (value2.type != TYPE_NUM) throw new InterpretationException(paramIndex, "Invalid data type for request operation '" + operatorr + "', got value of type: " + value2.type);
 
+                    float num1 = (float.TryParse(value1.basicValue, out float x) ? x : throw new InterpretationException(InterExecpType.GotNullBasicValue,paramIndex));
+                    float num2 = (float.TryParse(value2.basicValue, out float y) ? y : throw new InterpretationException(InterExecpType.GotNullBasicValue, paramIndex));
+
+                    result.type = TYPE_NUM;
                     //Operation
                     switch (operatorr)
                     {
                         case "+":
-                            result = (a + b).ToString();
+                            result.basicValue = (num1 + num2).ToString();
                             break;
                         case "-":
-                            result = (a - b).ToString();
+                            result.basicValue = (num1 - num2).ToString();
                             break;
                         case "*":
-                            result = (a * b).ToString();
+                            result.basicValue = (num1 * num2).ToString();
                             break;
                         case "/":
-                            result = (a / b).ToString();
+                            result.basicValue = (num1 / num2).ToString();
                             break;
                         case "%":
-                            result = (a % b).ToString();
+                            result.basicValue = (num1 % num2).ToString();
                             break;
                         default:
                             throw new InterpretationException(paramIndex, "Invalid Operator.");
@@ -1220,25 +1211,20 @@ namespace AbisInterpreter
                     //value1 = (1)
                     //valeu2 = (2) ? (3)
 
-                    splitChar = FindMiddleOperator(value2, "?");
-                    string value3 = value2.Substring(splitChar + 1);
-                    value2 = value2.Substring(0, splitChar);
+                    splitChar = FindMiddleOperator(strValue2, "?");
+                    string strValue3 = strValue2.Substring(splitChar + 1);
+                    strValue2 = strValue2.Substring(0, splitChar);
 
-                    value1 = GetValue(var_list, value1, paramIndex);
-                    value2 = GetValue(var_list, value2, paramIndex);
-                    value3 = GetValue(var_list, value3, paramIndex);
+                    Value value1 = GetValue(var_list, strValue1, paramIndex);
+                    Value value2 = GetValue(var_list, strValue2, paramIndex);
+                    Value value3 = GetValue(var_list, strValue3, paramIndex);
 
-                    if (!bool.TryParse(value1, out bool cmp))
-                    {
-                        throw new InterpretationException(paramIndex, "Invalid type of data for requested operation.");
-                    }
+                    if (value1.type != TYPE_BOOL) throw new InterpretationException(paramIndex, "Invalid data type for request comparation '" + operatorr + "', got value of type: " + value1.type);
+                    bool cmp = (bool.TryParse(value1.basicValue, out bool a) ? a : throw new InterpretationException(InterExecpType.GotNullBasicValue, paramIndex));
 
                     result = cmp ? value2 : value3;
                 }
-                else
-                {
-                    throw new InterpretationException(paramIndex, "Invalid Operator.");
-                }
+                else throw new InterpretationException(InterExecpType.InvalidOperator, paramIndex);
 
                 return result;
 
@@ -1267,76 +1253,135 @@ namespace AbisInterpreter
             }
             else
             {
-                return param;
+                Value val;
+                if (float.TryParse(param, out float f))
+                {
+                    val = new Value(TYPE_NUM);
+                    val.basicValue = f.ToString();
+                }
+                else if (bool.TryParse(param, out bool b))
+                {
+                    val = new Value(TYPE_BOOL);
+                    val.basicValue = b.ToString();
+                }
+                else
+                {
+                    val = new Value(TYPE_TEXT);
+                    val.basicValue = param;
+                }
+                return val;
             }
         }
 
         //#########################################################################################################
 
-        private class Variavel
+        private class Value
         {
+            public bool isStruct;
             public string type;
-            public string? id; //Variables in array dont have id
-            public string value;
+            public string? basicValue;
+            public Dictionary<string, Value>? valuePairs;
 
-            public Variavel(string type, string name, string value)
+            public Value(string type)
             {
                 this.type = type;
-                this.id = '$' + name;
-                this.value = value;
-            }
 
-            public Variavel(string value, string type)
-            {
-                this.value = value;
-                this.type = type;
+                switch (type)
+                {
+                    case TYPE_TEXT: this.isStruct = false; this.basicValue = ""; break;
+                    case TYPE_BOOL: this.isStruct = false; this.basicValue = "false"; break;
+                    case TYPE_NUM: this.isStruct = false; this.basicValue = "0"; break;
+
+                    default:
+                        this.isStruct = true;
+
+                        Struct? structt = struct_list.Find(x => x.name == type);
+                        if (structt is null) throw new InterpretationException(InterExecpType.StructNotFound);
+
+                        this.valuePairs = new Dictionary<string, Value>();
+
+                        foreach (var field in structt.fields)
+                        {
+                            this.valuePairs.Add(field.Item2, new Value(field.Item1));
+                        }
+                        break;
+                }
             }
         }
 
-        private class Array : Variavel
+        private class Variable
         {
-            public Variavel[] vars;
+            public Value value;
+            public string id;
 
-            public Array(string type, string name, string[] values) : base(type, name, "Array")
+            public string type { get => value.type; }
+
+            public Variable(string validType, string validName)
             {
-                Variavel[] arr = new Variavel[values.Length];
-                for (int i = 0; i < values.Length; i++)
-                {
-                    arr[i] = new Variavel(values[i], type);
-                }
-
-                this.vars = arr;
+                this.value = new Value(validType);
+                this.id = '$' + validName;
             }
 
-            public Array(string type, string name, Variavel[] vars) : base(type, name, "Array")
+            public Variable(Value value, string validName)
             {
-                this.vars = vars;
-            }
-
-            public Array(string type, string name, int length) : base(type, name, "Array")
-            {
-                this.vars = new Variavel[length];
-
-                string value = "";
-
-                if (type == "num") value = "0";
-                else if (type == "bool") value = "False";
-
-                for (int i = 0; i < this.vars.Length; i++)
-                {
-                    vars[i] = new Variavel(type, "", value);
-                }
+                this.value = value;
+                this.id = '$' + validName;
             }
         }
+
+        private class Struct
+        {
+            public string name;
+            public Tuple<string, string>[] fields;//(type, name)
+        }
+
+
+        //TODO: ARRAYS WILL BE BROKEN AFTER IMPLEMENTING STRUCTS
+        // private class Array : Variable
+        // {
+        //     public Variable[] vars;
+
+        //     public Array(string type, string name, string[] values) : base(type, name, "Array")
+        //     {
+        //         Variable[] arr = new Variable[values.Length];
+        //         for (int i = 0; i < values.Length; i++)
+        //         {
+        //             arr[i] = new Variable(values[i], type);
+        //         }
+
+        //         this.vars = arr;
+        //     }
+
+        //     public Array(string type, string name, Variable[] vars) : base(type, name, "Array")
+        //     {
+        //         this.vars = vars;
+        //     }
+
+        //     public Array(string type, string name, int length) : base(type, name, "Array")
+        //     {
+        //         this.vars = new Variable[length];
+
+        //         string value = "";
+
+        //         if (type == "num") value = "0";
+        //         else if (type == "bool") value = "False";
+
+        //         for (int i = 0; i < this.vars.Length; i++)
+        //         {
+        //             vars[i] = new Variable(type, "", value);
+        //         }
+        //     }
+        // }
 
         //Map of the actions
-        private static Dictionary<string, Action<Block>> map = new Dictionary<string, Action<Block>>{
+        private static Dictionary<string, Action<Block>> actionMap = new Dictionary<string, Action<Block>>{
             {"SET", Set},
             {"EQL", Equalss},
             {"EXE", Execute},
-            {"SETARR", SetArr},
-            {"GLEN", GetLength},
-            {"SPLITTEXT", SplitText},
+            //TODO: REACTIVATE THIS AFTER FIXING ARRAYS
+            //{"SETARR", SetArr},
+            //{"GLEN", GetLength},
+            //{"SPLITTEXT", SplitText},
             {"PRS", Parse},
             {"JTXT", JoinText},
             {"PRINT", Print},
@@ -1351,21 +1396,21 @@ namespace AbisInterpreter
         private class Block
         {
             public string name;
-            public string outputType;
-            public string outputValue = "";
-            public string[] inputVarsAndTypes;
+            public string? outputType;
+            public Value? outputValue;
+            public Tuple<string, string>[] inputVarsAndTypes; //[(type, name)]
             public int nextAction; //Used in IF, IFN & GOTO
 
             public List<Action> actions;
             public List<Flag> flag_list;
 
-            public List<Variavel>? var_list;
+            public List<Variable>? var_list;
 
             public Block(string name, string outputType, string[] inputVarsAndTypes, string instructions)
             {
                 this.name = name;
-                this.outputType = outputType;
-                this.inputVarsAndTypes = inputVarsAndTypes;
+                this.outputType = (outputType == "" ? null : outputType);
+                this.inputVarsAndTypes = ParseInputVarsAndTypes(inputVarsAndTypes);
 
                 //this.var_list = new List<Variavel>();
 
@@ -1375,13 +1420,27 @@ namespace AbisInterpreter
                 ParseIntructionsToBlockActions(this.flag_list, this.actions, instructions);
             }
 
+            private Tuple<string, string>[] ParseInputVarsAndTypes(string[] inputVarsAndTypes)
+            {
+                if (inputVarsAndTypes.Length == 1 && inputVarsAndTypes[0] == "") return new Tuple<string, string>[0];
+                //Format ["type:name"] -> [(type, name)]
+                Tuple<string, string>[] inputFields = new Tuple<string, string>[inputVarsAndTypes.Length];
+                for (int i = 0; i < inputFields.Length; i++)
+                {
+                    string[] a = inputVarsAndTypes[i].Split(":");
+                    inputFields[i] = new Tuple<string, string>(a[0], a[1]);
+                }
+
+                return inputFields;
+            }
+
             /// <summary>
             ///     Runs the block instructions. A Block must always return a value.
             /// </summary>
             /// <returns>Returns value acording with output type.</returns>
-            public string RunBlock(string[] inputValues)
+            public Value? RunBlock(Value[] inputValues)
             {
-                this.var_list = new List<Variavel>();
+                this.var_list = new List<Variable>();
                 blockStack.Push(this);
                 currentActionIndex = -1;
 
@@ -1390,11 +1449,11 @@ namespace AbisInterpreter
                 {
                     for (int i = 0; i < inputVarsAndTypes.Length; i++)
                     {
-                        string[] inputs = inputVarsAndTypes[i].Split(":");
-                        string[] parametersSet = { inputs[0], inputs[1] };
-                        string[] parametersEqualss = { "$" + inputs[1], inputValues[i] };
+                        string varName = inputVarsAndTypes[i].Item2;
 
-                        this.var_list.Add(new Variavel(inputs[0], inputs[1], inputValues[i]));
+                        //input Values Should be validated in GetValue Method.
+
+                        this.var_list.Add(new Variable(inputValues[i], varName));
                     }
                 }
 
@@ -1405,25 +1464,19 @@ namespace AbisInterpreter
                     nextAction = i;
 
                     string action = actions[i].actionType;
-                    if (map.ContainsKey(action))
+                    if (actionMap.ContainsKey(action))
                     {
-                        map[action](this);
+                        actionMap[action](this);
 
                         if (action == "RETURN")
                             break;
                     }
-                    else throw new InterpretationException(InterpretationExceptionType.ActionNotFound);
+                    else throw new InterpretationException(InterExecpType.ActionNotFound);
 
                     i = nextAction;
                 }
 
-                if (this.name == "@main")
-                {
-                    this.var_list.Clear();
-                    this.var_list = null;
-                    blockStack.Pop();
-                    return "";
-                }
+
                 // else if (this.outputType != "")
                 // {
                 //     throw new InterpretationException("Block finished without return statement.");
@@ -1497,7 +1550,7 @@ namespace AbisInterpreter
 
         //Used for making sure that everything is working proprely
         //If the given expression is not true an exception is throwned
-        private static void Assert(bool expr, InterpretationExceptionType type)
+        private static void Assert(bool expr, InterExecpType type)
         {
             if (!expr)
             {
@@ -1513,12 +1566,24 @@ namespace AbisInterpreter
             }
         }
 
-        public enum InterpretationExceptionType
+        public enum InterExecpType
         {
             NullBlockVarList,
             NullBlockFlagList,
             ActionNotFound,
             NoMainBlockFound,
+            StructNotFound,
+            DuplicateInputBlockVariableName,
+            InvalidBlockCallSyntax,
+            BlockNotFound,
+            TypesDontMatch,
+            GettingValueFromBlockWithoutReturnValue,
+            GotNullBasicValue,
+            InvalidOperator,
+            TODO,
+            ExpectedVariable,
+            VariableNotFound,
+            InvalidParameterQuantity,
         }
 
         [System.Serializable]
@@ -1527,8 +1592,8 @@ namespace AbisInterpreter
             //public InterpretationExeption() {}
             public InterpretationException(string message) : base(MontarMensagemErro(message)) { }
             public InterpretationException(int parametro, string message) : base(MontarMensagemErro(parametro, message)) { }
-            public InterpretationException(InterpretationExceptionType type) : base(MontarMensagemErro(type.ToString("G"))) { }
-            public InterpretationException(InterpretationExceptionType type, int parameter) : base(type.ToString("G")) { }
+            public InterpretationException(InterExecpType type) : base(MontarMensagemErro(type.ToString("G"))) { }
+            public InterpretationException(InterExecpType type, int parameter) : base(MontarMensagemErro(parameter, type.ToString("G"))) { }
 
             //Monta uma mesagem que mostra a linha onde ocorreu o erro com as 3 linhas anteriores e a menssagem de erro;
             private static string MontarMensagemErro(int parametro, string mensagem)

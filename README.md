@@ -8,7 +8,9 @@ This is still in a very early development stage and a lot of things can change.
 This is the c# version of it. I intend to develop a rust version too.
 
 # Project suspended
-This version of the projectspended. A new version of this interpreter and a redesing of the syntax of the language is being reworked in another repository and in rust.
+This version of the project suspended. A new version of this interpreter and a redesing of the syntax of the language is being
+reworked in another repository and in rust.
+
 New repository here (place later link here)
 
 # Instructions

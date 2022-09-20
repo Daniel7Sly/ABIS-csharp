@@ -7,7 +7,9 @@ This is still in a very early development stage and a lot of things can change.
 
 This is the c# version of it. I intend to develop a rust version too.
 
-This project was inspired by the programing language [Porth](https://gitlab.com/tsoding/porth) by the streamer [Tsoding](twitch.tv/tsoding). (the languages have nothing in common btw)
+# Project suspended
+This version of the projectspended. A new version of this interpreter and a redesing of the syntax of the language is being reworked in another repository and in rust.
+New repository here (place later link here)
 
 # Instructions
 

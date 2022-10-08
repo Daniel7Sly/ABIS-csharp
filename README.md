@@ -11,7 +11,7 @@ This is the c# version of it. I intend to develop a rust version too.
 This version of the project suspended. A new version of this interpreter and a redesing of the syntax of the language is being
 reworked in another repository and in rust.
 
-New repository here (place later link here)
+### New repository here : https://github.com/Daniel7Sly/ABIS-Programing-Language
 
 # Instructions
 
